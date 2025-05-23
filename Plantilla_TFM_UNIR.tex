@@ -1,0 +1,64 @@
+\input{inputs/config.tex}
+
+\selectlanguage{spanish}
+\begin{document}
+	
+	\input{inputs/title.tex}
+	\setcounter{page}{2}
+	
+	%\input{inputs/abstract.tex}
+	\clearpage
+	
+	\spacing{1.3}
+	\setlength{\parskip}{0pt}
+	\tableofcontents
+	\clearpage
+	\listoffigures
+	\clearpage
+	\listoftables
+	\clearpage
+	
+	\spacing{1.5} %Interlineado fijo
+	\setlength{\parskip}{6pt} %6 puntos de espaciado entre párrafos
+	
+	\input{caps/1_introduccion.tex}
+	\clearpage
+	\input{caps/2_contexto_estadodelarte.tex}
+	\clearpage
+	\input{caps/3_objetivos_metodologia.tex}
+	\clearpage
+	
+	%\input{inputs/introduccion.tex}
+	%\clearpage
+	%\input{inputs/justificacion.tex}
+	%\clearpage
+	%\input{inputs/objetivosMetodologia.tex}
+	%\clearpage
+	%\input{inputs/estadoDelArte.tex}
+	%\clearpage
+	%\input{inputs/analisisTecnico.tex}
+	%\clearpage
+	%\input{inputs/desarrolloEspecifico.tex}
+	%\clearpage
+	%\input{inputs/trabajosFuturos.tex}
+	%\clearpage
+	%\input{inputs/conclusiones.tex}
+
+	\clearpage
+	\printglossary[type=\acronymtype,title={Lista de Acrónimos y Abreviaturas}]
+	\glsaddallunused
+
+	\clearpage
+	\phantomsection %Insertamos ancla en la bibliografía para hipervínculo
+	\begin{flushleft}
+		%Visualizar bibliografía con notice incluida la no citada
+		\nocite{*}
+		\bibliographystyle{apacite}
+		\bibliography{recursos/bibliografia}
+	\end{flushleft}
+
+% Cuando tengamos apéndices, mostrar aquí
+%	\clearpage
+%	\appendix
+%	\input{caps/A_anexo.tex}
+\end{document} 

@@ -1,0 +1,42 @@
+=============================================
+
+palabras clave: TRAFFIC FLOW PREDICTION
+
+=============================================
+INTRODUCIR MI PAPER ORIGINAL
+
+A novel hybrid deep learning model with ARIMA Conv-LSTM networks and shuffle attention layer for short-term traffic flow prediction
+	https://www.sciencedirect.com/org/science/article/pii/S232499352300194X
+
+	Se pueden sacar estudios y comparaciones con ARIMA.
+	
+Urban intersection traffic flow prediction: A physics-guided stepwise framework utilizing spatio-temporal graph neural network algorithms
+	https://www.sciencedirect.com/science/article/pii/S2772586325000218
+
+	Se pueden extraer enlaces como ARIMA, knn, etc
+	
+Artificial intelligence-based vehicular traffic flow prediction methods for supporting intelligent transportation systems
+	https://www.sciencedirect.com/science/article/abs/pii/S1389128620311567?via%3Dihub
+	
+	Se puede sacar una clasificación para usar datos recolectados de sistemas ITS.
+
+Short-term traffic flow prediction using seasonal ARIMA model with limited input data
+	https://link.springer.com/article/10.1007/s12544-015-0170-8
+	
+Deep learning for short-term traffic flow prediction
+	https://www.sciencedirect.com/science/article/abs/pii/S0968090X17300633
+	
+Traffic flow prediction based on combination of support vector machine and data denoising schemes
+	https://www.sciencedirect.com/science/article/abs/pii/S0378437119302262
+	
+Short-Term Bus Passenger Flow Prediction Based on Graph Diffusion Convolutional Recurrent Neural Network
+	https://www.mdpi.com/2076-3417/13/8/4910
+	
+T-GCN: A Temporal Graph Convolutional Network for Traffic Prediction
+	https://ieeexplore.ieee.org/abstract/document/8809901
+	
+UrbanGPT: Spatio-Temporal Large Language Models
+	https://arxiv.org/abs/2403.00813
+	
+Gaussian Process Regression Ensemble Model for Network Traffic Prediction
+	https://www.researchgate.net/publication/344549802_Gaussian_Process_Regression_Ensemble_Model_for_Network_Traffic_Prediction
