@@ -182,6 +182,71 @@ Fragmento de código
 	url={https://papers.nips.cc/paper_files/paper/2012/hash/c399862d3b9d6b76c8436e924a68c45b-Abstract.html}
 }
 
+@Article{hochreiter1997long,
+	author = {Hochreiter, Sepp and Schmidhuber, Jürgen},
+	title = {Long Short-Term Memory},
+	journal = {Neural Computation},
+	volume = {9},
+	number = {8},
+	pages = {1735-1780},
+	year = {1997},
+	month = {11},
+	abstract = {Learning to store information over extended time intervals by recurrent backpropagation takes a very long time, mostly because of insufficient, decaying error backflow. We briefly review Hochreiter's (1991) analysis of this problem, then address it by introducing a novel, efficient, gradient based method called long short-term memory (LSTM). Truncating the gradient where this does not do harm, LSTM can learn to bridge minimal time lags in excess of 1000 discrete-time steps by enforcing constant error flow through constant error carousels within special units. Multiplicative gate units learn to open and close access to the constant error flow. LSTM is local in space and time; its computational complexity per time step and weight is O. 1. Our experiments with artificial data involve local, distributed, real-valued, and noisy pattern representations. In comparisons with real-time recurrent learning, back propagation through time, recurrent cascade correlation, Elman nets, and neural sequence chunking, LSTM leads to many more successful runs, and learns much faster. LSTM also solves complex, artificial long-time-lag tasks that have never been solved by previous recurrent network algorithms.},
+	issn = {0899-7667},
+	doi = {10.1162/neco.1997.9.8.1735},
+	url = {https://doi.org/10.1162/neco.1997.9.8.1735},
+	eprint = {https://direct.mit.edu/neco/article-pdf/9/8/1735/813796/neco.1997.9.8.1735.pdf},
+}
+
+@inproceedings{cho2014gru,
+	title = "Learning Phrase Representations using {RNN} Encoder{--}Decoder for Statistical Machine Translation",
+	author = {Cho, Kyunghyun  and
+	van Merri{\"e}nboer, Bart  and
+	Gulcehre, Caglar  and
+	Bahdanau, Dzmitry  and
+	Bougares, Fethi  and
+	Schwenk, Holger  and
+	Bengio, Yoshua},
+	editor = "Moschitti, Alessandro  and
+	Pang, Bo  and
+	Daelemans, Walter",
+	booktitle = "Proceedings of the 2014 Conference on Empirical Methods in Natural Language Processing ({EMNLP})",
+	month = oct,
+	year = "2014",
+	address = "Doha, Qatar",
+	publisher = "Association for Computational Linguistics",
+	url = "https://aclanthology.org/D14-1179/",
+	doi = "10.3115/v1/D14-1179",
+	pages = "1724--1734"
+}
+
+@article{zhao2017lstm,
+	author = {Zhao, Zheng and Chen, Weihai and Wu, Xingming and Chen, Peter C. Y. and Liu, Jingmeng},
+	title = {LSTM network: a deep learning approach for short-term traffic forecast},
+	journal = {IET Intelligent Transport Systems},
+	volume = {11},
+	number = {2},
+	pages = {68-75},
+	keywords = {learning (artificial intelligence), intelligent transportation systems, road traffic control, recurrent neural nets, LSTM network, LSTM deep-learning approach, short-term traffic forecasting, intelligent transportation system, travel modes, travel routes, departure time, traffic management, traffic data analysis, computation power, long-short-term memory network, temporal-spatial correlation, two-dimensional network, memory units},
+	doi = {https://doi.org/10.1049/iet-its.2016.0208},
+	url = {https://ietresearch.onlinelibrary.wiley.com/doi/abs/10.1049/iet-its.2016.0208},
+	eprint = {https://ietresearch.onlinelibrary.wiley.com/doi/pdf/10.1049/iet-its.2016.0208},
+	abstract = {Short-term traffic forecast is one of the essential issues in intelligent transportation system. Accurate forecast result enables commuters make appropriate travel modes, travel routes, and departure time, which is meaningful in traffic management. To promote the forecast accuracy, a feasible way is to develop a more effective approach for traffic data analysis. The availability of abundant traffic data and computation power emerge in recent years, which motivates us to improve the accuracy of short-term traffic forecast via deep learning approaches. A novel traffic forecast model based on long short-term memory (LSTM) network is proposed. Different from conventional forecast models, the proposed LSTM network considers temporal–spatial correlation in traffic system via a two-dimensional network which is composed of many memory units. A comparison with other representative forecast models validates that the proposed LSTM network can achieve a better performance.},
+	year = {2017}
+}
+
+@Article{ma2022cnn_gru,
+	author={Ma, Changxi and Zhao, Yongpeng and Dai, Guowen and Xu, Xuecai and Wong, Sze-Chun},
+	journal={IEEE Transactions on Intelligent Transportation Systems}, 
+	title={A Novel STFSA-CNN-GRU Hybrid Model for Short-Term Traffic Speed Prediction}, 
+	year={2023},
+	volume={24},
+	number={4},
+	pages={3728-3737},
+	keywords={Predictive models;Data models;Correlation;Roads;Prediction algorithms;Intelligent transportation systems;Feature extraction;Short-term traffic speed prediction;convolutional neural network;gated recurrent unit;deep learning model;spatial-temporal analysis},
+	doi={10.1109/TITS.2021.3117835}}
+
+
 @Article{forecastCnnWavelet,
 	title = {WT-2DCNN: A convolutional neural network traffic flow prediction model based on wavelet reconstruction},
 	journal = {Physica A: Statistical Mechanics and its Applications},
@@ -284,27 +349,84 @@ Fragmento de código
 	issn={1662-5218},
 }
 
-@Misc{desvGradiente,
+% Enlaces
+
+@Online{desvGradiente,
 	author = {{Wikipedia, la enciclopedia libre}},
 	title = {Problema de desvanecimiento de gradiente -- Wikipedia, la enciclopedia libre},
 	url = {https://es.wikipedia.org/wiki/Problema_de_desvanecimiento_de_gradiente},
-	urldate = {2025-04-18}
+	year = {2025},
+	urldate = {2025-04-18},
+	note = {Accedido el 18 de abril de 2025},
 }
 
-@Misc{openDataGv,
+@Online{openDataGv,
 	author = {{Gobierno Vasco, Eusko Jaurlaritza}},
 	title = {APIs de Open Data Euskadi},
-	url = {https://opendata.euskadi.eus/apis/-/apis-open-data/}
+	url = {https://opendata.euskadi.eus/apis/-/apis-open-data/},
+	year = {2025},
+	urldate = {2025-04-18},
+	note = {Accedido el 18 de abril de 2025},
 }
 
-@Misc{apiTraffic,
+@Online{apiTraffic,
 	author = {{Gobierno Vasco, Eusko Jaurlaritza}},
 	title = {Open Data Euskadi: API Traffic},
-	url = {https://opendata.euskadi.eus/api-traffic/}
+	url = {https://opendata.euskadi.eus/api-traffic/},
+	year = {2025},
+	urldate = {2025-04-18},
+	note = {Accedido el 18 de abril de 2025},
 }
 
-@Misc{apiMeteo,
+@Online{apiMeteo,
 	author = {{Gobierno Vasco, Eusko Jaurlaritza}},
 	title = {Open Data Euskadi: Euskalmet API},
-	url = {https://opendata.euskadi.eus/api-euskalmet/-/api-de-euskalmet/}
+	url = {https://opendata.euskadi.eus/api-euskalmet/-/api-de-euskalmet/},
+	year = {2025},
+	urldate = {2025-04-18},
+	note = {Accedido el 18 de abril de 2025},
+}
+
+@Online{openDataEuskadi,
+	author       = {{Gobierno Vasco}},
+	title        = {Portal de Open Data Euskadi},
+	year         = {2024},
+	url          = {https://opendata.euskadi.eus/},
+	urldate      = {2025-05-23},
+	note         = {Accedido el 23 de mayo de 2025}
+}
+
+@misc{xmlMeteo2024,
+	author = {{Eusko Jaurlaritza / Gobierno Vasco}},
+	title = {Estaciones meteorológicas. Lecturas recogidas en 2024},
+	year = {2024},
+	howpublished = {\url{https://opendata.euskadi.eus/catalogo/-/estaciones-meteorologicas-lecturas-recogidas-en-2024/}},
+	note = {[Conjunto de datos]. Open Data Euskadi.},
+}
+
+@misc{sensorTypeAbbrv,
+	author = {{Eusko Jaurlaritza / Gobierno Vasco}},
+	title = {Abreviaturas de los tipos de mediciones de sensores meteorológicos},
+	year = {s.f.},
+	howpublished = {\url{https://opendata.euskadi.eus//webopd00-dataset/es/contenidos/ds_meteorologicos/met_stations_ds_2009/es_dataset/adjuntos/abreviaturas.txt}},
+	note = {[Archivo de texto]. Open Data Euskadi.},
+}
+
+
+@Online{datacamp2023,
+	author       = {{DataCamp}},
+	title        = {PyTorch vs TensorFlow vs Keras: Key Differences},
+	year         = {2023},
+	url          = {https://www.datacamp.com/tutorial/pytorch-vs-tensorflow-vs-keras},
+	urldate      = {2025-05-23},
+	note         = {Accedido el 23 de mayo de 2025}
+}
+
+@Online{unfoldai2024,
+	author       = {{UnfoldAI}},
+	title        = {Keras vs PyTorch — Which DL framework to choose in 2024?},
+	year         = {2024},
+	url          = {https://unfoldai.com/keras-vs-pytorch-in-2024},
+	urldate      = {2025-05-23},
+	note         = {Accedido el 23 de mayo de 2025}
 }

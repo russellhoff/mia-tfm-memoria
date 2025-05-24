@@ -4,7 +4,7 @@ En los últimos años, la predicción del tráfico se ha convertido en un campo 
 
 La problemática de la predicción del tráfico en entornos urbanos y regionales como Bizkaia presenta una elevada complejidad, debido a la naturaleza altamente dinámica y no lineal del flujo vehicular, así como por la influencia de factores exógenos como el clima, los eventos especiales o los accidentes. Esta complejidad ha motivado el desarrollo de una gran variedad de enfoques, desde modelos estadísticos clásicos hasta sofisticadas arquitecturas de aprendizaje profundo.
 
-Este capítulo tiene como objetivo ofrecer una panorámica de las principales técnicas, modelos y tecnologías utilizadas en la predicción del tráfico. A partir de una revisión sistemática de la literatura científica más relevante, se presentarán los enfoques predominantes y se analizará su aplicabilidad al caso concreto de Bizkaia. Finalmente, se establecerá un marco comparativo que servirá como punto de partida para justificar la solución propuesta en este trabajo.
+Este capítulo tiene como objetivo ofrecer un panorama de las principales técnicas, modelos y tecnologías utilizadas en la predicción del tráfico. A partir de una revisión sistemática de la literatura científica más relevante, se presentarán los enfoques predominantes y se analizará su aplicabilidad al caso concreto de Bizkaia. Finalmente, se establecerá un marco comparativo que servirá como punto de partida para justificar la solución propuesta en este trabajo.
 
 \subsection{Técnicas existentes para la predicción del tráfico}
 
@@ -60,19 +60,7 @@ En el ámbito del tráfico, \acrshort{rf} es capaz de manejar grandes volúmenes
 
 A pesar de su simplicidad, \acrshort{knn} es muy eficaz en la predicción de tráfico cuando los patrones de flujo muestran alta dependencia espacial y temporal. Recientemente, \cite{forecastKnn} emplearon \acrshort{knn} para la predicción del tráfico en Bandung, Indonesia, empleando este método e integrado con la aplicación de simulación de movilidad urbana SUMO. El estudio buscó mitigar la congestión de tráfico anual en la ciudad, particularmente en periodos vacacionales. Utilizaron datos históricos de tráfico de Jl. Riau Bandung para predecir el nivel de congestión. La evaluación del rendimiento del método, usando una división de datos para entrenamiento y prueba, demostró una precisión muy alta con diferentes valores de 'k' vecinos considerados.
 
-\subsubsection{Introducción a las redes neuronales}
-
-Los orígenes del concepto de redes neuronales artificiales se remontan al influyente trabajo publicado en 1943 por Warren S. McCulloch y Walter Pitts, titulado \textit{A Logical Calculus of the Ideas Immanent in Nervous Activity}. En este estudio fundamental, McCulloch y Pitts propusieron un modelo matemático simple del funcionamiento de las neuronas biológicas, caracterizado por umbrales y conexiones ponderadas entre unidades neuronales, tal y como se puede ver en la figura \ref{fig:neuron}. Este modelo sentó las bases teóricas para comprender cómo redes de neuronas artificiales podrían realizar operaciones lógicas y aprender patrones complejos a partir de datos de entrada. Su trabajo es considerado un punto de partida clave en el campo del aprendizaje automático y, especialmente, de las redes neuronales, al introducir la idea innovadora de que una máquina podría simular aspectos del razonamiento humano mediante estructuras conectadas análogas al sistema nervioso humano \cite{mccullochPitts1943}.
-
-\begin{figure}[h]
-	\centering
-	\includegraphics[scale=0.5]{includes/McCulloch-Pitts-computational-model-of-a-neuron_W640.jpg}
-	\caption[Modelo computacional de la neurona de McCulloch y Pitts. Fuente: \url{https://www.researchgate.net/publication/323465059_Modulation_Format_Recognition_Using_Artificial_Neural_Networks_for_the_Next_Generation_Optical_Networks}]{Modelo computacional de la neurona de McCulloch y Pitts.}
-	\label{fig:neuron}
-\end{figure}
-
-Unos años más tarde, en 1958, Frank Rosenblatt presentó el \textit{Perceptrón}, una implementación práctica del modelo de neurona artificial, que combinaba ideas de neurofisiología con un procedimiento de aprendizaje supervisado. Este modelo era capaz de aprender a clasificar patrones linealmente separables ajustando los pesos de sus conexiones mediante un algoritmo de aprendizaje iterativo. El perceptrón representó un hito histórico al demostrar, por primera vez, que una red neuronal podía aprender de forma automática a partir de ejemplos \cite{rosenblatt1958perceptron}. Aunque sus limitaciones fueron puestas en evidencia en décadas posteriores, el perceptrón marcó el inicio de una línea de investigación que evolucionaría hasta los modernos algoritmos de aprendizaje profundo.
-
+\subsubsection{Aprendizaje profundo}
 
 El \textit{Deep Learning} o aprendizaje profundo es un área de \textit{Machine Learning} que utiliza redes neuronales artificiales de múltiples capas para modelar patrones complejos en los datos. Tras varias décadas de relativo estancamiento debido a las limitaciones computacionales y a las críticas vertidas por Minsky y Papert en los años 60 en el libro \textit{Perceptrons: An Introduction to Computational Geometry} \cite{minsky1969perceptrons}, las redes neuronales experimentaron un resurgimiento a partir de la década de los 2000, impulsado por el incremento exponencial de la capacidad de cómputo, la disponibilidad de grandes volúmenes de datos y el avance en algoritmos de entrenamiento. Este renacimiento del interés en las redes profundas se consolidó con el trabajo de \cite{hinton2006reducing}, donde se introdujo una técnica de preentrenamiento capa por capa utilizando autoencoders y máquinas de Boltzmann restringidas para facilitar el entrenamiento de redes neuronales profundas.
 
@@ -94,6 +82,7 @@ En cuanto a la aplicación de redes \acrshort{gru}, cabe destacar el estudio lle
 
 Ambos estudios evidencian cómo el uso de redes neuronales recurrentes permite modelar con alta precisión las dependencias temporales complejas inherentes al tráfico vehicular, posicionándolas como una alternativa destacada frente a métodos clásicos o más tradicionales. Estos modelos son especialmente útiles en contextos de predicción a corto plazo, donde la precisión y la velocidad de respuesta son críticas para una gestión eficiente del tráfico y la toma de decisiones en tiempo real.
 
+\begin{comment}
 \subsubsection{Redes convolucionales}
 
 Las \acrlong{cnn} son una clase de modelos de aprendizaje profundo diseñados para procesar datos con una estructura de tipo rejilla, como imágenes o series temporales espaciales. Su arquitectura se compone de capas convolucionales que aplican filtros para extraer características locales, seguidas de capas de agrupamiento y, finalmente, capas completamente conectadas para la toma de decisiones.​
@@ -113,6 +102,7 @@ En otro artículo científico titulado \textit{MF-CNN: Traffic Flow Prediction U
 La metodología aplicada comienza por la extracción de características temporales a corto y largo plazo del flujo de tráfico. Seguidamente, se representan las características en matrices bidimensionales combinando dimensiones espaciales y temporales. A continuación, se aplica una \acrshort{cnn} para aprender las representaciones de las matrices y se finaliza fusionando las características aprendidas con factores externos mediante una capa de regresión logística para efectuar la predicción final.
 
 Como resultado, el modelo MF-CNN logró una mejora notable en la precisión de la predicción del flujo de tráfico en comparación con varios modelos de referencia, demostrando la efectividad de integrar múltiples características y factores externos en el proceso de predicción.​
+\end{comment}
 
 \subsubsection{Graph Neural Networks}
 
@@ -188,7 +178,7 @@ Los resultados experimentales de \cite{trafficformer} muestran que Trafficformer
 	\renewcommand{\arraystretch}{1.4}
 	\begin{tabular}{p{3.5cm} p{3.5cm} p{3.5cm} p{4cm}}
 		\toprule
-		\textbf{Aspecto} & \textbf{RNNs (LSTM, GRU)} & \textbf{GNNs} & \textbf{Transformers (Trafficformer)} \\
+		\textbf{Aspecto} & \textbf{RNNs (LSTM, GRU)} & \textbf{GNNs} & \textbf{Transformers} \\
 		\midrule
 		Procesamiento secuencial vs. paralelo &
 		Procesamiento secuencial con paralelización limitada &

@@ -1,0 +1,167 @@
+\section*{Anexo B – Código fuente del generador de snapshots}
+\label{anexo:snapshot_generator}
+\addcontentsline{toc}{section}{Anexo B – Código fuente del generador de snapshots}
+
+A continuación se presenta el código fuente completo de la clase \texttt{MobilitySnapshotGeneratorService}, responsable de generar las instancias de \texttt{MobilitySnapshot} mediante la integración de datos de tráfico, meteorología e incidencias.
+
+\begin{lstlisting}[language=Kotlin, caption={Clase MobilitySnapshotGeneratorService}]
+	package es.joninx.tfm.dc.service
+	
+	import es.joninx.tfm.dc.builder.dataset.MobilitySnapshotBuilder
+	import es.joninx.tfm.dc.config.Cfg
+	import es.joninx.tfm.dc.repository.meteo.ReadingXmlRepository
+	import es.joninx.tfm.dc.repository.meteo.StationRepository
+	import es.joninx.tfm.dc.repository.traffic.FlowRepository
+	import es.joninx.tfm.dc.repository.traffic.IncidenceRepository
+	import es.joninx.tfm.dc.repository.traffic.MeterRepository
+	import es.joninx.tfm.dc.util.DateTimeUtils
+	import org.apache.logging.log4j.LogManager
+	import org.apache.logging.log4j.Logger
+	import org.springframework.stereotype.Service
+	import java.time.Duration
+	import java.time.LocalDateTime
+	
+	@Service
+	class MobilitySnapshotGeneratorService(
+		private val cfg: Cfg,
+	
+		private val snapshotBuilder: MobilitySnapshotBuilder,
+		private val snapshotPersistenceService: MobilitySnapshotPersistenceService,
+		private val flowRepository: FlowRepository,
+		private val meterRepository: MeterRepository,
+		private val incidenceRepository: IncidenceRepository,
+		private val stationRepository: StationRepository,
+		private val meteoReadingsRepository: ReadingXmlRepository,
+	) {
+		
+		/**
+		* Mapa cache: meterId → stationId
+		*/
+		private val meterToStationCache = mutableMapOf<String, String>()
+		
+		fun getNearestStationId(meterId: String, latitude: Double, longitude: Double): String? {
+			// ¿Ya lo tenemos cacheado?
+			meterToStationCache[meterId]?.let {
+				log.debug("Cache HIT: meterId=$meterId → stationId=$it")
+				return it
+			}
+			
+			// Si no, buscamos la estación más cercana
+			val nearestStation = stationRepository.findNearestStation(
+			longitude = longitude,
+			latitude = latitude,
+			maxDistanceMeters = cfg.algorithm.maxDistanceToStation
+			).blockFirst() ?: return null
+			
+			meterToStationCache[meterId] = nearestStation.stationId
+			log.debug("Cache MISS: meterId=$meterId → stationId=${nearestStation.stationId}")
+			return nearestStation.stationId
+		}
+		
+		fun generateSnapshots(
+			sourceIds: List<String>,
+			startDate: LocalDateTime,
+			endDate: LocalDateTime,
+			batchSize: Int = 500
+		) {
+			log.debug("Comenzando generación de MobilitySnapshots para sourceIds=${sourceIds.joinToString(",")}, fechas entre '${DateTimeUtils.format(startDate)}' y '${DateTimeUtils.format(endDate)}'")
+			
+			val meters = meterRepository.findAllBySourceIdIn(sourceIds)
+			.collectMap { it.meterId }
+			.block() ?: emptyMap()
+			
+			val intervals = generateIntervals(startDate, endDate, cfg.algorithm.timeWindowDuration)
+			var totalSnapshots = 0
+			
+			intervals.forEachIndexed { idx, (intervalStart, intervalEnd) ->
+				val flows = flowRepository.findAllBySourceIdInAndDateTimeBetweenQuery(
+				sourceIds, intervalStart, intervalEnd
+				).collectList().block() ?: emptyList()
+				
+				val groupedByMeter = flows.groupBy { it.meterId }
+				
+				val snapshots = groupedByMeter.mapNotNull { (meterId, flowList) ->
+					val meter = meters[meterId]
+					if (meter != null && flowList.isNotEmpty()) {
+						val totalVehiclesSum = flowList.sumOf { it.totalVehicles.toIntOrNull() ?: 0 }
+						
+						// Obtener incidencias para el intervalo
+						val latitude = meter.latitude
+						val longitude = meter.longitude
+						
+						// Busca incidencias cercanas y activas
+						val incidences = incidenceRepository
+						.findIncidencesNearAndActive(
+						longitude, latitude, cfg.algorithm.maxDistanceToIncidences,
+						intervalStart, intervalEnd
+						)
+						.collectList()
+						.block() ?: emptyList()
+						
+						// Meteo
+						val nearestStationId = getNearestStationId(
+						meterId = meterId,
+						latitude = latitude,
+						longitude = longitude
+						)
+						val meteoReadings = if (nearestStationId != null) {
+							meteoReadingsRepository.findReadingsByStationIdAndDateTimeBetween(
+							stationId = nearestStationId,
+							windowStart = intervalStart,
+							windowEnd = intervalEnd
+							).collectList().block() ?: emptyList()
+						} else emptyList()
+						
+						log.debug("Intervalo '${DateTimeUtils.format(intervalStart)}' → '${DateTimeUtils.format(intervalEnd)}' | meterId=$meterId | numFlows=${flowList.size} | totalVehiclesSum=$totalVehiclesSum | totalIncidences=${incidences.size} |meteoReadings=${meteoReadings.size}")
+						snapshotBuilder.fromGroupedFlows(
+						flows = flowList,
+						meter = meter,
+						windowStartDateTime = intervalStart,
+						windowEndDateTime = intervalEnd,
+						totalVehicles = totalVehiclesSum,
+						incidences = incidences,
+						meteoReadings = meteoReadings,
+						)
+					} else {
+						if (meter == null) {
+							log.warn("MeterId=$meterId no encontrado en meterMap para ventana '${DateTimeUtils.format(intervalStart)}' → '${DateTimeUtils.format(intervalEnd)}'")
+						} else {
+							log.warn("No hay flows para meterId=$meterId en ventana '${DateTimeUtils.format(intervalStart)}' → '${DateTimeUtils.format(intervalEnd)}'")
+						}
+						null
+					}
+				}
+				
+				// Guardar por lotes
+				snapshots.chunked(batchSize).forEach { batch ->
+					snapshotPersistenceService.saveBatch(batch).block()
+					log.debug("Batch guardado para intervalo $intervalStart → $intervalEnd (${batch.size} snapshots)")
+				}
+				totalSnapshots += snapshots.size
+				
+				if ((idx + 1) % 24 == 0) { // Cada 12 horas
+					log.debug("Progreso: ${idx + 1} de ${intervals.size} intervalos procesados, $totalSnapshots snapshots generados.")
+				}
+			}
+			
+			log.debug("Generación de MobilitySnapshots finalizada. Total snapshots: $totalSnapshots")
+		}
+		
+		// Utilidad para generar ventanas de 30 minutos (la misma que antes)
+		fun generateIntervals(start: LocalDateTime, end: LocalDateTime, step: Duration): List<Pair<LocalDateTime, LocalDateTime>> {
+			val intervals = mutableListOf<Pair<LocalDateTime, LocalDateTime>>()
+			var current = start
+			while (current.isBefore(end)) {
+				val next = current.plus(step)
+				intervals.add(Pair(current, if (next.isBefore(end)) next else end))
+				current = next
+			}
+			return intervals
+		}
+		
+		companion object {
+			val log: Logger = LogManager.getLogger(this::class.java)
+		}
+		
+	}
+\end{lstlisting}

@@ -1,0 +1,474 @@
+\section{Construcción del dataset y arquitectura del sistema}
+\label{sec:dataset_arquitectura}
+\addcontentsline{toc}{section}{Construcción del dataset y arquitectura del sistema}
+
+%
+% Para citar: 
+% 	(ver Sección~\ref{sec:dataset_arquitectura})
+% 	como se describe en la Sección~\nameref{sec:dataset_arquitectura})
+%
+
+En este capítulo se describe el diseño, desarrollo e implementación del sistema responsable de generar el dataset empleado en el modelo de predicción de tráfico. Se parte de la identificación y análisis de las fuentes de datos disponibles, que incluyen mediciones de flujo vehicular, condiciones meteorológicas e incidencias viales. A continuación, se detallan las decisiones técnicas adoptadas en la arquitectura del sistema de integración, los patrones de diseño utilizados y el procedimiento empleado para consolidar todas las observaciones en una única estructura homogénea: la clase \texttt{MobilitySnapshot}. Finalmente, se justifican aspectos clave como la granularidad temporal del dataset, los criterios de selección de variables y las estrategias de persistencia.
+
+
+\subsection{Fuentes de datos y análisis de disponibilidad}
+
+Durante la primera fase del proyecto, se realizó un análisis exhaustivo de las fuentes de datos abiertas disponibles para la provincia de Bizkaia en el ámbito de los \acrshort{its}. La fuente de datos principal se corresponde con el API de Tráfico del portal de Open Data del Gobierno Vasco \cite{apiTraffic}. Se identificaron tres orígenes principales de datos:
+
+\begin{itemize}
+	\item \textbf{Gobierno Vasco}: mediante el API de Open Data Euskadi, se obtuvo información de aforos de tráfico e incidencias viales.
+	\item \textbf{Ayuntamiento de Bilbao}: también a través de Open Data, se extrajeron series temporales de datos de tráfico en tiempo real.
+	\item \textbf{Diputación Foral de Bizkaia}: al no disponer de un endpoint público, se logró contactar con los técnicos responsables y obtener acceso a sus datos mediante ficheros descargables proporcionados manualmente.
+\end{itemize}
+
+La cobertura de los datos obtenidos se representa en la tabla \ref{tab:cobertura_datos_opendata}, extraída y adaptada de la documentación técnica del repositorio del proyecto.
+
+\begin{table}[H]
+	\centering
+	\caption{Cobertura de datos por fuente y tipo.}
+	\label{tab:cobertura_datos_opendata}
+	\begin{tabular}{|c|l|c|c|c|}
+		\hline
+		\textbf{SourceId} & \textbf{Organización}              & \textbf{Meters} & \textbf{Flows} & \textbf{Incidences} \\ \hline
+			1	& Gobierno Vasco 				 			& \textcolor{mygreen}{\faCheck} & \textcolor{mygreen}{\faCheck} & \textcolor{mygreen}{\faCheck} \\ \hline
+			2   & Diputación Foral de Bizkaia 	 			& \faHandPaper & \faHandPaper & \textcolor{mygreen}{\faCheck} \\ \hline
+			3   & Diputación Foral de Álava		 			& \textcolor{myred}{\faTimes} & \textcolor{myred}{\faTimes} & \textcolor{mygreen}{\faCheck} \\ \hline
+			4   & Diputación Foral de Gipuzkoa   			& \textcolor{mygreen}{\faCheck} & \textcolor{myred}{\faTimes} & \textcolor{mygreen}{\faCheck} \\ \hline
+			5   & Ayuntamiento Bilbao 			 			& \textcolor{mygreen}{\faCheck} & \textcolor{mygreen}{\faCheck} & \textcolor{mygreen}{\faCheck} \\ \hline
+			6   & Ayuntamiento Vitoria-Gasteiz   			& \textcolor{mygreen}{\faCheck} & \textcolor{mygreen}{\faCheck} & \textcolor{mygreen}{\faCheck} \\ \hline
+			7   & Ayuntamiento de Donostia-San Sebastián	& \textcolor{mygreen}{\faCheck} & \textcolor{myred}{\faTimes} & \textcolor{mygreen}{\faCheck} \\ \hline
+	\end{tabular}
+\end{table}
+
+\textit{Leyenda:} 
+\textcolor{mygreen}{\faCheck} Datos existentes y descargados correctamente. 
+\textcolor{myred}{\faTimes} No existen datos para ese sourceId en OpenData.
+\faHandPaper Datos obtenidos de forma externa e introducidos de forma manual mediante programación.
+
+El caso de uso actual trata de cubrir la provincia de Bizkaia, por lo que únicamente van a ser necesarias las fuentes de datos con identificadores sourceId 1, 2 y 5.
+
+Las incidencias se obtuvieron completamente para todos los sourceId.
+
+En cuanto a la obtención de los datos meteorológicos, si bien es cierto que existe el API de meteorología del portal de Open Data del Gobierno Vasco \cite{apiMeteo}, éste presenta numerosos fallos a la hora de usarlo. Un claro ejemplo es la Figura \ref{fig:euskalmet_api_error}. 
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.95\textwidth]{includes/error_api_euskalmet.png}
+	\caption{Ejemplo de error a la hora de consultar el API de Euskalmet.}
+	\label{fig:euskalmet_api_error}
+\end{figure}
+
+Por ello, no se tenía la certeza de si se iban a obtener datos correctos, por lo que se pensó en maneras alternativas de obtener los propios datos. Así, se buscaron alternativas y se encontró en el mismo portal de Open Data del Gobierno Vasco las lecturas recogidas por las estaciones meteorológicas del año 2024 \cite{xmlMeteo2024}. 
+
+\subsubsection{Modelo de datos almacenado}
+
+Una vez explicadas las fuentes de datos, se podría comenzar a explicar cómo se van a almacenar dichos datos. En la figura \ref{fig:uml_classes} se puede ver las clases persistidas en la base de datos.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.95\textwidth]{includes/model_classes.png}
+	\caption{Modelo de clases en UML de las entidades principales del sistema.}
+	\label{fig:uml_classes}
+\end{figure}
+
+A continuación, se describen las entidades persistidas en base de datos, divididas por paquetes funcionales según su origen y propósito dentro del sistema: tráfico, meteorología y dataset resultante. Cada clase representa un documento en la base de datos MongoDB, adaptado a una estructura flexible y orientada a documentos.
+
+\paragraph{Flow}
+Representa una medición de flujo de tráfico captada por un aforador en una fecha y hora determinadas. Entre sus atributos destacan:
+\begin{itemize}
+	\item \texttt{id}: identificador único del registro.
+	\item \texttt{meterId}: identificador del aforador que ha generado la medición.
+	\item \texttt{sourceId}: origen de los datos (Gobierno Vasco, Ayuntamiento, etc.).
+	\item \texttt{dateTime} y \texttt{endDateTIme}: marca temporal de la medición. Puede que la marca de final no esté informada.
+	\item \texttt{totalVehicles}: número total de vehículos detectados.
+	\item \texttt{speedAvg}: velocidades medias de los vehículos detectados.
+	\item \texttt{lengthIntervals} y \texttt{speedIntervals}: listas de intervalos por longitudes y velocidades, útiles para análisis más detallados. No se usa en este caso de uso.
+\end{itemize}
+
+\paragraph{Meter}
+Contiene la información estática de los aforadores:
+\begin{itemize}
+	\item \texttt{meterId}, \texttt{sourceId}: identificadores del aforador y de la fuente de datos.
+	\item \texttt{latitude}, \texttt{longitude} y \texttt{point}: ubicación geográfica. Útil el punto (tipo GeoJSON), puesto que es un índice geoespacial y se pueden realizar operaciones sobre el mismo (búsquedas por cercanía, distancias, etc).
+	\item \texttt{postalCode}, \texttt{provinceId}, \texttt{municipalityId}: metadatos administrativos.
+\end{itemize}
+
+\paragraph{Incidence}
+Recoge información sobre incidencias viales que pueden afectar al tráfico:
+\begin{itemize}
+	\item \texttt{incidenceId}, \texttt{sourceId}: identificadores del evento y de la fuente de datos.
+	\item \texttt{incidenceName} e \texttt{incidenceDescription}: información descriptiva textual de la incidencia.
+	\item \texttt{incidenceType}, \texttt{incidenceLevel}: tipificación normalizada para su posterior uso como variable categórica.
+	\item \texttt{cause}, \texttt{road}, \texttt{pkStart}, \texttt{pkEnd}, \texttt{cityTown}, \texttt{province}, \texttt{autonomousRegion}, \texttt{carRegistration}: información adicional de la incidencia. Recoge datos como la carretera, los puntos kilométricos de inicio y de fin e información administrativa. No se tratará en este caso de uso.
+	\item \texttt{startDate}, \texttt{endDate}: intervalo de vigencia de la incidencia. Esta información es relevante.
+	\item \texttt{point}: ubicación geoespacial (tipo GeoJSON). Útil para realizar búsquedas por cercanía.
+\end{itemize}
+
+\paragraph{Source}
+Representa los orígenes oficiales de datos, como el Gobierno Vasco o ayuntamientos. Sus campos identifican la organización y su descripción.
+
+\vspace{1em}
+\paragraph{Reading}
+Es la clase principal para representar una lectura meteorológica horaria del API. Sin embargo, no se ha usado esta entidad para construir el dataset.
+\begin{itemize}
+	\item \texttt{oid}: identificador de la lectura.
+	\item \texttt{typeId}: tipo de la lectura.
+	\item \texttt{station}: estación meteorológica emisora.
+	\item \texttt{sensor}: sensor responsable de la medición (\texttt{StationSensor}).
+	\item \texttt{measureType} y \texttt{measure}: categorización de la medición.
+	\item \texttt{start}, \texttt{end}: momento para el cual se ha realizado la medición.
+	\item \texttt{slots}, \texttt{values}: forma en la que tiene el API de almacenar las mediciones. Cada elemento del slot se corresponde a un elemento de values, en la misma posición, indicando lo que se mide y su valor.
+\end{itemize}
+
+\paragraph{ReadingXml}
+Clase específica para lecturas meteorológicas históricas extraídas desde ficheros XML. A diferencia de \texttt{Reading}, puede contener estructuras agrupadas por múltiples sensores. Es la clase definitiva empleada para construir el dataset.
+\begin{itemize}
+	\item \texttt{id}: identificador de la lectura.
+	\item \texttt{stationId}: identificador de la estación meteorológica de la lectura.
+	\item \texttt{file}: fichero de donde se ha extraído el dato de medición.
+	\item \texttt{dateTime}: momento para el cual se ha realizado la medición.
+	\item \texttt{valueBySensor}: forma en la que se almacenan las mediciones. El elemento clave identifica el tipo de medición y el valor indica el valor propio de la medición.
+\end{itemize}
+
+\paragraph{Station}
+Define las estaciones meteorológicas que proporcionan las lecturas:
+\begin{itemize}
+	\item \texttt{stationId}: identificador único de la estación de medición.
+	\item \texttt{name}, \texttt{municipality}, \texttt{province}: información administrativa.
+	\item \texttt{latitude}, \texttt{longitude}, \texttt{altitude} y \texttt{position}: coordenadas geográficas.
+	\item \texttt{sensors}: lista de sensores instalados.
+\end{itemize}
+
+\paragraph{StationSensor}
+Define la configuración física de un sensor en una estación:
+\begin{itemize}
+	\item \texttt{sensorId}, \texttt{sensorKey}: clave de sensor y código técnico.
+	\item \texttt{unit}, \texttt{at}: unidad de medida y altura del sensor (en centímetros).
+\end{itemize}
+
+\vspace{1em}
+\paragraph{MobilitySnapshot}
+Es la entidad clave que representa un punto de datos enriquecido para el modelo predictivo. Cada snapshot incluye:
+\begin{itemize}
+	\item \texttt{id}: identificador único del dato.
+	\item \texttt{meterId}, \texttt{meterCode}: información identificativa del aforador del cual se ha extraído la información de Flow.
+	\item \texttt{totalVehicles}: indica la cantidad de vehículos que han pasado por este punto entre en el espacio temporal definido.
+	\item \texttt{latitude}, \texttt{longitude}, \texttt{position}: información geoespacial del snapshot. Nótese que el campo positión es de tipo GeoJson.
+	\item \texttt{startDateTime}, \texttt{endDateTime}: indica entre qué momentos es válido este snapshot.
+	\item \texttt{hasAccident}, \texttt{hasWeatherImpact}, \texttt{hasConstruction}, etc: indica si durante este espacio temporal cerca de este punto ha ocurrido alguna incidencia del tipo.
+	\item \texttt{temperature}, \texttt{humidity}, \texttt{windSpeed}, \texttt{solarRadiation}, \texttt{pressure}, etc: indica los valores meteorológicos del propio snapshot.
+\end{itemize}
+
+Esta clase es el resultado final del proceso de integración de datos y constituye la base sobre la que se entrena el modelo de predicción de tráfico.
+
+\subsection{Recolección, arquitectura y patrones de diseño empleados}
+
+El software encargado de la recolección de datos se ha desarrollado en \textbf{Kotlin con Spring Boot}, aplicando principios de arquitectura hexagonal y múltiples patrones de diseño para garantizar su mantenibilidad y robustez. Entre los patrones de diseño empleados destacan:
+
+\begin{itemize}
+	\item \textbf{Builder}: utilizado en la generación del dataset a través de la clase \texttt{MobilitySnapshotBuilder}.
+	\item \textbf{Repository}: todas las operaciones de acceso a datos (\texttt{FlowRepository}, \texttt{MeterRepository}, etc.) se abstraen en repositorios desacoplados.
+	\item \textbf{Service Layer}: la lógica de negocio reside en servicios como \texttt{FlowService}, \texttt{MeterService}, \texttt{IncidenceService}.
+	\item \textbf{DTO (Data Transfer Object)}: se emplean DTOs para el intercambio de datos entre capas, evitando el acoplamiento con los modelos de persistencia.
+	\item \textbf{Helper/Utility Classes}: utilidades para parseo, validación y transformación de datos (por ejemplo, para el tratamiento de ficheros XML meteorológicos).
+	\item \textbf{Facade}: fachadas que agrupan operaciones complejas en interfaces sencillas, facilitando la integración con servicios externos.
+	\item \textbf{Factory} y \textbf{Singleton}: empleados para instanciar objetos según el origen de datos y para servicios centrales, respectivamente.
+\end{itemize}
+
+La decisión de utilizar una base de datos \textbf{NoSQL, MongoDB}, responde a la necesidad de trabajar con estructuras flexibles, heterogéneas y de gran volumen, propias del contexto del proyecto.
+
+\subsection{Decisiones de construcción del dataset}
+
+Tras la integración de las fuentes de datos de tráfico, meteorología e incidencias, se llevó a cabo un proceso de análisis y consolidación de información para la construcción del dataset final utilizado por el modelo de predicción. Este dataset, modelado a través de la clase \texttt{MobilitySnapshot}, resume en cada observación todos los factores que pueden influir en la intensidad del tráfico en un instante y ubicación concretos. En los siguientes apartados se detallan las decisiones tomadas en relación con cada fuente de información, comenzando por la tipificación de incidencias viales.
+
+\subsubsection{Obtención y estructuración de incidencias}
+% Si ponemos así no se imprime en el indice
+%\subsubsection*{Obtención y estructuración de incidencias}
+
+\begin{comment}
+Para reflejar el impacto real de eventos disruptivos sobre el tráfico, se incluyó una capa de incidencias viales. Estas se obtienen desde Open Data Euskadi, descargando los eventos reportados en el periodo de interés. Dado que la API no permite filtrar por \texttt{sourceId} directamente, se realiza la descarga completa diaria y un post-procesamiento para clasificar y asociar incidencias a flujos y sensores relevantes.
+
+En el proceso de integración, se ha fabricado una \textbf{tipología de incidencias} propia, agrupando los eventos en grandes bloques como:
+
+\begin{itemize}
+	\item Accidentes
+	\item Retenciones
+	\item Obras
+	\item Fenómenos meteorológicos
+	\item Restricciones especiales
+	\item Otros
+\end{itemize}
+
+La categorización se automatiza mediante reglas implementadas en el código (\texttt{IncidenceCategoryHelper}), asignando cada registro a una categoría normalizada.
+\end{comment}
+
+A partir del análisis exploratorio de las incidencias disponibles en la base de datos, se identificaron distintos tipos reportados a lo largo del tiempo por las diferentes entidades públicas. El siguiente listado resume las categorías encontradas, junto con su frecuencia absoluta. Es importante tener en cuenta que estos datos corresponden a toda la \acrshort{capv}, no solo a Bizkaia.
+
+\begin{lstlisting}[language=json, caption={Frecuencia de incidencias por tipo original}]
+	[
+	{ "count": 41792, "incidenceType": "Puertos de montaña" },
+	{ "count": 8544,  "incidenceType": "Obras" },
+	{ "count": 8391,  "incidenceType": "Vialidad invernal tramos" },
+	{ "count": 7594,  "incidenceType": "Seguridad vial" },
+	{ "count": 3155,  "incidenceType": "Accidente" },
+	{ "count": 2005,  "incidenceType": "Otras incidencias" },
+	{ "count": 203,   "incidenceType": "Meteorológica" },
+	{ "count": 165,   "incidenceType": "OTRO" },
+	{ "count": 135,   "incidenceType": "OBRA" },
+	{ "count": 78,    "incidenceType": "EVEN" },
+	{ "count": 3,     "incidenceType": "Retención" }
+	]
+\end{lstlisting}
+
+Con base en esta información, se procedió a una consolidación tipológica siguiendo tres criterios principales:
+
+\begin{itemize}
+	\item Evitar la existencia de categorías con muy baja frecuencia.
+	\item Unificar variantes ortográficas o nomenclaturas inconsistentes (por ejemplo, \texttt{Obras} y \texttt{OBRA}).
+	\item Mantener las categorías que aportan valor explicativo al modelo de predicción.
+\end{itemize}
+
+El resultado es una agrupación validada que se resume en la tabla \ref{agrupacion_incidencias}.
+
+\begin{table}[H]
+	\centering
+	\caption{Agrupación final de incidencias para el modelo predictivo}
+	\label{tab:agrupacion_incidencias}
+	\begin{tabular}{|l|p{5.5cm}|r|l|}
+		\hline
+		\textbf{Categoría general} & \textbf{Tipos incluidos} & \textbf{Total casos} & \textbf{Variable sugerida} \\
+		\hline
+		\texttt{WEATHER}    & Puertos de montaña, Vialidad invernal tramos, Meteorológica & \textbf{50.386} & \texttt{hasWeatherImpact} \\
+		\texttt{ROADWORK}   & Obras, OBRA                                                   & \textbf{8.679}  & \texttt{hasRoadwork} \\
+		\texttt{SAFETY}     & Seguridad vial                                                & \textbf{7.594}  & \texttt{hasSafetyIssue} \\
+		\texttt{ACCIDENT}   & Accidente                                                     & \textbf{3.155}  & \texttt{hasAccident} \\
+		\texttt{OTHER}      & Otras incidencias, OTRO                                       & \textbf{2.170}  & \texttt{hasOtherIncident} \\
+		\texttt{EVENT}      & EVEN                                                          & \textbf{78}     & \texttt{hasEvent} \\
+		\texttt{CONGESTION} & Retención                                                     & \textbf{3}      & \texttt{hasCongestion (opcional)} \\
+		\hline
+	\end{tabular}
+\end{table}
+
+Las variables anteriores se incorporan al dataset como flags booleanos en la clase \texttt{MobilitySnapshot}, permitiendo representar si una incidencia de dicha categoría estaba activa o no en el momento de cada observación. Las variables mínimas propuestas son:
+
+\begin{lstlisting}[language=Kotlin, caption={Variables mínimas de incidencias en MobilitySnapshot}]
+	val hasWeatherImpact: Boolean
+	val hasRoadwork: Boolean
+	val hasSafetyIssue: Boolean
+	val hasAccident: Boolean
+	val hasOtherIncident: Boolean
+\end{lstlisting}
+
+Adicionalmente, y si el volumen de datos lo justifica en futuras versiones del dataset, se podrían incorporar:
+
+\begin{lstlisting}[language=Kotlin, caption={Variables opcionales}]
+	val hasEvent: Boolean
+	val hasCongestion: Boolean
+\end{lstlisting}
+
+\begin{comment}
+\subsubsection{Selección y estructuración de datos meteorológicos}
+La integración de datos meteorológicos requirió la descarga y parseo de ficheros XML históricos del Open Data de Gobierno Vasco. Los datos se procesan en scripts propios y se almacenan estructuradamente por estación y sensor.
+
+Se ha realizado una \textbf{selección experta} de las variables meteorológicas relevantes, en base a literatura y experiencia práctica. Las categorías finales incluidas son:
+
+\begin{table}[H]
+	\centering
+	\begin{tabular}{|l|l|p{7cm}|}
+		\hline
+		\textbf{Categoría} & \textbf{SensorKey base} & \textbf{Justificación} \\ \hline
+		Temperatura aire    & Tem\_Aire\_\_a\_*     & Influye en el comportamiento y volumen vial. \\ \hline
+		Humedad relativa    & Humedad\_\_a\_*       & Afecta visibilidad y adherencia. \\ \hline
+		Precipitación       & Precip\_\_\_a\_*      & Relacionada con retenciones y reducción de flujo. \\ \hline
+		Presión atmosférica & Presion\_\_a\_*       & Útil para identificar cambios bruscos. \\ \hline
+		Radiación solar     & Irradia\_\_\_a\_*     & Relacionada con condiciones extremas. \\ \hline
+		Velocidad viento    & Vel\_Med\_\_a\_*      & Indicador de fenómenos adversos. \\ \hline
+	\end{tabular}
+	\caption{Selección de sensores meteorológicos relevantes para el dataset.}
+\end{table}
+
+Para cada categoría se selecciona el sensor más cercano al nivel del suelo o el más representativo en la estación, y se asocia al flujo de tráfico más próximo geográficamente.
+\end{comment}
+
+\subsubsection{Selección e integración de variables meteorológicas}
+
+El sistema de captación meteorológica empleado en este proyecto incluye un conjunto amplio y heterogéneo de sensores distribuidos en estaciones automáticas de observación repartidas por la CAPV. Cada estación contiene múltiples sensores, y cada sensor puede registrar una variable distinta a una altura determinada del suelo (por ejemplo, 0 cm, 1050 cm o 2200 cm). 
+
+Como se detalla en el \hyperref[anexo:sensores]{Anexo~A}, se dispone de un amplio conjunto de sensores meteorológicos, cada uno con una codificación propia y una descripción técnica. En concreto, se incluyen más de 30 tipos distintos de sensores, desde condiciones atmosféricas hasta mediciones marinas o subterráneas. Algunos ejemplos de variables disponibles son: temperatura del aire (\texttt{Tem.Aire}), humedad relativa (\texttt{Humedad}), radiación solar (\texttt{Irradia.}), presión atmosférica (\texttt{Presión}), dirección del viento (\texttt{Dir.Med.}), visibilidad, y muchas otras relacionadas con agua o condiciones marítimas. 
+
+Dado el objetivo de este proyecto—predecir el flujo de tráfico urbano—se realizó una \textbf{selección cuidadosa de las variables meteorológicas más relevantes}, descartando aquellas que, por su naturaleza o localización (ej. marítimas), no presentaban una influencia directa sobre la movilidad terrestre urbana.
+
+Las variables seleccionadas, junto con su justificación práctica, se muestran en la tabla \ref{seleccion_meteo}.
+
+\begin{table}[H]
+	\centering
+	\caption{Selección de sensores meteorológicos y su relevancia para la predicción de tráfico}
+	\label{tab:seleccion_meteo}
+	\begin{tabular}{|l|l|p{7cm}|}
+		\hline
+		\textbf{Categoría} & \textbf{SensorKey base} & \textbf{Justificación} \\ \hline
+		Temperatura del aire    & \texttt{Tem\_Aire\_\_a\_*}  & Influye en el comportamiento de conducción y el volumen de tráfico. \\ \hline
+		Humedad relativa         & \texttt{Humedad\_\_a\_*}   & Afecta la visibilidad y adherencia de los neumáticos. \\ \hline
+		Precipitación acumulada  & \texttt{Precip\_\_\_a\_*}  & Altamente correlacionada con congestiones y reducción de velocidad. \\ \hline
+		Presión atmosférica      & \texttt{Presion\_\_a\_*}   & Indicador indirecto de cambios climáticos significativos. \\ \hline
+		Radiación solar          & \texttt{Irradia\_\_\_a\_*} & Relacionada con condiciones extremas de iluminación y temperatura. \\ \hline
+		Velocidad media del viento & \texttt{Vel\_Med\_\_a\_*}  & Indicador de fenómenos meteorológicos adversos (rachas, tormentas). \\ \hline
+	\end{tabular}
+\end{table}
+
+\vspace{1em}
+Para cada una de estas categorías, se escoge \textbf{el sensor más representativo o más cercano al suelo} disponible en cada estación. Este criterio asegura la mayor homogeneidad entre estaciones y la mayor cercanía posible a las condiciones experimentadas en carretera.
+
+Finalmente, estas variables se integran dentro de cada observación del dataset final mediante su asociación espacio-temporal al flujo de tráfico correspondiente, quedando reflejadas como campos meteorológicos en la clase \texttt{MobilitySnapshot}:
+
+\begin{lstlisting}[language=Kotlin, caption={Variables meteorológicas integradas en MobilitySnapshot}]
+	val temperature: Double?
+	val humidity: Double?
+	val precipitation: Double?
+	val pressure: Double?
+	val solarRadiation: Double?
+	val windSpeed: Double?
+\end{lstlisting}
+
+Estas variables permiten modelar de forma efectiva el efecto de las condiciones meteorológicas sobre la movilidad urbana, mejorando la capacidad predictiva del modelo de aprendizaje profundo.
+
+\subsubsection{Fusión e integración: la clase \texttt{MobilitySnapshot}}
+
+La entidad central para la construcción del dataset es la clase \texttt{MobilitySnapshot}, que representa un registro aglutinado por instante temporal y ubicación, integrando la información de:
+
+\begin{itemize}
+	\item \textbf{Flujos de tráfico (\texttt{Flow})}: variables como \texttt{meterId}, \texttt{dateTime}, \texttt{totalVehicles}, y metadatos geográficos.
+	\item \textbf{Meteorología}: valores de los sensores seleccionados asociados espacial y temporalmente al flujo.
+	\item \textbf{Incidencias}: información de incidencias activas cercanas en tiempo y espacio, codificadas según la tipología definida.
+\end{itemize}
+
+\begin{comment}
+\textbf{Metodología de integración:}
+\begin{enumerate}
+	\item Para cada observación de flujo, se asocia la estación meteorológica más cercana y sus valores horarios.
+	\item Se identifican incidencias activas en un radio y ventana temporal cercanos.
+	\item Se genera un registro enriquecido y alineado por timestamp, base para el entrenamiento de modelos de aprendizaje supervisado.
+\end{enumerate}
+
+\vspace{0.5em}
+\textit{
+	“De todo el listado, los sensores más relevantes para explicar la variabilidad del tráfico suelen ser: Temperatura aire, Humedad relativa, Precipitación, Presión atmosférica, Radiación solar, Velocidad viento. Para cada categoría, puedes tomar el sensor más cercano al suelo o el más representativo… Para cada aforo (\texttt{Flow}), se asocian tanto la lectura meteorológica más cercana en el tiempo y espacio como la información de incidencias activa, generando así la entidad \texttt{MobilitySnapshot}, base del dataset de predicción.”
+}
+\end{comment}
+
+El proceso de generación de las observaciones enriquecidas se implementa en el servicio \texttt{MobilitySnapshotGeneratorService}, dentro del método \texttt{generateSnapshots()}. Este método ejecuta de forma secuencial la construcción de objetos \texttt{MobilitySnapshot}, cada uno de los cuales encapsula una observación consolidada de movilidad para un instante y punto geográfico concretos. La lógica está diseñada para ser robusta y escalable, gestionando datos de múltiples fuentes (flujos, meteorología e incidencias) mediante el uso de procesamiento por intervalos y agrupación por sensor.
+
+El flujo completo queda representado en la Figura~\ref{fig:sequence_mobility_snapshot}, mediante un diagrama de secuencia UML, que ilustra claramente el intercambio entre repositorios, lógica de negocio y servicios de persistencia.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.95\textwidth]{includes/snapshot_generator_sequence.png}
+	\caption{Diagrama de secuencia de integración y persistencia en \texttt{MobilitySnapshot}.}
+	\label{fig:sequence_mobility_snapshot}
+\end{figure}
+
+El código fuente completo del componente encargado de llevar a cabo esta integración puede consultarse en el Anexo~\ref{anexo:snapshot_generator}, donde se incluye la clase \texttt{MobilitySnapshotGeneratorService} desarrollada específicamente para este propósito.
+
+El proceso se puede descomponer en los siguientes pasos:
+
+\begin{enumerate}
+	\item \textbf{Inicialización:} se obtienen todos los aforadores activos (\texttt{Meter}) correspondientes a los identificadores de fuente (\texttt{sourceIds}) indicados.
+	\item \textbf{Ventanas temporales:} se generan intervalos de tiempo equiespaciados de 30 minutos entre las fechas de inicio y fin.
+	\item \textbf{Extracción de flujos:} para cada intervalo, se recuperan todos los flujos de vehículos (\texttt{Flow}) registrados en ese rango temporal y se agrupan por aforador (\texttt{meterId}).
+	\item \textbf{Procesamiento por aforador:} para cada grupo de flujos:
+	\begin{itemize}
+		\item Se localiza el aforador correspondiente y se calcula el número total de vehículos en la ventana.
+		\item Se consultan las incidencias viales (\texttt{Incidence}) activas y geoespacialmente cercanas (500 metros) en el intervalo.
+		\item Se determina la estación meteorológica más cercana usando una cache interna. Si existe, se recuperan las lecturas (\texttt{Reading}) correspondientes al intervalo temporal.
+	\end{itemize}
+	\item \textbf{Construcción del snapshot:} con todos los datos anteriores, se construye el objeto \texttt{MobilitySnapshot} mediante el \texttt{MobilitySnapshotBuilder}.
+	\item \textbf{Persistencia por lotes:} los snapshots generados se agrupan en bloques de tamaño configurable (por defecto 500) y se guardan en la base de datos de forma transaccional.
+\end{enumerate}
+
+Para procesar los datos por ventanas temporales consecutivas, se implementa una función utilitaria llamada \texttt{generateIntervals()}, que permite dividir un periodo de tiempo en subintervalos de duración fija. Este procedimiento es fundamental en el procesamiento de datos temporales y en la agregación de observaciones como \texttt{MobilitySnapshot}.
+
+El algoritmo se describe de la siguiente forma.
+
+\vspace{1em}
+\noindent \textbf{Descripción del funcionamiento:}
+\begin{itemize}
+	\item La función recibe un instante inicial (\texttt{start}), un instante final (\texttt{end}) y una duración fija (\texttt{step}).
+	\item Crea una lista vacía de intervalos temporales.
+	\item Mediante un bucle, se van generando pares de fechas consecutivos, avanzando de \texttt{step} en \texttt{step}.
+	\item Si el último intervalo excede el tiempo final, se ajusta automáticamente para que el límite superior sea exactamente \texttt{end}.
+	\item Devuelve la lista completa de intervalos como pares de fechas (\texttt{Pair<start, end>}).
+\end{itemize}
+
+\vspace{1em}
+\noindent \textbf{Ejemplo práctico:}
+\begin{lstlisting}[language=Kotlin, caption={Ejemplo de uso con intervalos de 30 minutos}]
+	generateIntervals(
+	start = 2024-01-01T00:00,
+	end = 2024-01-01T01:00,
+	step = Duration.ofMinutes(30)
+	)
+\end{lstlisting}
+
+\noindent El resultado de este ejemplo sería:
+\begin{verbatim}
+	[
+	(2024-01-01T00:00, 2024-01-01T00:30),
+	(2024-01-01T00:30, 2024-01-01T01:00)
+	]
+\end{verbatim}
+
+Este mecanismo permite particionar grandes volúmenes de datos históricos en unidades manejables, facilitando la agregación de información por tramos y reduciendo la carga computacional de los algoritmos de predicción.
+
+Este proceso se ejecuta para todas las ventanas temporales dentro del periodo solicitado, permitiendo cubrir días, semanas o incluso meses de observaciones. Se emplean caches internas y colecciones reactivas para optimizar el rendimiento del sistema y permitir el escalado.
+
+\subsubsection{Consideraciones finales para la generación del dataset}
+
+Una decisión fundamental en la construcción del dataset es la selección del intervalo temporal con el que se van a agrupar las observaciones. Este proceso, conocido como \textit{resampling temporal}, consiste en consolidar las mediciones de tráfico (\texttt{Flow}) en tramos de tiempo consecutivos y homogéneos. Esta práctica es común en el análisis de series temporales y presenta múltiples ventajas:
+
+\begin{itemize}
+	\item \textbf{Reducción de dispersión:} ayuda a evitar huecos en las series temporales, suavizando el ruido y mejorando la capacidad de generalización del modelo.
+	\item \textbf{Homogeneización del dataset:} garantiza que todas las observaciones estén espaciadas en el tiempo con la misma frecuencia, lo cual es esencial para el entrenamiento supervisado.
+	\item \textbf{Facilitación de integración con otras fuentes:} permite alinear los flujos con los datos meteorológicos e incidencias, los cuales pueden tener frecuencias distintas o menos regulares.
+	\item \textbf{Reducción de volumen de datos:} disminuye la cantidad de registros generados, lo que mejora la eficiencia tanto en almacenamiento como en entrenamiento de modelos.
+\end{itemize}
+
+\vspace{1em}
+\noindent La elección del intervalo temporal óptimo depende del equilibrio entre granularidad, capacidad computacional y riqueza informativa. Las alternativas más comunes son:
+
+\begin{itemize}
+	\item \textbf{Intervalos de 1 hora:} proporcionan una agregación suficiente para análisis diarios o semanales, son compatibles con muchos datasets públicos, pero pueden enmascarar variaciones de corto plazo (como retenciones puntuales).
+	
+	\item \textbf{Intervalos de 30 minutos:} capturan mejor los picos de tráfico y permiten reflejar dinámicas más rápidas (por ejemplo, alteraciones por accidentes o climatología adversa). Este intervalo ha sido el seleccionado en este proyecto como punto de partida, ya que ofrece un buen compromiso entre granularidad y manejabilidad.
+	
+	\item \textbf{Intervalos de 15 minutos o menos:} pueden resultar útiles si se dispone de datos de alta frecuencia, pero también pueden introducir más ruido o generar datasets demasiado voluminosos para ciertos entornos de cómputo.
+\end{itemize}
+
+\begin{table}[H]
+	\centering
+	\caption{Comparativa entre intervalos temporales posibles para el resampling}
+	\label{tab:resample_comparison}
+	\begin{tabular}{|l|c|c|c|}
+		\hline
+		\textbf{Criterio} & \textbf{15 minutos} & \textbf{30 minutos} & \textbf{1 hora} \\
+		\hline
+		\textbf{Granularidad}        & Alta        & Media       & Baja \\
+		\textbf{Captura de picos}    & Muy buena   & Buena       & Limitada \\
+		\textbf{Volumen de datos}    & Alto        & Medio       & Bajo \\
+		\textbf{Riesgo de ruido}     & Alto        & Bajo-Medio  & Bajo \\
+		\textbf{Compatibilidad con fuentes externas} & Menor       & Alta        & Alta \\
+		\textbf{Recomendado para}    & Predicción muy reactiva o microanálisis & Equilibrio general & Análisis macro o planificación \\
+		\hline
+	\end{tabular}
+\end{table}
+
+En la Tabla \ref{resample_comparison} se puede apreciar resumidamente las consideraciones descritas anteriormente.
+
+\vspace{1em}
+\noindent \textbf{Decisión tomada:} el sistema desarrollado trabaja por defecto con ventanas de \textbf{30 minutos}. Esta elección permite capturar transiciones relevantes en la movilidad sin incrementar en exceso la complejidad del dataset. No obstante, la arquitectura del generador (\texttt{MobilitySnapshotGeneratorService}) permite modificar este parámetro fácilmente para experimentar con alternativas. Por ejemplo:
+
+\begin{itemize}
+	\item Reducir a 15 minutos si se observan patrones planos o poca sensibilidad a eventos puntuales.
+	\item Aumentar a 1 hora si el volumen de datos es demasiado elevado o si se prioriza una vista agregada del tráfico.
+\end{itemize}
+
+
