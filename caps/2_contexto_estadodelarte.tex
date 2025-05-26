@@ -1,4 +1,6 @@
-\section{Contexto y estado del arte}
+\section*{Contexto y estado del arte}
+\label{sec:ctx_estart}
+\addcontentsline{toc}{section}{Contexto y estado del arte}
 
 En los últimos años, la predicción del tráfico se ha convertido en un campo de investigación clave dentro de los \acrlong{its}, impulsado por la disponibilidad creciente de datos en tiempo real y los avances en el aprendizaje automático. El objetivo principal es anticipar las condiciones del tráfico con suficiente precisión como para facilitar la toma de decisiones, tanto por parte de los operadores como de los usuarios de la red vial.
 
@@ -176,7 +178,7 @@ Los resultados experimentales de \cite{trafficformer} muestran que Trafficformer
 	\caption{Comparativa entre arquitecturas en tareas de predicción del tráfico}
 	\label{tab:comparativa_modelos}
 	\renewcommand{\arraystretch}{1.4}
-	\begin{tabular}{p{3.5cm} p{3.5cm} p{3.5cm} p{4cm}}
+	\begin{tabularx}{\textwidth}{lXXX}
 		\toprule
 		\textbf{Aspecto} & \textbf{RNNs (LSTM, GRU)} & \textbf{GNNs} & \textbf{Transformers} \\
 		\midrule
@@ -197,8 +199,7 @@ Los resultados experimentales de \cite{trafficformer} muestran que Trafficformer
 		Rendimiento moderado en tareas espaciales, sensible a ruido temporal &
 		Mejores resultados en métricas MAE, RMSE y MAPE, mayor capacidad de generalización \\
 		\bottomrule
-	\end{tabular}
+	\end{tabularx}
 \end{table}
-
 
 En resumen, los modelos Transformer no solo ofrecen ventajas computacionales, sino que proporcionan una representación más rica y eficiente de las correlaciones espacio-temporales que caracterizan al problema de la predicción del tráfico urbano. 
