@@ -1,0 +1,40 @@
+\section*{Conclusiones y trabajo futuro}
+\label{sec:conclusiones}
+\addcontentsline{toc}{section}{Conclusiones y trabajo futuro}
+
+%
+% Para citar: 
+% 	(ver Sección~\ref{sec:dataset_arquitectura})
+% 	como se describe en la Sección~\nameref{sec:dataset_arquitectura})
+%
+
+Este capítulo sintetiza los hallazgos principales derivados del desarrollo y evaluación de los modelos propuestos en este trabajo fin de máster. Se presentan primero las conclusiones fundamentales del estudio, seguidas por recomendaciones y propuestas específicas para futuras investigaciones.
+
+\subsection{Conclusiones}
+
+El desarrollo de este trabajo ha permitido abordar con éxito el objetivo principal planteado inicialmente: diseñar, implementar y evaluar modelos de predicción del tráfico vehicular mediante técnicas avanzadas de aprendizaje profundo, destacando especialmente la arquitectura \texttt{Trafficformer} basada en Transformers con atención espacial.
+
+La comparación entre \texttt{MLP} y \texttt{Trafficformer} ha demostrado la clara superioridad del segundo en los tres contextos evaluados (sourceIds 1, 2 y 5). Trafficformer logró resultados significativamente mejores en métricas clave como MAE, RMSE y $R^2$, validando así su capacidad para explotar eficazmente dependencias espaciales y temporales, especialmente en escenarios complejos con alta densidad y distribución espacial.
+
+La metodología de experimentación exhaustiva permitió identificar combinaciones óptimas de hiperparámetros (tamaño de ventana temporal, número de cabezas de atención, tamaño de embedding, entre otros), destacando la importancia crítica del ajuste adecuado de estos parámetros para obtener un rendimiento óptimo del modelo.
+
+Asimismo, la utilización de la plataforma \textit{Weights & Biases} ha resultado fundamental para asegurar la reproducibilidad, transparencia y análisis riguroso de los experimentos, proporcionando un seguimiento detallado y sistemático del proceso de entrenamiento y evaluación.
+
+No obstante, el trabajo ha revelado diversas limitaciones, principalmente relacionadas con la representatividad espacial de las fuentes de datos, restricciones técnicas de hardware, posibles sesgos en los datos y limitaciones en la generalización externa. Estas limitaciones representan oportunidades claras para futuros desarrollos y mejoras.
+
+\subsection{Trabajo Futuro}
+
+De cara a futuras investigaciones, se identifican diversas líneas de trabajo que permitirían mejorar aún más los resultados obtenidos:
+
+\begin{itemize}
+	\item \textbf{Ampliación de datos y fuentes adicionales}: Incorporar nuevos conjuntos de datos provenientes de otras regiones o ciudades, así como otras variables exógenas no consideradas, para mejorar la generalización y robustez del modelo.
+	\item \textbf{Optimización y escalado del modelo}: Realizar experimentos con infraestructuras computacionales más potentes (por ejemplo, GPU de alto rendimiento o clústeres en la nube), lo que permitiría profundizar en la exploración de hiperparámetros y probar arquitecturas más complejas. Para ello, en el proyecto actual se provee de una implementación lista para usar en Amazon Web Services.
+	\item \textbf{Técnicas avanzadas de tratamiento de datos}: Evaluar el impacto de estrategias más avanzadas de imputación de datos, tratamiento de valores atípicos, y técnicas de aprendizaje auto-supervisado que podrían mejorar la calidad y representatividad de los datasets empleados.
+	\item \textbf{Evaluación en tiempo real y despliegue operativo}: Desarrollar un sistema integrado capaz de realizar predicciones en tiempo real, desplegado en un entorno operativo real, permitiendo validar su utilidad práctica y detectar oportunidades adicionales de mejora.
+	\item \textbf{Interpretabilidad y explicabilidad}: Implementar técnicas adicionales que aumenten la interpretabilidad de los modelos desarrollados, facilitando la comprensión y justificación de las decisiones tomadas por el sistema.
+	\item \textbf{Integración de otros modelos avanzados}: Explorar modelos complementarios como Graph Neural Networks (GNNs) o modelos híbridos que podrían aprovechar aún más las estructuras espaciales complejas presentes en los datos de tráfico.
+\end{itemize}
+
+En conclusión, este TFM establece una sólida base metodológica y técnica para futuros trabajos en predicción de tráfico, y destaca la capacidad de los modelos basados en Transformers, particularmente Trafficformer, para abordar eficazmente desafíos de alta complejidad espacial y temporal.
+
+
