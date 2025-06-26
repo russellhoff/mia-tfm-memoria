@@ -1,6 +1,5 @@
-\section*{Desarrollo experimental, comparación de modelos y resultados}
+\section{Desarrollo experimental, comparación de modelos y resultados}
 \label{sec:desarrollo_comp_results}
-\addcontentsline{toc}{section}{Desarrollo experimental, comparación de modelos y resultados}
 
 %
 % Para citar: 
@@ -11,17 +10,11 @@
 \subsection{Planteamiento experimental y justificación}
 \label{sec:planteamiento_experimental}
 
-\begin{comment}
-	- Descripción clara de los objetivos del bloque experimental.
-	- Justificación de la necesidad de comparar un baseline clásico (MLP) con un modelo SOTA (Trafficformer).
-	- Introducción a las fuentes de datos (source_id_1, source_id_2, source_id_5) y su contexto.
-\end{comment}
-
 El presente capítulo recoge el desarrollo experimental llevado a cabo para validar la hipótesis principal del Trabajo Fin de Máster: que el uso de una arquitectura basada en \textit{Transformers} con mecanismos de atención espacial, como \textit{Trafficformer}, permite mejorar la capacidad predictiva respecto a modelos tradicionales como un perceptrón multicapa (\textit{MLP}) en el contexto de predicción de aforos de tráfico.
 
 Para ello, se ha diseñado una estrategia de evaluación comparativa entre modelos, aplicándolos sobre tres fuentes de datos independientes que recogen información de tráfico rodado en la provincia de Bizkaia. Cada fuente representa una infraestructura y cobertura distintas, lo que permite evaluar el comportamiento de los modelos bajo distintos escenarios y estructuras de datos.
 
-\subsubsection{Fuentes de datos}
+\subsubsection*{Fuentes de datos}
 Las fuentes de datos empleadas se almacenan en la base de datos \texttt{mobility\_db} de MongoDB, en la colección \texttt{mobility\_snapshots}. Cada snapshot representa una observación de múltiples medidores de tráfico en una marca temporal concreta. Las fuentes son las siguientes:
 
 \begin{itemize}
@@ -32,7 +25,6 @@ Las fuentes de datos empleadas se almacenan en la base de datos \texttt{mobility
 
 La estructura de los datos ha sido estandarizada previamente a través de un pipeline de construcción de dataset explicado en capítulos anteriores. En todos los casos, los datos incluyen no solo los conteos de vehículos sino también información meteorológica, atributos temporales (hora, día de la semana, etc.), y metadatos geográficos y semánticos de los sensores.
 
-%% Puedes añadir aquí una figura tipo mapa con los Meters por source_id si lo tienes visualizado
 La Figura~\ref{fig:sourceid1_map} muestra la ubicación de los sensores de la fuente \texttt{source\_id = 1} (Gobierno Vasco). En muchos de estos puntos existen múltiples medidores, ya que se instala un sensor por carril en el mismo emplazamiento físico.
 
 \begin{figure}[H]
@@ -59,9 +51,8 @@ Finalmente, la Figura~\ref{fig:sourceid5_map} representa los sensores aportados 
 	\caption{Ubicación de aforos de la fuente Ayuntamiento de Bilbao (source\_id = 5)}
 	\label{fig:sourceid5_map}
 \end{figure}
-%% FIN
 
-\subsubsection{Hipótesis y objetivos del experimento}
+\subsubsection*{Hipótesis y objetivos del experimento}
 
 El objetivo del experimento es doble:
 
@@ -72,7 +63,6 @@ El objetivo del experimento es doble:
 
 La hipótesis de partida es que el modelo \textit{Trafficformer}, al integrar mecanismos de atención multi-cabeza junto con máscaras espaciales basadas en OpenStreetMap, será capaz de capturar relaciones espaciales y temporales complejas entre sensores de tráfico, lo que se traducirá en mejores métricas de error respecto al MLP.
 
-%% Aquí puedes insertar un esquema gráfico de comparación entre MLP vs Trafficformer si lo tienes
 Antes de abordar las particularidades técnicas de cada arquitectura en apartados posteriores, en la Tabla~\ref{tab:mlp_vs_trafficformer} se presenta una comparación conceptual entre los dos modelos evaluados: un perceptrón multicapa clásico (MLP) y el modelo propuesto basado en atención (Trafficformer).
 
 \begin{table}[H]
@@ -93,9 +83,8 @@ Antes de abordar las particularidades técnicas de cada arquitectura en apartado
 		\bottomrule
 	\end{tabularx}
 \end{table}
-%% FIN
 
-\subsubsection{Estrategia comparativa}
+\subsubsection*{Estrategia comparativa}
 
 La estrategia consiste en:
 
@@ -106,37 +95,27 @@ La estrategia consiste en:
 	\item Realizar comparativas cruzadas entre MLP y Trafficformer dentro de cada source, y globalmente.
 \end{itemize}
 
-%% Puedes añadir aquí una tabla resumen de los modelos evaluados por source_id
-
 Este enfoque permite no solo identificar el modelo óptimo por entorno de datos, sino también validar si la mejora obtenida por el modelo basado en atención es consistente y significativa. En apartados posteriores se detallarán las configuraciones evaluadas, el entorno de experimentación y los resultados obtenidos.
 
 \subsection{Entorno de desarrollo y reproducibilidad}
 \label{sec:entorno_reproducibilidad}
 
-\begin{comment}
-	- Detalles sobre el entorno Python, dependencias y hardware usado (incluyendo CUDA, UV, etc.).
-	- Cómo se garantiza que los experimentos sean reproducibles (gestión de seeds, versión de código, uso de notebooks, etc.).
-	- Referencia a tu repositorio y a la estructura del código.
-\end{comment}
-
 Este apartado describe el conjunto de herramientas, tecnologías y decisiones que han permitido asegurar la trazabilidad, reproducibilidad y escalabilidad de los experimentos realizados en este trabajo. Se detallan tanto el entorno software empleado como las herramientas de seguimiento, exportación y despliegue previstas.
 
-\subsubsection{Entorno de desarrollo y gestión del proyecto}
+\subsubsection*{Entorno de desarrollo y gestión del proyecto}
 
 La experimentación ha sido desarrollada en un proyecto Python estructurado bajo el paquete \texttt{trafficformer-bizkaia}, gestionado mediante el gestor de dependencias \texttt{uv}. Este gestor ha demostrado ser una alternativa eficiente y moderna a sistemas tradicionales como \texttt{pip} o \texttt{poetry}, permitiendo la instalación aislada de entornos y una resolución rápida de paquetes.
 
 El conjunto de dependencias se encuentra especificado en el fichero \texttt{pyproject.toml} de la Figura~\ref{fig:capt_pyproject}, y abarca bibliotecas clave para aprendizaje profundo (\texttt{torch}, \texttt{torchvision}), procesamiento de datos (\texttt{numpy}, \texttt{pandas}), manipulación geoespacial (\texttt{osmnx}, \texttt{pyrosm}) y conexión con bases de datos NoSQL (\texttt{pymongo}).
 
-%% Puedes insertar aquí una captura parcial del pyproject.toml destacando torch/cu128, wandb, pymongo...
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=0.85\textwidth]{includes/cap5/captura_pyproject_toml.png}
 	\caption{Captura del fichero pyproject.toml}
 	\label{fig:capt_pyproject}
 \end{figure}
-%% FIN
 
-\subsubsection{Monitorización y trazabilidad experimental con W\textsc{and}B}
+\subsubsection*{Monitorización y trazabilidad experimental con W\textsc{and}B}
 
 La herramienta \texttt{Weights \& Biases (wandb)} ha sido empleada como sistema de seguimiento y gestión de experimentos. Su integración ha permitido:
 
@@ -150,16 +129,14 @@ La herramienta \texttt{Weights \& Biases (wandb)} ha sido empleada como sistema 
 
 Esta herramienta ha resultado esencial para asegurar la reproducibilidad de los experimentos y la trazabilidad científica, especialmente dado el elevado número de combinaciones exploradas (120 experimentos). En la Figura~\ref{fig:capt_wandb} se puede visualizar cuál es el aspecto visual de Wandb.
 
-%% Aquí puedes añadir una captura del panel de wandb con un ejemplo de experimento (entrenamiento + métricas)
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=0.85\textwidth]{includes/cap5/captura_wandb.png}
 	\caption{Captura de Wandb}
 	\label{fig:capt_wandb}
 \end{figure}
-%% FIN
 
-\subsubsection{Exportación de modelos con ONNX}
+\subsubsection*{Exportación de modelos con ONNX}
 
 Para favorecer la portabilidad y posible despliegue en entornos de producción o evaluación externa, se ha integrado la exportación de modelos al formato \texttt{ONNX (Open Neural Network Exchange)}.
 
@@ -172,9 +149,7 @@ Este estándar abierto permite:
 
 Los modelos óptimos extraídos (uno por pareja source/modelo) han sido exportados a este formato y almacenados de forma segura en un sistema local y remoto.
 
-%% Puedes añadir aquí una captura del esquema ONNX exportado, o su validación con onnxruntime
-
-\subsubsection{Preparación para entrenamiento en la nube}
+\subsubsection*{Preparación para entrenamiento en la nube}
 
 Aunque todos los experimentos del presente trabajo han sido ejecutados localmente, se ha diseñado y probado un entorno completo de entrenamiento en la nube sobre Amazon Web Services (AWS).
 
@@ -187,17 +162,13 @@ Mediante una plantilla en \texttt{CloudFormation} (fichero \texttt{template.yaml
 	\item Un entorno \texttt{Python 3.13} preconfigurado en arranque, listo para ejecutar notebooks y scripts con PyTorch y aceleración GPU.
 \end{itemize}
 
-%% Puedes insertar aquí un resumen gráfico de la arquitectura desplegada en AWS: EC2 + VPN + MongoDB
-
 Esta infraestructura fue diseñada como alternativa escalable, con posibilidad de ser reutilizada en el futuro para entrenamientos de mayor duración o mayor carga de memoria.
 
 \paragraph{Nota sobre seguridad:} toda la configuración se recupera desde un bucket S3 controlado mediante permisos específicos del rol IAM.
 
-%% Si lo deseas, puedes incluir el fichero template.yaml como anexocapt_wandb (Anexo C), explicando brevemente su contenido.
 Con el objetivo de facilitar futuras ejecuciones en la nube, se ha preparado una plantilla de infraestructura como código utilizando AWS CloudFormation. Esta plantilla automatiza el despliegue de una instancia con GPU, volumen persistente y conexión segura mediante VPN a la base de datos local. Aunque no ha sido necesario su uso durante el desarrollo del presente trabajo, se ha documentado como valor añadido y se incluye en el \hyperref[anexo:plantilla_aws]{Anexo~C}.
-%% FIN Como se detalla en el \hyperref[anexo:plantilla_aws]{Anexo~C}
 
-\subsubsection{Almacenamiento auxiliar con MinIO}
+\subsubsection*{Almacenamiento auxiliar con MinIO}
 
 Como complemento al sistema principal de base de datos, se ha utilizado un servidor \texttt{MinIO} (compatibilidad S3) desplegado sobre un NAS local con TrueNAS Scale.
 
@@ -215,15 +186,9 @@ Esta solución ha permitido separar claramente el almacenamiento estructurado (M
 \subsection{Preparación de datos y pipeline}
 \label{sec:prep_datos_pipeline}
 
-\begin{comment}
-	- Breve explicación del pipeline de datos: de MongoDB al dataset, manejo de features, máscaras espaciales, repository pattern.
-	- Explicación de la generación y justificación de máscaras espaciales (destacando el uso real de OSMPathSpatialMaskStrategy).
-	- Ejemplo/resumen del código clave (docstring y fragmentos) con referencia al repositorio.
-\end{comment}
-
 La construcción del pipeline de datos ha sido un paso clave en este trabajo, permitiendo transformar observaciones crudas de tráfico en estructuras tensoriales aptas para el entrenamiento de modelos de aprendizaje profundo. Para ello, se ha implementado un sistema modular en Python, que distingue claramente entre las necesidades del modelo base (MLP) y las del modelo avanzado (Trafficformer), evitando así procesamientos innecesarios en cada caso.
 
-\subsubsection{Extracción desde base de datos}
+\subsubsection*{Extracción desde base de datos}
 
 La información de entrada proviene de una base de datos MongoDB, concretamente de las colecciones \texttt{meters} (información estática de sensores) y \texttt{mobility\_snapshots} (lecturas horarias del flujo de tráfico).
 
@@ -289,7 +254,7 @@ Tras su preparación, los datos se serializan en disco en formato \texttt{.npz} 
 	\item Integrar estos ficheros con entornos de entrenamiento remotos, como AWS, a través de MinIO.
 \end{itemize}
 
-\subsubsection{Estructura de entrada por modelo}
+\subsubsection*{Estructura de entrada por modelo}
 
 \textbf{Para el modelo MLP}, las muestras se representan como vectores planos: se concatena la información de todos los sensores y todas las variables dentro de una ventana temporal, sin conservar ninguna estructura espacial. Se omite completamente el uso de grafos o máscaras, priorizando la eficiencia y simplicidad.
 
@@ -297,13 +262,13 @@ Tras su preparación, los datos se serializan en disco en formato \texttt{.npz} 
 
 Esta diferenciación permite compartir código, reutilizando funciones comunes de preprocesado, pero manteniendo separadas las fases más costosas como la construcción de grafos o generación de máscaras.
 
-\subsubsection{Construcción del grafo de sensores}
+\subsubsection*{Construcción del grafo de sensores}
 
 En el caso del modelo Trafficformer, se genera un grafo representando la red viaria de sensores. Cada nodo representa un \texttt{meter}, y las aristas se definen en función de su proximidad física o conectividad vial. Este grafo es generado desde el módulo \texttt{sensor\_network\_map.py}, utilizando distancias geográficas, heurísticas de agrupación y datos abiertos de OpenStreetMap.
 
 A partir del grafo se puede derivar la matriz de adyacencia que servirá como base para aplicar enmascaramientos espaciales.
 
-\subsubsection{Máscaras espaciales (solo para Trafficformer)}
+\subsubsection*{Máscaras espaciales (solo para Trafficformer)}
 
 Las máscaras espaciales permiten restringir el campo de atención del modelo, indicando qué sensores deben influenciarse entre sí durante el proceso de autoatención.
 
@@ -317,9 +282,7 @@ Se ha diseñado una arquitectura extensible de generación de máscaras, impleme
 
 Estas máscaras se construyen en formato tensorial y se almacenan para su reutilización durante los entrenamientos posteriores.
 
-%% Aquí puedes insertar una figura opcional mostrando la máscara resultante para un subconjunto de sensores
-
-\subsubsection{Serialización y persistencia}
+\subsubsection*{Serialización y persistencia}
 
 Todos los tensores generados (entradas, salidas, máscaras) se serializan en disco utilizando formatos como \texttt{.npz} y \texttt{.json}. Estos ficheros se almacenan de forma organizada por combinación de modelo y fuente de datos, y se respaldan en MinIO para garantizar su disponibilidad en posteriores ejecuciones.
 
@@ -341,7 +304,7 @@ Esta estrategia de persistencia permite:
 
 Durante el desarrollo de este trabajo se han implementado dos tipos de modelos de aprendizaje profundo para la predicción del flujo vehicular: un modelo base tipo perceptrón multicapa (MLP) y una arquitectura avanzada basada en Transformers denominada \texttt{Trafficformer}. Ambos modelos han sido implementados en PyTorch y diseñados para ajustarse al mismo pipeline de datos, permitiendo una comparación directa en términos de rendimiento y eficiencia.
 
-\subsubsection{Perceptrón Multicapa (MLP)}
+\subsubsection*{Perceptrón Multicapa (MLP)}
 
 El modelo \texttt{MLP}, implementado en el fichero \texttt{mlp\_enhanced.py}, actúa como modelo base para el conjunto de experimentos. Su arquitectura consiste en una serie de capas completamente conectadas (\texttt{Linear}), separadas por funciones de activación \texttt{ReLU}, normalización por lotes (\texttt{BatchNorm1d}) y capas de regularización \texttt{Dropout}.
 
@@ -353,25 +316,31 @@ En la Figura~\ref{fig:mlp_enhanced_vertical} se presenta un esquema lógico de s
 
 \begin{figure}[H]
 	\centering
-	\caption{Esquema lógico del flujo de capas en el modelo \texttt{MLP}}
+	\begin{tikzpicture}[
+		node distance=1.5cm,
+		every node/.style={font=\small, align=center},
+		box/.style={draw, rounded corners, minimum width=6.2cm, minimum height=1cm, fill=gray!5},
+		arrow/.style={-Latex, thick}
+		]
+		% Nodes
+		\node[box] (input) {[Input: batch, num\_meters, seq\_len, num\_features]};
+		\node[box, below=of input] (flatten) {Flatten};
+		\node[box, below=of flatten] (linear1) {Linear $\rightarrow$ hidden\_dim\\ReLU + BatchNorm + Dropout};
+		\node[box, below=of linear1] (linear2) {Linear $\rightarrow$ hidden\_dim\\ReLU + BatchNorm + Dropout};
+		\node[box, below=of linear2] (linear3) {Linear $\rightarrow$ 1};
+		\node[box, below=of linear3] (reshape) {Reshape $\rightarrow$ batch $\times$ num\_meters};
+		\node[box, below=of reshape] (output) {Output};
+		
+		% Arrows
+		\draw[arrow] (input) -- (flatten);
+		\draw[arrow] (flatten) -- (linear1);
+		\draw[arrow] (linear1) -- (linear2);
+		\draw[arrow] (linear2) -- (linear3);
+		\draw[arrow] (linear3) -- (reshape);
+		\draw[arrow] (reshape) -- (output);
+	\end{tikzpicture}
+	\caption{Esquema lógico del flujo de capas en el modelo \texttt{MLP}.}
 	\label{fig:mlp_enhanced_vertical}
-	\begin{verbatim}
-		[Input: batch, num_meters, seq_len, num_features]
-		|
-		[Flatten]
-		|
-		[Linear → hidden_dim]
-		[ReLU + BatchNorm + Dropout]
-		|
-		[Linear → hidden_dim]
-		[ReLU + BatchNorm + Dropout]
-		|
-		[Linear → 1]
-		|
-		[Reshape → batch x num_meters]
-		|
-		[Output]
-	\end{verbatim}
 \end{figure}
 
 El comportamiento del modelo está condicionado por varios parámetros configurables en su constructor:
@@ -386,7 +355,7 @@ El comportamiento del modelo está condicionado por varios parámetros configura
 
 Estos parámetros permiten ajustar la capacidad del modelo a distintos tamaños de entrada y configuraciones experimentales, manteniendo una estructura modular y flexible.
 
-\subsubsection{Trafficformer}
+\subsubsection*{Trafficformer}
 
 El modelo \texttt{Trafficformer}, implementado en el fichero \texttt{trafficformer.py} e incluido en el \hyperref[anexo:codigo_trafficformer]{Anexo~D}, representa una evolución arquitectónica de los Transformers tradicionales adaptada al contexto específico de predicción de tráfico multivariable. A diferencia de las redes densas como el MLP, esta arquitectura se construye con el propósito de capturar de forma simultánea dependencias temporales a lo largo de una ventana de observación y relaciones espaciales entre sensores distribuidos por la red viaria.
 
@@ -400,39 +369,31 @@ Esta operación se ilustra esquemáticamente en la Figura~\ref{fig:attention_mas
 
 \begin{figure}[H]
 	\centering
-	\caption{Aplicación de la máscara espacial en el mecanismo de atención de \texttt{Trafficformer}}
+	\begin{tikzpicture}[
+		node distance=1.8cm,
+		every node/.style={font=\small, align=center},
+		box/.style={draw, rounded corners, minimum width=5.5cm, minimum height=1cm, fill=gray!5},
+		arrow/.style={-Latex, thick}
+		]
+		% Nodes
+		\node[box] (A) {Nodo A (sensor 1)};
+		\node[box, below=of A] (att) {Atención multi-cabezal\\Q (query) $\leftarrow$ Nodo A\\K, V (keys, values) $\leftarrow$ Nodos B, C, D, E, ...};
+		\node[box, below=of att] (mask) {Máscara espacial (M)\\[2pt]
+			M[A][B] = 1 $\rightarrow$ se permite la atención\\
+			M[A][C] = 0 $\rightarrow$ atención bloqueada\\
+			M[A][D] = 1 $\rightarrow$ se permite la atención\\
+			\textellipsis};
+		\node[box, below=of mask] (rest) {Atención restringida por máscara};
+		\node[box, below=of rest] (embed) {Embedding enriquecido del nodo A};
+		
+		% Arrows
+		\draw[arrow] (A) -- (att);
+		\draw[arrow] (att) -- (mask);
+		\draw[arrow] (mask) -- (rest);
+		\draw[arrow] (rest) -- (embed);
+	\end{tikzpicture}
+	\caption{Aplicación de la máscara espacial en el mecanismo de atención de \texttt{Trafficformer}.}
 	\label{fig:attention_masking}
-	\begin{verbatim}
-		┌────────────────────────────────────────────┐
-		│           Nodo A (sensor 1)                │
-		└────────────────────────────────────────────┘
-		│
-		│     Atención multi-cabezal
-		▼
-		┌───────────────────────────────────────────────┐
-		│      Q (query) ← Nodo A                       │
-		│      K, V (keys, values) ← Nodo B, C, D, E... │
-		└───────────────────────────────────────────────┘
-		│
-		│     Máscara espacial
-		▼
-		┌────────────────────────────────────────────┐
-		│      Spatial Attention Mask (M)            │
-		│                                            │
-		│  M[A][B] = 1   → se permite la atención    │
-		│  M[A][C] = 0   → atención bloqueada        │
-		│  M[A][D] = 1   → se permite la atención    │
-		│  ...                                       │
-		└────────────────────────────────────────────┘
-		│
-		▼
-		Atención restringida
-		│
-		▼
-		┌────────────────────────────────────────────┐
-		│     Embedding enriquecido del nodo A       │
-		└────────────────────────────────────────────┘
-	\end{verbatim}
 \end{figure}
 
 Tras el bloque de atención se encuentra una red \texttt{FeedForward} con normalización y conexiones residuales, que complementa la capacidad de aprendizaje no lineal de la arquitectura. Finalmente, se aplica un bloque predictor por nodo, implementado como un MLP con estructura \texttt{Linear → LayerNorm → ReLU → Linear}, que emite la predicción del volumen de tráfico esperado en el próximo instante temporal.
@@ -441,22 +402,29 @@ El flujo completo de capas puede representarse de forma esquemática como sigue:
 
 \begin{figure}[H]
 	\centering
-	\caption{Esquema lógico del flujo de capas del modelo \texttt{Trafficformer}}
+	\begin{tikzpicture}[
+		node distance=1.8cm,
+		every node/.style={font=\small, align=center},
+		box/.style={draw, rounded corners, minimum width=6.2cm, minimum height=1cm, fill=gray!5},
+		arrow/.style={-Latex, thick}
+		]
+		% Nodes
+		\node[box] (input) {[Input: batch, num\_nodes, seq\_len, num\_features]};
+		\node[box, below=of input] (posenc) {Positional Encoding};
+		\node[box, below=of posenc] (mlp) {Temporal Feature Extractor\\MLP + LayerNorm + Dropout};
+		\node[box, below=of mlp] (encoder) {Encoder Layer $\times$ N:\\Spatial Multi-Head Attention\\+ FeedForward + Residual};
+		\node[box, below=of encoder] (pred) {Predictor MLP:\\Linear $\rightarrow$ LayerNorm $\rightarrow$ ReLU $\rightarrow$ Linear};
+		\node[box, below=of pred] (output) {[Output: batch $\times$ num\_nodes]};
+		
+		% Arrows
+		\draw[arrow] (input) -- (posenc);
+		\draw[arrow] (posenc) -- (mlp);
+		\draw[arrow] (mlp) -- (encoder);
+		\draw[arrow] (encoder) -- (pred);
+		\draw[arrow] (pred) -- (output);
+	\end{tikzpicture}
+	\caption{Esquema lógico del flujo de capas del modelo \texttt{Trafficformer}.}
 	\label{fig:trafficformer_vertical}
-	\begin{verbatim}
-		[Input: batch, num_nodes, seq_len, num_features]
-		|
-		[Positional Encoding]
-		|
-		[Temporal Feature Extractor (MLP + LayerNorm + Dropout)]
-		|
-		[Encoder Layer xN: Spatial Multi-Head Attention]
-		+ FeedForward + Residual Connections
-		|
-		[Predictor MLP: Linear → LayerNorm → ReLU → Linear]
-		|
-		[Output: batch x num_nodes]
-	\end{verbatim}
 \end{figure}
 
 Cabe destacar que el modelo ha sido diseñado para ser altamente configurable, permitiendo ajustar su capacidad expresiva a distintos conjuntos de datos y requisitos computacionales. Entre los principales hiperparámetros se encuentran:
@@ -476,12 +444,6 @@ Esta flexibilidad, unida a su capacidad para integrar estructura espacial, convi
 \subsection{Diseño experimental y combinaciones}
 \label{sec:diseño_exp_combinaciones}
 
-\begin{comment}
-	- Explicación detallada del plan experimental (tablas tipo las de EXPERIMENTS.md).
-	- Justificación de los valores elegidos para cada parámetro/hiperparámetro, en línea con el estado del arte y buenas prácticas.
-	- Número total de experimentos, cómo se organiza la ejecución (notebooks, Wandb, etc.).
-\end{comment}
-
 Para evaluar de forma rigurosa el rendimiento de las distintas arquitecturas propuestas, se ha diseñado un conjunto exhaustivo de experimentos que cubre diversas combinaciones de modelos, hiperparámetros y fuentes de datos. El total de combinaciones generadas asciende a \textbf{120 experimentos}, cada uno de los cuales ha sido ejecutado de forma independiente y almacenado como notebook reproducible.
 
 El diseño factorial considera dos modelos principales: \texttt{MLP} como base lineal y \texttt{Trafficformer} como modelo avanzado con atención espacial. A su vez, se han evaluado estas arquitecturas sobre tres conjuntos de datos procedentes de distintas fuentes institucionales, representadas por los identificadores \texttt{source\_id = 1, 2, 5}.
@@ -490,11 +452,12 @@ Cada modelo ha sido entrenado utilizando un conjunto diverso de combinaciones de
 
 \begin{table}[H]
 	\centering
+	\small
 	\caption{Configuraciones experimentales evaluadas}
 	\label{tab:experimentos_resumen}
-	\begin{tabularx}{\textwidth}{l | l | l | l | l | l | l | l | l}
+	\begin{tabularx}{\textwidth}{c | c | c | c | c | c | c | c | c}
 		\toprule
-		\textbf{sourceId} & \textbf{Modelo} & \textbf{SEQ\_LEN} & \textbf{Learning Rate} & \textbf{Batch Size} & \textbf{Epochs / Early Stopping} & \textbf{NUM\_HEADS} & \textbf{EMBEDDING\_DIM} & \textbf{NUM\_LAYERS / FF\_HIDDEN\_DIM} \\
+		\textbf{SID} & \textbf{M} & \textbf{SL} & \textbf{LR} & \textbf{BS} & \textbf{E/ES} & \textbf{NH} & \textbf{ED} & \textbf{NL/FF} \\
 		\midrule
 		1 & MLP           & 4, 8 & 1e-3 / 5e-4 & 64 / 128 & 100 / patience=10 & -      & -       & - \\
 		1 & Trafficformer & 4, 8 & 1e-3 / 5e-4 & 32 / 64  & 120 / patience=10 & 4 / 8  & 64 / 128 & 4/256 y 6/512 \\
@@ -504,13 +467,27 @@ Cada modelo ha sido entrenado utilizando un conjunto diverso de combinaciones de
 		5 & Trafficformer & 4, 8 & 1e-3 / 5e-4 & 32 / 64  & 120 / patience=10 & 4 / 8  & 64 / 128 & 4/256 y 6/512 \\
 		\bottomrule
 	\end{tabularx}
+	\vspace{0.5em}
+	\begin{minipage}{0.98\textwidth}
+	\footnotesize
+	\textbf{Leyenda de columnas:} 
+	\textbf{SID}: sourceId. \\
+	\textbf{M}: Modelo. \\
+	\textbf{SL}: Secuencia temporal (\texttt{seq\_len}). \\
+	\textbf{LR}: Learning Rate. \\
+	\textbf{BS}: Tamaño de batch. \\
+	\textbf{E/ES}: Épocas / \textit{Early Stopping} (p: patience). \\
+	\textbf{NH}: Número de cabezas de atención (\texttt{num\_heads}). \\
+	\textbf{ED}: Dimensión de embedding (\texttt{embedding\_dim}). \\
+	\textbf{NL/FF}: Número de capas encoder / dimensión del feedforward (\texttt{num\_layers / ff\_hidden\_dim}).
+	\end{minipage}
 \end{table}
 
 A continuación, se detallan las combinaciones de hiperparámetros evaluadas en el conjunto de experimentos realizados. Cada uno de estos parámetros ha sido cuidadosamente seleccionado en base a recomendaciones de la literatura científica y su aplicabilidad práctica en modelos de predicción multivariada de series temporales, como se describe seguidamente:
 
 \begin{itemize}
 	\item \textbf{SEQ\_LEN}: Los valores 4 y 8 permiten comparar el efecto de ventanas más cortas vs. más largas sobre la precisión y la capacidad de capturar patrones temporales. Es una práctica habitual en \textit{forecasting} experimentar con varias ventanas para encontrar el equilibrio entre capacidad de predicción y sobreajuste.
-	\item \textbf{Learning Rate}: 1e-3 es un valor estándar en \textit{deep learning} y recomendado en el propio artículo de Trafficformer~\cite{transformer_based}, pero se elige 5e-4 para realizar el experimento. En el articulo también se cita el empleo de la estrategia ReduceLROnPlateau \cite{ruder2017overviewgradientdescentoptimization}, estrategia que permite reducir el learning rate hasta un umbral en función de la selección de una métrica. Pese a que dicha estrategia está disponible en Pytorch \cite{pytorchReduceLrOnPLateau} se decidió no emplearla por reducir la complejidad del experimento.
+	\item \textbf{Learning Rate}: 1e-3 es un valor estándar en \textit{deep learning} y recomendado en el propio artículo de Trafficformer~\cite{trafficformer}, pero se elige 5e-4 para realizar el experimento. En el articulo también se cita el empleo de la estrategia ReduceLROnPlateau \cite{ruder2017overviewgradientdescentoptimization}, estrategia que permite reducir el learning rate hasta un umbral en función de la selección de una métrica. Pese a que dicha estrategia está disponible en Pytorch \cite{pytorchReduceLrOnPLateau} se decidió no emplearla por reducir la complejidad del experimento.
 	\item \textbf{Batch Size}: Se experimenta con 64 y 128 para MLP, y con 32 y 64 para Trafficformer. Un \textit{batch size} menor en Trafficformer permite reducir el uso de memoria y mejora la generalización en modelos más profundos.
 	\item \textbf{Epochs / Early Stopping}: Se ha limitado el entrenamiento a 100--120 épocas, con un mecanismo de \textit{early stopping} con paciencia de 10 épocas. Esta configuración evita el sobreentrenamiento sin necesidad de vigilancia manual.
 	\item \textbf{NUM\_HEADS y EMBEDDING\_DIM}: Las combinaciones evaluadas (4/64 y 8/128) reflejan el equilibrio entre capacidad representacional y coste computacional. Un mayor número de cabezas puede capturar relaciones más complejas entre sensores.

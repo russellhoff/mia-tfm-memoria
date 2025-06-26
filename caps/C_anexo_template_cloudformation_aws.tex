@@ -6,7 +6,7 @@ Con el objetivo de permitir la escalabilidad y entrenamiento de los modelos desa
 
 Esta plantilla permite desplegar de forma automática una instancia con aceleración por GPU, almacenamiento persistente y conexión segura a la base de datos local mediante VPN. Aunque no ha sido necesario su uso durante el desarrollo del presente trabajo, se considera un componente valioso para futuras ejecuciones de alto rendimiento o despliegues remotos. La plantilla está pensada para ser lanzada directamente desde la consola de AWS o mediante herramientas como \texttt{AWS SAM} o \texttt{AWS CLI}.
 
-\begin{lstlisting}[language=yaml, caption={Plantilla CloudFormation utilizada para el despliegue de entorno de entrenamiento}, label={lst:template_yaml}, {recursos/template.yaml}]
+\begin{lstlisting}[language=yaml, caption={Plantilla CloudFormation utilizada para el despliegue de entorno de entrenamiento}, label={lst:template_yaml}]
 
   AWSTemplateFormatVersion: '2010-09-09'
   Description: EC2 g5.xlarge Ubuntu 24.04 DLAMI GPU con volumen persistente y WireGuard

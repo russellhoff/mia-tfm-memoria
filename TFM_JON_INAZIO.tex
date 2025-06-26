@@ -4,7 +4,9 @@
 \begin{document}
 	
 	\input{inputs/title.tex}
-	\setcounter{page}{2}
+	
+	\pagenumbering{roman} % Números romanos en minúscula
+	\setcounter{page}{1}
 	
 	\input{caps/0_resumen.tex}
 	\clearpage
@@ -17,10 +19,12 @@
 	\clearpage
 	\listoftables
 	\clearpage
-	
+
 	\spacing{1.5} %Interlineado fijo
 	\setlength{\parskip}{6pt} %6 puntos de espaciado entre párrafos
-	
+	\pagenumbering{arabic} % Números arábigos normales
+	\setcounter{page}{1}
+
 	\input{caps/1_introduccion.tex}
 	\clearpage
 	\input{caps/2_contexto_estadodelarte.tex}
@@ -36,22 +40,6 @@
 	\input{caps/7_conclusiones_trabajo_futuro.tex}
 	\clearpage
 	
-	%\input{inputs/introduccion.tex}
-	%\clearpage
-	%\input{inputs/justificacion.tex}
-	%\clearpage
-	%\input{inputs/objetivosMetodologia.tex}
-	%\clearpage
-	%\input{inputs/estadoDelArte.tex}
-	%\clearpage
-	%\input{inputs/analisisTecnico.tex}
-	%\clearpage
-	%\input{inputs/desarrolloEspecifico.tex}
-	%\clearpage
-	%\input{inputs/trabajosFuturos.tex}
-	%\clearpage
-	%\input{inputs/conclusiones.tex}
-
 	\clearpage
 	\printglossary[type=\acronymtype,title={Acrónimos y Abreviaturas}]
 	\printglossary
@@ -66,12 +54,21 @@
 		\bibliography{recursos/bibliografia}
 	\end{flushleft}
 
-% Cuando tengamos apéndices, mostrar aquí
 	\clearpage
 	\appendix
-%	\input{caps/A_anexo.tex}
+	
 	\input{caps/A_anexo_descrp_cod_meteo.tex}
 	\clearpage
 	\input{caps/B_anexo_codigo_generador_snapshots.tex}
+	\clearpage
+	\input{caps/C_anexo_template_cloudformation_aws.tex}
+	\clearpage
+	\input{caps/D_anexo_codigo_trafficformer.tex}
+	\clearpage
+	\input{caps/E_anexo_experimentos.tex}
+	\clearpage
+	\input{caps/F_anexo_resultados_experimentos.tex}
+	\clearpage
+	\input{caps/G_anexo_analisis_avanzado_por_fuente_datos.tex}
 	\clearpage
 \end{document} 

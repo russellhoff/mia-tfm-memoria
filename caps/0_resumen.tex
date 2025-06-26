@@ -1,9 +1,13 @@
 \vspace*{\fill}
 \selectlanguage{spanish}
 \begin{abstract}
-	La predicción precisa del tráfico es clave para optimizar la movilidad y el uso de infraestructuras, especialmente en la \acrlong{capv} y más en concreto en la provincia de Bizkaia, donde la orografía, densidad urbana y condiciones meteorológicas suponen retos añadidos. Sin embargo, la complejidad inherente a los datos de tráfico, caracterizados por fuertes correlaciones espacio-temporales y patrones no lineales, dificulta su modelado y predicción exacta. Este trabajo propone un modelo de predicción basado en redes neuronales con arquitectura Transformer, capaz de capturar dependencias espacio-temporales complejas mediante mecanismos de atención que asignan pesos dinámicos a segmentos relevantes. Se emplearán datos abiertos de tráfico y meteorología procedentes de la provincia de Bizkaia. La validación se realizará con datos reales y se comparará frente a modelos tradicionales de redes neuronales, demostrando mejoras significativas en precisión. El sistema resultante ofrece una herramienta robusta y eficiente para la gestión del tráfico en tiempo real, con potencial para anticipar congestiones y optimizar la toma de decisiones operativas.
+	En este Trabajo Fin de Máster se aborda el desarrollo de un sistema avanzado de predicción del flujo de tráfico en la provincia de Bizkaia mediante técnicas de aprendizaje profundo basadas en arquitecturas transformer. El dataset ha sido elaborado integrando múltiples fuentes de datos abiertos oficiales del Gobierno Vasco, incluyendo aforos de tráfico y variables meteorológicas proporcionadas por Euskalmet, lo que ha permitido enriquecer la modelización con información contextual relevante.
+	
+	El modelo propuesto, fundamentado en la arquitectura Trafficformer, se ha entrenado y evaluado exhaustivamente frente a un modelo base MLP, demostrando mejoras sustanciales en la capacidad predictiva. En los experimentos realizados sobre distintos conjuntos de sensores, Trafficformer ha logrado reducir el error absoluto medio (MAE) en test hasta un 25–30\% respecto al MLP, alcanzando valores de MAE inferiores a 0.003 vehículos normalizados y un $R^2$ superior a 0.96 en los mejores escenarios, frente a $R^2$ de 0.87–0.90 para el MLP. Además, el modelo ha mostrado mayor robustez frente a la variabilidad meteorológica y la heterogeneidad espacial de la red viaria.
+	
+	Entre las principales contribuciones destacan la integración efectiva de datos heterogéneos, la aplicación y adaptación de técnicas de deep learning de última generación al contexto de la predicción de tráfico real y la publicación de un pipeline reproducible. Se discuten también las limitaciones encontradas y se proponen líneas de trabajo futuro orientadas a la incorporación de nuevos tipos de datos y la extensión a entornos urbanos más complejos.
 \end{abstract}
-\textbf{Palabras clave}: Predicción del tráfico, Aprendizaje profundo, Transformers, Redes neuronales, Correlación espacio-temporal, Datos abiertos, Comunidad Autónoma del País Vasco, Bizkaia
+\textbf{Palabras clave}: Predicción del tráfico, Aprendizaje profundo, Transformers, Datos abiertos, Comunidad Autónoma del País Vasco, Bizkaia
 
 \vfill
 \clearpage
@@ -12,9 +16,13 @@
 \selectlanguage{english}
 
 \begin{abstract}
-	Accurate traffic forecasting is essential for optimising mobility and infrastructure usage, especially in the Autonomous Community of the Basque Country (\acrshort{capv}) and particularly in the province of Bizkaia, where the region’s orography, urban density, and weather variability present additional challenges. However, the inherent complexity of traffic data, characterised by strong spatio-temporal correlations and non-linear patterns, makes its modelling and prediction difficult. This work proposes a prediction model based on neural networks with Transformer architecture, capable of capturing complex spatio-temporal dependencies through attention mechanisms that dynamically assign weights to relevant segments. Bizkaia's open traffic and weather datasets will be used. The model will be validated with real-world data and compared against traditional neural network models. The outcome will be a robust and efficient tool for real-time traffic management, with the potential to anticipate congestion and support the optimisation of operational decision-making.
+	This Master's Thesis presents the development of an advanced traffic flow forecasting system in the province of Bizkaia using deep learning techniques based on transformer architectures. The dataset was constructed by integrating multiple official Open Data sources from the Basque Government, including traffic count data and meteorological variables from Euskalmet, thus enriching the modeling process with relevant contextual features.
+	
+	The proposed model, based on the Trafficformer architecture, was thoroughly trained and benchmarked against a baseline MLP model, achieving substantial improvements in predictive capability. Across various sensor sets, Trafficformer reduced the mean absolute error (MAE) on the test set by 25–30\% compared to MLP, reaching MAE values below 0.003 (normalized vehicles) and test $R^2$ scores above 0.96 in the best cases, versus $R^2$ of 0.87–0.90 for the MLP. The model also demonstrated increased robustness to meteorological variability and the spatial heterogeneity of the road network.
+	
+	Key contributions include the effective integration of heterogeneous data, the adaptation of state-of-the-art deep learning techniques to real-world traffic forecasting, and the publication of a reproducible pipeline. The limitations encountered are discussed, and future work is proposed to incorporate new data sources and extend the model to more complex urban scenarios.
 \end{abstract}
 
-\textbf{Keywords}: Traffic forecasting, Deep learning, Transformers, Neural networks, Spatio-temporal correlation, Open data, Autonomous Community of the Basque Country, Bizkaia
+\textbf{Keywords}: Traffic forecasting, Deep learning, Transformers, Open data, Autonomous Community of the Basque Country, Bizkaia
 \selectlanguage{spanish}
 \vspace*{\fill}

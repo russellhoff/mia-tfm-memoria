@@ -1,6 +1,5 @@
-\section*{Construcción del dataset y arquitectura del sistema}
+\section{Construcción del dataset y arquitectura del sistema}
 \label{sec:dataset_arquitectura}
-\addcontentsline{toc}{section}{Construcción del dataset y arquitectura del sistema}
 
 %
 % Para citar: 
@@ -66,7 +65,7 @@ En cuanto a la obtención de los datos meteorológicos, si bien es cierto que ex
 
 Por ello, no se tenía la certeza de si se iban a obtener datos correctos, por lo que se pensó en maneras alternativas de obtener los propios datos. Así, en esa búsqueda de caminos se encontró, dentro del mismo portal de Open Data del Gobierno Vasco, las lecturas recogidas por las estaciones meteorológicas del año 2024 de forma bruta en formato XML, accesible a continuación \cite{xmlMeteo2024}. 
 
-\subsubsection{Modelo de datos almacenado}
+\subsubsection*{Modelo de datos almacenado}
 
 Una vez explicadas las fuentes de datos, se podría comenzar a explicar cómo se van a almacenar dichos datos. En la figura \ref{fig:uml_classes} se puede ver las clases persistidas en la base de datos.
 
@@ -244,7 +243,7 @@ La decisión de utilizar una base de datos \textbf{NoSQL, MongoDB}, responde a l
 
 Tras la integración de las fuentes de datos de tráfico, meteorología e incidencias, se llevó a cabo un proceso de análisis y consolidación de información para la construcción del dataset final utilizado por el modelo de predicción. Este dataset, modelado a través de la clase \texttt{MobilitySnapshot}, resume en cada observación todos los factores que pueden influir en la intensidad del tráfico en un instante y ubicación concretos. En los siguientes apartados se detallan las decisiones tomadas en relación con cada fuente de información, comenzando por la tipificación de incidencias viales.
 
-\subsubsection{Obtención y estructuración de incidencias}
+\subsubsection*{Obtención y estructuración de incidencias}
 % Si ponemos así no se imprime en el indice
 %\subsubsection*{Obtención y estructuración de incidencias}
 
@@ -320,31 +319,7 @@ Adicionalmente, y si el volumen de datos lo justifica en futuras versiones del d
 	val hasCongestion: Boolean
 \end{lstlisting}
 
-\begin{comment}
-\subsubsection{Selección y estructuración de datos meteorológicos}
-La integración de datos meteorológicos requirió la descarga y parseo de ficheros XML históricos del Open Data de Gobierno Vasco. Los datos se procesan en scripts propios y se almacenan estructuradamente por estación y sensor.
-
-Se ha realizado una \textbf{selección experta} de las variables meteorológicas relevantes, en base a literatura y experiencia práctica. Las categorías finales incluidas son:
-
-\begin{table}[H]
-	\centering
-	\begin{tabular}{|l|l|p{7cm}|}
-		\hline
-		\textbf{Categoría} & \textbf{SensorKey base} & \textbf{Justificación} \\ \hline
-		Temperatura aire    & Tem\_Aire\_\_a\_*     & Influye en el comportamiento y volumen vial. \\ \hline
-		Humedad relativa    & Humedad\_\_a\_*       & Afecta visibilidad y adherencia. \\ \hline
-		Precipitación       & Precip\_\_\_a\_*      & Relacionada con retenciones y reducción de flujo. \\ \hline
-		Presión atmosférica & Presion\_\_a\_*       & Útil para identificar cambios bruscos. \\ \hline
-		Radiación solar     & Irradia\_\_\_a\_*     & Relacionada con condiciones extremas. \\ \hline
-		Velocidad viento    & Vel\_Med\_\_a\_*      & Indicador de fenómenos adversos. \\ \hline
-	\end{tabular}
-	\caption{Selección de sensores meteorológicos relevantes para el dataset.}
-\end{table}
-
-Para cada categoría se selecciona el sensor más cercano al nivel del suelo o el más representativo en la estación, y se asocia al flujo de tráfico más próximo geográficamente.
-\end{comment}
-
-\subsubsection{Selección e integración de variables meteorológicas}
+\subsubsection*{Selección e integración de variables meteorológicas}
 
 El sistema de captación meteorológica empleado en este proyecto incluye un conjunto amplio y heterogéneo de sensores distribuidos en estaciones automáticas de observación repartidas por la CAPV. Cada estación contiene múltiples sensores, y cada sensor puede registrar una variable distinta a una altura determinada del suelo (por ejemplo, 0 cm, 1050 cm o 2200 cm). 
 
@@ -389,7 +364,7 @@ Finalmente, estas variables se integran dentro de cada observación del dataset 
 
 Estas variables permiten modelar de forma efectiva el efecto de las condiciones meteorológicas sobre la movilidad urbana, mejorando la capacidad predictiva del modelo de aprendizaje profundo.
 
-\subsubsection{Fusión e integración: la clase \texttt{MobilitySnapshot}}
+\subsubsection*{Fusión e integración: la clase \texttt{MobilitySnapshot}}
 
 La entidad central para la construcción del dataset es la clase \texttt{MobilitySnapshot}, que representa un registro aglutinado por instante temporal y ubicación, integrando la información de:
 
@@ -398,20 +373,6 @@ La entidad central para la construcción del dataset es la clase \texttt{Mobilit
 	\item \textbf{Meteorología}: valores de los sensores seleccionados asociados espacial y temporalmente al flujo.
 	\item \textbf{Incidencias}: información de incidencias activas cercanas en tiempo y espacio, codificadas según la tipología definida.
 \end{itemize}
-
-\begin{comment}
-\textbf{Metodología de integración:}
-\begin{enumerate}
-	\item Para cada observación de flujo, se asocia la estación meteorológica más cercana y sus valores horarios.
-	\item Se identifican incidencias activas en un radio y ventana temporal cercanos.
-	\item Se genera un registro enriquecido y alineado por timestamp, base para el entrenamiento de modelos de aprendizaje supervisado.
-\end{enumerate}
-
-\vspace{0.5em}
-\textit{
-	“De todo el listado, los sensores más relevantes para explicar la variabilidad del tráfico suelen ser: Temperatura aire, Humedad relativa, Precipitación, Presión atmosférica, Radiación solar, Velocidad viento. Para cada categoría, puedes tomar el sensor más cercano al suelo o el más representativo… Para cada aforo (\texttt{Flow}), se asocian tanto la lectura meteorológica más cercana en el tiempo y espacio como la información de incidencias activa, generando así la entidad \texttt{MobilitySnapshot}, base del dataset de predicción.”
-}
-\end{comment}
 
 El proceso de generación de las observaciones enriquecidas se implementa en el servicio \texttt{MobilitySnapshotGeneratorService}, dentro del método \texttt{generateSnapshots()}. Este método ejecuta de forma secuencial la construcción de objetos \texttt{MobilitySnapshot}, cada uno de los cuales encapsula una observación consolidada de movilidad para un instante y punto geográfico concretos. La lógica está diseñada para ser robusta y escalable, gestionando datos de múltiples fuentes (flujos, meteorología e incidencias) mediante el uso de procesamiento por intervalos y agrupación por sensor.
 
@@ -424,7 +385,7 @@ El flujo completo queda representado en la Figura \ref{fig:sequence_mobility_sna
 	\label{fig:sequence_mobility_snapshot}
 \end{figure}
 
-El código fuente completo del componente encargado de llevar a cabo esta integración puede consultarse en el Anexo \ref{anexo:snapshot_generator}, donde se incluye la clase \texttt{MobilitySnapshotGeneratorService} desarrollada específicamente para este propósito.
+El código fuente completo del componente encargado de llevar a cabo esta integración puede consultarse en el \hyperref[anexo:snapshot_generator]{Anexo~B}, donde se incluye la clase \texttt{MobilitySnapshotGeneratorService} desarrollada específicamente para este propósito.
 
 El proceso se puede descomponer en los siguientes pasos:
 
@@ -478,7 +439,7 @@ Este mecanismo permite particionar grandes volúmenes de datos históricos en un
 
 Este proceso se ejecuta para todas las ventanas temporales dentro del periodo solicitado, permitiendo cubrir días, semanas o incluso meses de observaciones. Se emplean caches internas y colecciones reactivas para optimizar el rendimiento del sistema y permitir el escalado.
 
-\subsubsection{Consideraciones finales para la generación del dataset}
+\subsubsection*{Consideraciones finales para la generación del dataset}
 
 Una decisión fundamental en la construcción del dataset es la selección del intervalo temporal con el que se van a agrupar las observaciones. Este proceso, conocido como \textit{resampling temporal}, consiste en consolidar las mediciones de tráfico (\texttt{Flow}) en tramos de tiempo consecutivos y homogéneos. Esta práctica es común en el análisis de series temporales y presenta múltiples ventajas:
 
