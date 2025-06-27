@@ -323,7 +323,7 @@ Adicionalmente, y si el volumen de datos lo justifica en futuras versiones del d
 
 El sistema de captación meteorológica empleado en este proyecto incluye un conjunto amplio y heterogéneo de sensores distribuidos en estaciones automáticas de observación repartidas por la CAPV. Cada estación contiene múltiples sensores, y cada sensor puede registrar una variable distinta a una altura determinada del suelo (por ejemplo, 0 cm, 1050 cm o 2200 cm). 
 
-Como se detalla en el \hyperref[anexo:sensores]{Anexo~A}, se dispone de un amplio conjunto de sensores meteorológicos, cada uno con una codificación propia y una descripción técnica. En concreto, se incluyen más de 30 tipos distintos de sensores, desde condiciones atmosféricas hasta mediciones marinas o subterráneas. Algunos ejemplos de variables disponibles son: temperatura del aire (\texttt{Tem.Aire}), humedad relativa (\texttt{Humedad}), radiación solar (\texttt{Irradia.}), presión atmosférica (\texttt{Presión}), dirección del viento (\texttt{Dir.Med.}), visibilidad, y muchas otras relacionadas con agua o condiciones marítimas. 
+Como se detalla en el \hyperref[anexo:sensores]{Anexo~B}, se dispone de un amplio conjunto de sensores meteorológicos, cada uno con una codificación propia y una descripción técnica. En concreto, se incluyen más de 30 tipos distintos de sensores, desde condiciones atmosféricas hasta mediciones marinas o subterráneas. Algunos ejemplos de variables disponibles son: temperatura del aire (\texttt{Tem.Aire}), humedad relativa (\texttt{Humedad}), radiación solar (\texttt{Irradia.}), presión atmosférica (\texttt{Presión}), dirección del viento (\texttt{Dir.Med.}), visibilidad, y muchas otras relacionadas con agua o condiciones marítimas. 
 
 Dado el objetivo de este proyecto es predecir el flujo de tráfico urbano, se realizó una \textbf{selección cuidadosa de las variables meteorológicas más relevantes}, descartando aquellas que, por su naturaleza o localización (ej. marítimas), no presentaban una influencia directa sobre la movilidad terrestre urbana.
 
@@ -385,7 +385,7 @@ El flujo completo queda representado en la Figura \ref{fig:sequence_mobility_sna
 	\label{fig:sequence_mobility_snapshot}
 \end{figure}
 
-El código fuente completo del componente encargado de llevar a cabo esta integración puede consultarse en el \hyperref[anexo:snapshot_generator]{Anexo~B}, donde se incluye la clase \texttt{MobilitySnapshotGeneratorService} desarrollada específicamente para este propósito.
+El código fuente completo del componente encargado de llevar a cabo esta integración puede consultarse en el \hyperref[anexo:snapshot_generator]{Anexo~C}, donde se incluye la clase \texttt{MobilitySnapshotGeneratorService} desarrollada específicamente para este propósito.
 
 El proceso se puede descomponer en los siguientes pasos:
 
@@ -493,4 +493,34 @@ En la Tabla \ref{tab:resample_comparison} se puede apreciar resumidamente las co
 	\item Aumentar a 1 hora si el volumen de datos es demasiado elevado o si se prioriza una vista agregada del tráfico.
 \end{itemize}
 
+\subsection{Arquitectura y pipeline general del proyecto}
+
+A continuación, se presenta una descripción completa de la arquitectura y el pipeline diseñado para este proyecto, abarcando desde la recolección inicial de datos hasta la generación y validación de modelos predictivos basados en aprendizaje profundo.
+
+Todo el proceso comienza con el artefacto \texttt{Data Collector}, un proyecto desarrollado en Kotlin utilizando el framework Spring Boot. Su función principal consiste en la construcción integral del dataset utilizado posteriormente para el entrenamiento de modelos predictivos.
+
+En primer lugar, se ha recopilado la información meteorológica. Los datos estáticos, tales como la ubicación de las estaciones meteorológicas, se obtienen directamente mediante la API de Euskalmet proporcionada por el Gobierno Vasco. Debido a problemas técnicos en la extracción automática de las mediciones diarias, estas han sido extraídas mediante la descarga manual de un archivo ZIP del portal Open Data del Gobierno Vasco, que contiene todas las lecturas meteorológicas del año 2024.
+
+En segundo lugar, el dataset incorpora información de aforos vehiculares proveniente de distintas fuentes, centradas exclusivamente en Bizkaia: una del Gobierno Vasco, dos de la Diputación Foral de Bizkaia y cinco del Ayuntamiento de Bilbao. La información relativa a las fuentes del Gobierno Vasco y del Ayuntamiento de Bilbao se ha extraído mediante su API de Tráfico, incluyendo tanto estaciones como mediciones e incidencias del tráfico. Por otro lado, los datos proporcionados por la Diputación Foral de Bizkaia han sido facilitados directamente mediante un acuerdo expreso con dicha institución.
+
+Una vez obtenida y consolidada toda esta información, se almacena en una base de datos MongoDB, y posteriormente se procede a construir el dataset definitivo en la colección denominada \texttt{MobilitySnapshot}. Este proceso se describe detalladamente en secciones previas del presente capítulo.
+
+Tras esta fase de recolección y consolidación, se entra en la etapa del proyecto principal denominado \texttt{Trafficformer Bizkaia}. Este proyecto está desarrollado en Python, utilizando librerías relevantes para el aprendizaje profundo como PyTorch. Se han implementado dos modelos predictivos principales: un modelo base \texttt{MultiLayerPerceptron} (MLP) y el modelo definitivo \texttt{Trafficformer}, basado en una arquitectura moderna de tipo Transformer.
+
+Para gestionar los experimentos y entrenamientos, se han definido una serie de procesos específicos descritos en profundidad en el Capítulo~\ref{sec:desarrollo_comp_results}. Se han diseñado diferentes entrenamientos para evaluar ambas arquitecturas (MLP y Trafficformer) y para realizar múltiples pruebas variando hiperparámetros significativos.
+
+Estos entrenamientos se ejecutan principalmente en notebooks Jupyter sobre una máquina local equipada con una GPU de alto rendimiento, suficiente para el entrenamiento de redes neuronales profundas. Adicionalmente, se dispone de una infraestructura preparada para realizar entrenamientos de forma escalable en la nube mediante instancias EC2 de Amazon Web Services (AWS) y utilizando imágenes AMI configuradas con soporte Nvidia.
+
+Durante el proceso de entrenamiento y evaluación, se ha utilizado la plataforma Weight \& Biases para realizar un seguimiento detallado de los experimentos, facilitando así la elección y validación de los mejores modelos entre los 120 experimentos realizados (un experimento por cada \texttt{sourceId} y tipo de modelo).
+
+Para resumir y facilitar la comprensión del lector, en la Figura~\ref{fig:pipeline-general} se presenta el diagrama de flujo general.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.95\textwidth]{includes/cap4/trafficformer_arch.png}
+	\caption{Diagrama de arquitectura y pipeline general del proyecto.}
+	\label{fig:pipeline-general}
+\end{figure}
+
+Este esquema proporciona una visión clara y sintetizada del flujo de trabajo, facilitando la comprensión y la replicabilidad de las metodologías empleadas a lo largo de todo el proceso de investigación y desarrollo llevado a cabo en este TFM.
 

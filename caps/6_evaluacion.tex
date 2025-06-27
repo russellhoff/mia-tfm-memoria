@@ -19,7 +19,7 @@
 
 Para cada una de las tres fuentes de datos disponibles (\texttt{sourceId} = 1, 2 y 5), se ha seleccionado el mejor modelo entrenado para cada una de las dos arquitecturas evaluadas: \texttt{MLP} y \texttt{Trafficformer}. La selección se ha realizado tomando como criterio el valor mínimo de la métrica de pérdida sobre el conjunto de validación (\texttt{val\_loss}) entre todas las combinaciones de hiperparámetros evaluadas durante el proceso experimental.
 
-En el \hyperref[anexo:resultados_exp]{Anexo~F} se puede consultar la tabla completa de todos los experimentos llevados a cabo junto con los resultados de todas las métricas obtenidas.
+En el \hyperref[anexo:resultados_exp]{Anexo~G} se puede consultar la tabla completa de todos los experimentos llevados a cabo junto con los resultados de todas las métricas obtenidas.
 
 En la tabla~\ref{tab:mejores_modelos} se muestran los modelos seleccionados junto con sus respectivas métricas sobre el conjunto de test, así como los valores clave de los hiperparámetros empleados.
 
@@ -318,7 +318,7 @@ Este análisis de fuentes de datos subraya la importancia del diseño experiment
 
 La superioridad generalizada del modelo Trafficformer sobre MLP en las tres fuentes de datos analizadas se explica principalmente por la capacidad de capturar dependencias espaciales y temporales mediante el mecanismo de atención multi-cabezal. Esta capacidad es especialmente valiosa en contextos urbanos complejos (sourceId 5) y en redes de sensores extensas (sourceId 2), donde las relaciones entre los puntos de medida tienen gran relevancia.
 
-La elección de hiperparámetros, como el tamaño del batch, learning rate, número de cabezas de atención, y dimensión de embedding, ha demostrado ser crítica en la optimización de Trafficformer. Los resultados muestran que valores intermedios o altos para \texttt{num\_heads} y \texttt{embedding\_dim} mejoran significativamente el rendimiento, validando lo observado en estudios previos del estado del arte (Chang et al., 2025).
+La elección de hiperparámetros, como el tamaño del batch, learning rate, número de cabezas de atención, y dimensión de embedding, ha demostrado ser crítica en la optimización de Trafficformer. Los resultados muestran que valores intermedios o altos para \texttt{num\_heads} y \texttt{embedding\_dim} mejoran significativamente el rendimiento, validando lo observado en estudios previos del estado del arte \cite{trafficformer}.
 
 Finalmente, el análisis pone de manifiesto que el modelo MLP presenta limitaciones inherentes a su arquitectura más simple, especialmente en contextos con fuertes correlaciones espaciales o temporales. El modelo Trafficformer, al incluir mecanismos avanzados de atención, proporciona mayor robustez y capacidad predictiva, alineándose con las tendencias recientes en la literatura científica sobre modelos Transformer aplicados a predicción del tráfico.
 
@@ -327,7 +327,7 @@ Finalmente, el análisis pone de manifiesto que el modelo MLP presenta limitacio
 
 Además del análisis comparativo entre las arquitecturas y fuentes de datos realizado previamente, se ha llevado a cabo un análisis avanzado, complementario y exhaustivo, con el objetivo de identificar patrones específicos y posibles limitaciones de los modelos entrenados. Este análisis incluye gráficos específicos tales como la representación del error absoluto frente a los valores reales, series temporales comparativas para sensores individuales, mapas de errores y gráficos de distribución del error por sensor.
 
-A continuación, se presentan las conclusiones más relevantes derivadas del análisis avanzado realizado para cada una de las fuentes de datos (\texttt{sourceId}). El detalle completo de las gráficas mencionadas está disponible en el \hyperref[anexo:analisis_avanzado]{Anexo~G}.
+A continuación, se presentan las conclusiones más relevantes derivadas del análisis avanzado realizado para cada una de las fuentes de datos (\texttt{sourceId}). El detalle completo de las gráficas mencionadas está disponible en el \hyperref[anexo:analisis_avanzado]{Anexo~H}.
 
 \paragraph{SourceId 1}
 El análisis avanzado sobre la fuente de datos 1 muestra una adecuada capacidad predictiva global del modelo Trafficformer. El gráfico de dispersión (scatter plot) revela una fuerte correlación entre los valores predichos y los reales, con la mayoría de puntos cercanos a la diagonal. Sin embargo, el histograma de errores refleja la presencia de errores significativos en ciertas predicciones puntuales, lo que sugiere áreas específicas donde el modelo podría mejorar. El mapa de errores confirma visualmente que la mayoría de errores altos se concentran en puntos geográficos específicos (probablemente zonas críticas de tráfico o intersecciones complejas), lo que podría ser causado por factores no capturados completamente por el modelo.
@@ -340,7 +340,7 @@ Finalmente, la fuente de datos 5, que cubre una zona urbana densa (Bilbao), pres
 
 Este análisis avanzado permite concluir que, aunque el modelo Trafficformer muestra en general buenos resultados en todas las fuentes de datos, existe un margen significativo de mejora en escenarios específicos y complejos, tales como intersecciones críticas y áreas urbanas densas. Además, pone de manifiesto la importancia del análisis visual detallado para identificar oportunidades específicas de optimización en futuras iteraciones del modelo.
 
-Las gráficas completas utilizadas para este análisis avanzado se encuentran detalladamente en el \hyperref[anexo:analisis_avanzado]{Anexo~G}.
+Las gráficas completas utilizadas para este análisis avanzado se encuentran detalladamente en el \hyperref[anexo:analisis_avanzado]{Anexo~H}.
 
 
 \subsection{Limitaciones y validez de los experimentos}

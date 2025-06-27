@@ -166,7 +166,7 @@ Esta infraestructura fue diseñada como alternativa escalable, con posibilidad d
 
 \paragraph{Nota sobre seguridad:} toda la configuración se recupera desde un bucket S3 controlado mediante permisos específicos del rol IAM.
 
-Con el objetivo de facilitar futuras ejecuciones en la nube, se ha preparado una plantilla de infraestructura como código utilizando AWS CloudFormation. Esta plantilla automatiza el despliegue de una instancia con GPU, volumen persistente y conexión segura mediante VPN a la base de datos local. Aunque no ha sido necesario su uso durante el desarrollo del presente trabajo, se ha documentado como valor añadido y se incluye en el \hyperref[anexo:plantilla_aws]{Anexo~C}.
+Con el objetivo de facilitar futuras ejecuciones en la nube, se ha preparado una plantilla de infraestructura como código utilizando AWS CloudFormation. Esta plantilla automatiza el despliegue de una instancia con GPU, volumen persistente y conexión segura mediante VPN a la base de datos local. Aunque no ha sido necesario su uso durante el desarrollo del presente trabajo, se ha documentado como valor añadido y se incluye en el \hyperref[anexo:plantilla_aws]{Anexo~D}.
 
 \subsubsection*{Almacenamiento auxiliar con MinIO}
 
@@ -357,7 +357,7 @@ Estos parámetros permiten ajustar la capacidad del modelo a distintos tamaños 
 
 \subsubsection*{Trafficformer}
 
-El modelo \texttt{Trafficformer}, implementado en el fichero \texttt{trafficformer.py} e incluido en el \hyperref[anexo:codigo_trafficformer]{Anexo~D}, representa una evolución arquitectónica de los Transformers tradicionales adaptada al contexto específico de predicción de tráfico multivariable. A diferencia de las redes densas como el MLP, esta arquitectura se construye con el propósito de capturar de forma simultánea dependencias temporales a lo largo de una ventana de observación y relaciones espaciales entre sensores distribuidos por la red viaria.
+El modelo \texttt{Trafficformer}, implementado en el fichero \texttt{trafficformer.py} e incluido en el \hyperref[anexo:codigo_trafficformer]{Anexo~E}, representa una evolución arquitectónica de los Transformers tradicionales adaptada al contexto específico de predicción de tráfico multivariable. A diferencia de las redes densas como el MLP, esta arquitectura se construye con el propósito de capturar de forma simultánea dependencias temporales a lo largo de una ventana de observación y relaciones espaciales entre sensores distribuidos por la red viaria.
 
 Cada entrada al modelo es un tensor de cuatro dimensiones con forma \texttt{[batch, num\_nodes, seq\_len, num\_features]}, donde cada nodo (o sensor) contiene una secuencia temporal de medidas multivariantes. A este tensor se le aplica una codificación posicional sinusoidal, que permite al modelo distinguir la posición relativa de cada instante de tiempo dentro de la secuencia, ya que carece de una estructura recurrente que imponga orden implícito.
 
@@ -496,7 +496,7 @@ A continuación, se detallan las combinaciones de hiperparámetros evaluadas en 
 
 Cada experimento fue registrado y monitorizado utilizando la plataforma \texttt{Weights \& Biases}, lo que permitió realizar un análisis sistemático posterior y facilitar la selección de los mejores modelos por fuente de datos y arquitectura. Para facilitar la reproducibilidad y la trazabilidad de los resultados, todos los notebooks están numerados de forma consistente e incluyen visualizaciones, métricas y configuración exacta de entrenamiento.
 
-En el \hyperref[anexo:combinaciones_exp]{Anexo~E} se pueden consultar las diferentes combinaciones experimentales propuestas.
+En el \hyperref[anexo:combinaciones_exp]{Anexo~F} se pueden consultar las diferentes combinaciones experimentales propuestas.
 
 \subsection{Proceso de entrenamiento y selección de mejores modelos}
 \label{sec:entrenamiento_mej_modelos}
