@@ -42,7 +42,6 @@ La cobertura de los datos obtenidos se representa en la tabla \ref{tab:cobertura
 	\end{tabularx}
 	
 	\vspace{0.5em}
-	\textit{Leyenda:}
 	\begin{itemize}
 		\item \textcolor{mygreen}{\faCheck} Datos existentes y descargados correctamente.
 		\item \textcolor{myred}{\faTimes} No existen datos para ese \texttt{sourceId} en OpenData.
@@ -512,15 +511,3 @@ Para gestionar los experimentos y entrenamientos, se han definido una serie de p
 Estos entrenamientos se ejecutan principalmente en notebooks Jupyter sobre una máquina local equipada con una GPU de alto rendimiento, suficiente para el entrenamiento de redes neuronales profundas. Adicionalmente, se dispone de una infraestructura preparada para realizar entrenamientos de forma escalable en la nube mediante instancias EC2 de Amazon Web Services (AWS) y utilizando imágenes AMI configuradas con soporte Nvidia.
 
 Durante el proceso de entrenamiento y evaluación, se ha utilizado la plataforma Weight \& Biases para realizar un seguimiento detallado de los experimentos, facilitando así la elección y validación de los mejores modelos entre los 120 experimentos realizados (un experimento por cada \texttt{sourceId} y tipo de modelo).
-
-Para resumir y facilitar la comprensión del lector, en la Figura~\ref{fig:pipeline-general} se presenta el diagrama de flujo general.
-
-\begin{figure}[H]
-	\centering
-	\includegraphics[width=0.95\textwidth]{includes/cap4/trafficformer_arch.png}
-	\caption{Diagrama de arquitectura y pipeline general del proyecto.}
-	\label{fig:pipeline-general}
-\end{figure}
-
-Este esquema proporciona una visión clara y sintetizada del flujo de trabajo, facilitando la comprensión y la replicabilidad de las metodologías empleadas a lo largo de todo el proceso de investigación y desarrollo llevado a cabo en este TFM.
-

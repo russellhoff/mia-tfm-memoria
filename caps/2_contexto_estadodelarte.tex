@@ -9,17 +9,16 @@ Este capítulo tiene como objetivo ofrecer un panorama de las principales técni
 
 \subsection{Técnicas existentes para la predicción del tráfico}
 
-La literatura especializada distingue entre dos grandes familias de métodos para la predicción del tráfico: los modelos basados en estadística y los modelos basados en aprendizaje automático, con especial atención a los métodos de aprendizaje profundo. A continuación, se presenta una clasificación preliminar de las principales técnicas utilizadas:
+En la literatura se han desarrollado diversas técnicas para la predicción del tráfico, desde modelos estadísticos clásicos hasta enfoques basados en aprendizaje profundo. Entre las principales categorías se encuentran:
 
 \begin{itemize}
-	\item \textbf{Modelos estadísticos}: \acrlong{arima}, Kalman Filter, regresiones lineales.
-	\item \textbf{Modelos clásicos de machine learning}: \acrlong{svr}, \acrlong{rf}, \acrlong{knn}.
+	\item \textbf{Modelos estadísticos lineales}: como \acrlong{arima}, Kalman Filter o regresiones lineales, empleados tradicionalmente en la predicción de series temporales de tráfico \cite{forecastSarima, forecastArimaLtsm, forecastKalman, liu2020congestion}.
+	\item \textbf{Modelos basados en Support Vector Regression}: \acrlong{svr}, \acrlong{rf}, \acrlong{knn}, que han mostrado eficacia en contextos con datos limitados y estructuras menos complejas \cite{omar2024, forecastRf, forecastKnn}.
 	\item \textbf{Redes neuronales profundas}:
 	\begin{itemize}
-		\item \acrlong{rnn}, \acrlong{lstm} y \acrlong{gru}.
-		\item \acrlong{cnn}, para capturar relaciones espaciales.
-		\item \acrlong{gnn}, incluyendo \acrlong{gcn} y \acrlong{gat}, adaptadas a redes viarias.
-		\item Modelos Transformer.
+		\item \acrlong{rnn}, y variantes como \acrlong{lstm} y \acrlong{gru}, diseñadas para capturar dependencias temporales a corto y largo plazo en series de tráfico \cite{hochreiter1997long, cho2014gru, zhao2017lstm, ma2022cnn_gru}.
+		\item \acrlong{gnn}, incluyendo \acrlong{gcn} y \acrlong{gat} (adaptadas a redes viarias), que permiten modelar explícitamente la topología de la red viaria y las relaciones entre distintos nodos \cite{forecastGgnn, forecastGnn}.
+		\item Modelos basados en transformer, que han demostrado una capacidad sobresaliente para captar dependencias espaciotemporales y superar limitaciones de modelos anteriores \cite{trafficformer, cai2020traffictransformer}.
 	\end{itemize}
 \end{itemize}
 
@@ -71,35 +70,11 @@ Actualmente, el aprendizaje profundo se caracteriza por la capacidad de represen
 
 \subsubsection*{Redes neuronales recurrentes}
 
-Dentro del aprendizaje profundo, una clase especial de redes neuronales, conocidas como \acrfull{rnn}, ha demostrado ser particularmente efectiva para modelar secuencias temporales. Las \acrshort{rnn} están diseñadas para capturar dependencias temporales a largo plazo gracias a su estructura recurrente, que permite que la salida de una etapa de la red influya en etapas posteriores.
-
-Las variantes más importantes y populares de las \acrshort{rnn} son las redes \acrlong{lstm} y \acrlong{gru}. Las \acrshort{lstm} fueron propuestas por \cite{hochreiter1997long}, y están especialmente diseñadas para manejar el problema del desvanecimiento del gradiente mediante el uso de puertas que controlan la información almacenada en la memoria de la red. Por otro lado, las redes \acrshort{gru}, introducidas por \cite{cho2014gru}, simplifican el modelo \acrshort{lstm} al combinar algunas de sus puertas, proporcionando un rendimiento similar con menos parámetros y una complejidad computacional reducida.
-
-Diversos estudios han aplicado exitosamente las redes neuronales recurrentes a problemas específicos de predicción de tráfico, destacando las arquitecturas \acrshort{lstm} y \acrshort{gru}.
-
-Un ejemplo notable es el trabajo realizado por \cite{zhao2017lstm}, en el que utilizaron una red neuronal \acrshort{lstm} para la predicción de flujo de tráfico a corto plazo. En su investigación, entrenaron un modelo con datos históricos de volumen vehicular recolectados en sensores, alcanzando un \acrfull{mre} de tan solo un 6,41\%, demostrando así la efectividad del enfoque \acrshort{lstm} para capturar patrones complejos en series temporales del tráfico.
-
-En cuanto a la aplicación de redes \acrshort{gru}, cabe destacar el estudio llevado a cabo por \cite{ma2022cnn_gru}, quienes diseñaron un algoritmo híbrido basado en la combinación de \acrshort{cnn} y \acrshort{gru} para predecir la velocidad del tráfico. Este modelo obtuvo una media del \acrshort{mape} de aproximadamente 8,60\%, reflejando una considerable precisión en la predicción del flujo vehicular al integrar tanto características espaciales como temporales del tráfico.
-
-Ambos estudios evidencian cómo el uso de redes neuronales recurrentes permite modelar con alta precisión las dependencias temporales complejas inherentes al tráfico vehicular, posicionándolas como una alternativa destacada frente a métodos clásicos o más tradicionales. Estos modelos son especialmente útiles en contextos de predicción a corto plazo, donde la precisión y la velocidad de respuesta son críticas para una gestión eficiente del tráfico y la toma de decisiones en tiempo real.
+Las redes neuronales recurrentes (\acrfull{rnn}) han demostrado gran eficacia en la predicción de series temporales en el ámbito del tráfico, gracias a su capacidad para modelar dependencias a largo plazo mediante estructuras como las \acrshort{lstm} \cite{hochreiter1997long} y las \acrshort{gru} \cite{cho2014gru}. Diversos estudios han validado su aplicabilidad en este campo, destacando resultados como los obtenidos por Zhao et al. con \acrshort{lstm}, logrando un error relativo medio (\acrshort{mre}) del 6,41\% en predicción de flujo de tráfico a corto plazo \cite{zhao2017lstm}, o la propuesta de Ma et al., que combinan \acrshort{cnn} y \acrshort{gru} para alcanzar un \acrshort{mape} del 8,60\% en predicción de velocidad \cite{ma2022cnn_gru}. Estas evidencias posicionan a las \acrshort{rnn} y sus variantes como alternativas robustas frente a métodos tradicionales, especialmente en tareas de predicción a corto plazo.
 
 \subsubsection*{Graph Neural Networks}
 
-Las \acrlong{gnn} surgen de la necesidad de extender las capacidades del aprendizaje profundo a datos no euclidianos, como los grafos, que representan relaciones complejas entre entidades. A diferencia de las redes neuronales tradicionales, que operan sobre datos estructurados en rejillas (como imágenes o secuencias), las \acrshort{gnn} están diseñadas para trabajar directamente con la estructura de los grafos, tal y como se explica por \cite{theoryGnn}, permitiendo capturar dependencias tanto locales como globales entre nodos.
-
-Las GNN se basan en el principio de \textit{message passing}, donde cada nodo actualiza su representación en función de sus vecinos. Entre las arquitecturas más destacadas se encuentran:​
-
-\begin{itemize}
-	\item \textbf{\acrlong{gcn}}: Fueron introducidas en \cite{theoryGcn}. Estas redes generalizan las convoluciones a grafos, permitiendo una agregación eficiente de la información de los vecinos.
-	\item \textbf{\acrlong{gat}}: Incorporan mecanismos de atención (como se verá más adelante) para ponderar la importancia de cada vecino en la actualización del nodo central. Fueron introducidas en \cite{theoryGan}.
-	\item \textbf{\acrlong{ggnn}}: Utilizan mecanismos de puertas, similares a las \acrshort{lstm}, para controlar el flujo de información entre nodos.
-\end{itemize}
-
-La predicción del flujo de tráfico es un desafío clave en los sistemas de transporte inteligentes, donde es esencial anticipar las condiciones del tráfico para optimizar la movilidad urbana. Las \acrshort{gnn} son particularmente adecuadas para esta tarea debido a que las redes de carreteras pueden modelarse naturalmente como grafos, donde los nodos representan intersecciones o sensores, y las aristas representan las conexiones viales.
-
-Un estudio destacado en este ámbito es \textit{Improving Traffic Density Forecasting in Intelligent Transportation Systems Using Gated Graph Neural Networks}, de \cite{forecastGgnn}. En este trabajo, los autores comparan diferentes arquitecturas de \cite{gnn} para la predicción de la densidad del tráfico, incluyendo \acrshort{gcn}, GraphSAGE y \acrshort{ggnn}. Los resultados muestran que las acrshort superan a las demás arquitecturas en términos de precisión, con un RMSE de 9.15 y un MAE de 7.1, destacando su capacidad para capturar dinámicamente las dependencias espaciales y temporales en los datos de tráfico.​
-
-Otro estudio relevante es \textit{TrafficStream: A Streaming Traffic Flow Forecasting Framework Based on Graph Neural Networks and Continual Learning} de \cite{forecastGnn}. Este trabajo propone un marco de predicción de flujo de tráfico en tiempo real que combina \acrshort{gnn} con aprendizaje continuo, permitiendo adaptarse a cambios en la red de tráfico y patrones de flujo a lo largo del tiempo. El modelo utiliza estrategias como la reactivación de datos históricos y el suavizado de parámetros para mantener la precisión de las predicciones en entornos dinámicos.​
+Las \acrlong{gnn} han permitido extender el aprendizaje profundo a datos no euclidianos como los grafos, resultando especialmente adecuadas para modelar redes de carreteras en sistemas inteligentes de transporte \cite{theoryGnn}. Estas arquitecturas, como las Graph Convolutional Networks (\acrshort{gcn}), introducidas en \cite{theoryGcn}, Graph Attention Networks (\acrshort{gat}), introducidas en \cite{theoryGan} y las Gated Graph Neural Networks (\acrshort{ggnn}), destacan por su capacidad para capturar dependencias espaciales y temporales entre nodos e incorporar mecanismos avanzados como la atención o puertas de control. Diversos estudios han demostrado su efectividad en la predicción del flujo y la densidad del tráfico; por ejemplo, el trabajo de \cite{forecastGgnn} evidencia que las \acrshort{ggnn} superan a otras arquitecturas en precisión, mientras que propuestas como TrafficStream \cite{forecastGnn} combinan \acrshort{gnn} con aprendizaje continuo para adaptarse a cambios dinámicos en los patrones de tráfico.
 
 \subsubsection*{Redes Neuronales con Transformers}
 
@@ -115,7 +90,14 @@ El uso de modelos Transformer en el ámbito de los sistemas inteligentes de tran
 
 Un estudio reciente y particularmente relevante para este trabajo es el desarrollado por \cite{trafficformer}, titulado \textit{Transformer-based short-term traffic forecasting model considering traffic spatiotemporal correlation}. En este artículo, los autores presentan \textbf{Trafficformer}, un modelo Transformer adaptado específicamente a la predicción del tráfico a corto plazo, integrando correlaciones espacio-temporales mediante máscaras espaciales y representaciones topológicas de la red viaria.
 
-En cuanto a la arquitectura, el modelo Trafficformer consta de tres módulos fundamentales: 
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.9\textwidth]{includes/fnbot-19-1527908-g001.jpg}
+	\caption{Arquitectura general del modelo Trafficformer \cite{trafficformer}}
+	\label{fig:trafficformer}
+\end{figure}
+
+En cuanto a la arquitectura, el modelo Trafficformer (véase Figura~\ref{fig:trafficformer}) consta de tres módulos fundamentales:
 \begin{itemize}
 	\item[(1)] Extracción de características temporales mediante \acrlong{mlp}. 
 	\item[(2)] Interacción espacial basada en codificadores Transformer con máscaras de atención topológicas. 
@@ -128,7 +110,7 @@ La inclusión de una máscara espacial, que filtra interacciones irrelevantes ba
 
 \vspace{0.5cm}
 
-El trabajo de \cite{trafficformer} demuestra que los modelos basados en Transformers no sólo son competitivos, sino que se posicionan como una opción de referencia para tareas de predicción del tráfico, permitiendo una mejor generalización, mayor interpretabilidad y adaptabilidad frente a cambios dinámicos en la red.
+El trabajo de \cite{trafficformer} demuestra que los modelos basados en transformers no sólo son competitivos, sino que se posicionan como una opción de referencia para tareas de predicción del tráfico, permitiendo una mejor generalización, mayor interpretabilidad y adaptabilidad frente a cambios dinámicos en la red.
 
 Este enfoque supone un salto cualitativo respecto a técnicas previas como \acrshort{lstm}, \acrshort{gru} o incluso \acrshort{gnn}, al combinar lo mejor de los modelos de secuencia (captura temporal) con mecanismos estructurados de atención espacial. Además, su arquitectura modular y altamente paralelizable lo convierte en un candidato ideal para despliegues en entornos cloud, edge o híbridos, como los requeridos en la infraestructura del proyecto que nos ocupa.
 

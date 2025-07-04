@@ -38,7 +38,18 @@ Además, UnfoldAI ofrece un análisis detallado sobre las fortalezas y debilidad
 
 \subsection{Metodología de trabajo}
 
-Para la consecución de los objetivos, tomando como referencia la solución Trafficformer, se ha pensado en estructurar el proyecto de la siguiente manera:
+Para la consecución de los objetivos, tomando como referencia la solución Trafficformer, se ha pensado en estructurar el proyecto siguiendo un flujo de trabajo organizado en varias fases clave.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.95\textwidth]{includes/cap4/trafficformer_arch.png}
+	\caption{Diagrama de arquitectura y pipeline general del proyecto.}
+	\label{fig:pipeline-general}
+\end{figure}
+
+Este esquema proporciona una visión clara y sintetizada del flujo de trabajo, facilitando la comprensión global y la replicabilidad de las metodologías empleadas a lo largo de todo el proceso de investigación y desarrollo llevado a cabo en este TFM.
+
+A continuación, se detallan las principales fases y componentes metodológicos del proyecto:
 
 \begin{itemize}
 	\item Adquisición y preprocesamiento de datos.
@@ -61,13 +72,6 @@ Para la consecución de los objetivos, tomando como referencia la solución Traf
 	\end{itemize}
 \end{itemize}
 
-\begin{figure}[H]
-	\centering
-	\includegraphics[width=0.9\textwidth]{includes/fnbot-19-1527908-g001.jpg}
-	\caption{Arquitectura general del modelo Trafficformer \cite{trafficformer}}
-	\label{fig:trafficformer}
-\end{figure}
-
 Como consecuencia, se prevé llevar a cabo las siguientes tareas.
 
 \begin{itemize}
@@ -77,3 +81,98 @@ Como consecuencia, se prevé llevar a cabo las siguientes tareas.
 	\item Evaluación comparativa. Evaluación de los modelos con un conjunto de métricas estándar (\acrshort{mae}, \acrshort{rmse}, \acrshort{mape}). Comparativa entre modelos para seleccionar el más adecuado para el caso de uso.
 	\item Validación y conclusiones. Validación en escenarios reales y extracción de conclusiones sobre la utilidad del modelo. Estudio de la viabilidad de su aplicación en entornos reales, como el soporte a \acrshort{its} o planificación urbana.
 \end{itemize}
+
+\subsection{Fundamentos matemáticos del modelo Trafficformer}
+
+Para aportar una visión rigurosa y formal del modelo propuesto, a continuación se detalla la formulación matemática de Trafficformer, describiendo sus componentes principales y la notación empleada a lo largo de este trabajo.
+
+\subsubsection*{Componentes principales}
+
+\paragraph{1. Traffic Input.}  
+El punto de partida del modelo es una matriz histórica de aforos:
+
+\[
+S_t^{I}\in\mathbb{R}^{N\times I},
+\]
+
+donde $N$ representa la longitud de la ventana temporal (número de pasos de tiempo considerados) e $I$ es el número de nodos o sensores de la red. Para cada nodo $i$, se recoge una secuencia temporal de sus últimas $N$ mediciones de aforos, lo que puede visualizarse como un tensor tiempo × nodo.
+
+El modelo también emplea una máscara espacial, construida a partir de la distancia física y las relaciones topológicas entre nodos:
+
+\[
+M^{P}\in\mathbb{R}^{I\times I}.
+\]
+
+Se trata de una matriz binaria que determina qué pares de nodos pueden influirse mutuamente, filtrando las interacciones irrelevantes (por ejemplo, nodos distantes o no conectados directamente en la red viaria).
+
+\paragraph{2. Temporal Feature Extractor}  
+
+Cada columna de $S_t^{I}$, correspondiente a la serie temporal de un nodo, se procesa mediante un \emph{Multi-Layer Perceptron} (MLP) compartido. El resultado es una matriz de embeddings temporales por nodo:
+
+\[
+S_t^{C1}\in\mathbb{R}^{I\times d_t}.
+\]
+
+\paragraph{3. Traffic Node Feature Interaction}  
+
+Las representaciones temporales se combinan a través de un mecanismo de \emph{Multi-head Self-Attention}, donde la máscara $M^{P}$ restringe la atención a los nodos vialmente conectados. La estructura sigue el esquema Transformer estándar: atención $\rightarrow$ \textsc{Add \& Norm} $\rightarrow$ Feed-Forward $\rightarrow$ \textsc{Add \& Norm}. El resultado es un embedding espaciotemporal enriquecido:
+
+\[
+Z_t\in\mathbb{R}^{I\times d_s}.
+\]
+
+\paragraph{4. Traffic Capacity Forecasting}  
+
+Finalmente, un segundo MLP por nodo transforma $Z_t$ en las predicciones para los siguientes $H$ pasos temporales:
+
+\[
+\hat{V}_{t+1:t+H}\in\mathbb{R}^{I\times H},
+\]
+
+donde $H$ es el horizonte de predicción.
+
+
+\subsubsection*{Resumen y puntos clave}
+
+La Figura~\ref{fig:trafficformer} muestra el flujo de información entre los diferentes módulos del modelo. A continuación, se sintetiza en una sola expresión el pipeline completo:
+
+\[
+S_t^{I}\;
+\xrightarrow[\text{MLP}]{\text{Temporal}}\;
+S_t^{C1}\;
+\xrightarrow[\;M^{P}\;]{\text{Self-Attention}}\;
+Z_t\;
+\xrightarrow[\text{MLP}]{\text{Regresión}}\;
+\hat{V}_{t+1:t+H}
+\]
+
+Para mayor claridad, en la Tabla~\ref{tab:simbolos-trafficformer} se resume la notación empleada en esta sección.
+
+\begin{table}[h]
+	\centering
+	\caption{Notación de los principales símbolos utilizados en la formulación de Trafficformer.}
+	\label{tab:simbolos-trafficformer}
+	\begin{tabular}{@{}>{$}c<{$}p{10cm}@{}}
+		\toprule
+		\textbf{Símbolo} & \textbf{Descripción} \\ \midrule
+		N & Longitud de la ventana histórica (nº de pasos de tiempo) \\[2pt]
+		I & Número total de nodos/sensores en la red \\[2pt]
+		S_t^{I} & Matriz de características históricas de tamaño $N\times I$ \\[2pt]
+		M^{P} & Máscara espacial ($I\times I$) que pondera la atención entre nodos \\[2pt]
+		S_t^{C1} & Embedding temporal por nodo ($I\times d_t$) \\[2pt]
+		Z_t & Embedding espaciotemporal final ($I\times d_s$) \\[2pt]
+		\hat{V}_{t+1:t+H} & Aforos predichos para los próximos $H$ pasos \\ \bottomrule
+	\end{tabular}
+\end{table}
+
+Por último, se destacan a continuación varios aspectos clave del diseño de Trafficformer que justifican su elección y eficacia para la predicción de tráfico:
+
+\begin{itemize}
+	\item El modelo \emph{desacopla} el aprendizaje temporal del aprendizaje espacial.
+	\item La máscara $M^{P}$ introduce conocimiento a priori de la topología vial, lo que acelera la convergencia y mejora la interpretabilidad.
+	\item Los MLP son ligeros y comparten pesos entre nodos, reduciendo la complejidad frente a arquitecturas basadas en LSTM o CNN.
+\end{itemize}
+
+\vspace{0.5cm}
+
+Esta formulación matemática resume de forma rigurosa el funcionamiento interno de Trafficformer y proporciona la base conceptual sobre la que se desarrolla y adapta el modelo en el presente trabajo.

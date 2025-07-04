@@ -1,0 +1,121 @@
+\documentclass[11pt,a4paper]{article}
+
+% ---------- Paquetes útiles ----------
+\usepackage[utf8]{inputenc}      % Para acentos directos
+\usepackage[T1]{fontenc}
+\usepackage[spanish]{babel}
+\usepackage{amsmath,amssymb}
+\usepackage{array}               % Columnas tipo p{..}
+\usepackage{booktabs}            % Líneas bonitas en tablas
+\usepackage{geometry}            % Márgenes cómodos
+\geometry{margin=2.5cm}
+
+% ---------- Comienza el documento ----------
+\begin{document}
+	
+	\title{Descripción de la Arquitectura \emph{Trafficformer}}
+	\author{}
+	\date{}
+	\maketitle
+	
+	%-------------------------------------------------
+	\section*{Componentes principales}
+	%-------------------------------------------------
+	
+	\begin{enumerate}
+		\item \textbf{Traffic Input}
+		\begin{itemize}
+			\item Histórico de velocidades:
+			\[
+			S_t^{I}\in\mathbb{R}^{N\times I},
+			\]
+			donde $N$ es el número de pasos de tiempo y $I$ el número de nodos.
+			\item 
+			\item para cada uno de los $I$ nodos/sensores ponemos sus últimas $N$ mediciones de velocidad (u otra variable). Piensa en un cubo de datos tiempo × nodo. 
+			\item 
+			\item Máscara espacial basada en distancia y velocidad libre:
+			\[
+			M^{P}\in\mathbb{R}^{I\times I}.
+			\]
+		\end{itemize}
+		Matriz binaria o continua que codifica qué pares de nodos pueden influirse. Se calcula con la distancia física y la velocidad de flujo libre (si dos nodos están muy lejos o no comparten vía, la máscara ≈ 0). 
+		
+		\item \textbf{Temporal Feature Extractor}
+		\begin{itemize}
+			\item Cada secuencia temporal (una columna de $S_t^{I}$) pasa por un mismo
+			\emph{Multi-Layer Perceptron} (MLP).
+			\item Salida (embedding temporal por nodo):
+			\[
+			S_t^{C1}\in\mathbb{R}^{I\times d_t}.
+			\]
+		\end{itemize}
+		
+		\item \textbf{Traffic Node Feature Interaction}
+		\begin{itemize}
+			\item \emph{Multi-head Self-Attention} con la máscara $M^{P}$ para limitar la
+			atención a nodos vialmente conectados.
+			\item Estructura estándar \textsc{Add\,&\,Norm} $\rightarrow$ Feed-Forward
+			$\rightarrow$ \textsc{Add\,&\,Norm}.
+			\item Salida (embedding espaciotemporal):
+			\[
+			Z_t\in\mathbb{R}^{I\times d_s}.
+			\]
+		\end{itemize}
+		
+		\item \textbf{Speed Forecasting}
+		\begin{itemize}
+			\item Un segundo MLP por nodo transforma $Z_t$ en las predicciones:
+			\[
+			\hat{V}_{t+1:t+H}\in\mathbb{R}^{I\times H},
+			\]
+			donde $H$ es el horizonte de predicción (número de pasos futuros).
+		\end{itemize}
+	\end{enumerate}
+	
+	%-------------------------------------------------
+	\section*{Flujo de datos resumido}
+	%-------------------------------------------------
+	
+	\[
+	S_t^{I}\;
+	\xrightarrow[\text{MLP}]{\text{Temporal}}\;
+	S_t^{C1}\;
+	\xrightarrow[\;M^{P}\;]{\text{Self-Attention}}\;
+	Z_t\;
+	\xrightarrow[\text{MLP}]{\text{Regresión}}\;
+	\hat{V}_{t+1:t+H}
+	\]
+	
+	%-------------------------------------------------
+	\section*{Tabla de símbolos}
+	%-------------------------------------------------
+	
+	\begin{table}[h]
+		\centering
+		\begin{tabular}{@{}>{$}c<{$}p{10cm}@{}}
+			\toprule
+			\textbf{Símbolo} & \textbf{Descripción} \\ \midrule
+			N & Longitud de la ventana histórica (nº de pasos de tiempo) \\[2pt]
+			I & Número total de nodos/sensores en la red \\[2pt]
+			S_t^{I} & Matriz de características históricas de tamaño $N\times I$ \\[2pt]
+			M^{P} & Máscara espacial ($I\times I$) que pondera la atención entre nodos \\[2pt]
+			S_t^{C1} & Embedding temporal por nodo ($I\times d_t$) \\[2pt]
+			Z_t & Embedding espaciotemporal final ($I\times d_s$) \\[2pt]
+			\hat{V}_{t+1:t+H} & Velocidades predichas para los próximos $H$ pasos \\ \bottomrule
+		\end{tabular}
+	\end{table}
+	
+	%-------------------------------------------------
+	\section*{Puntos clave}
+	%-------------------------------------------------
+	
+	\begin{itemize}
+		\item El modelo \emph{desacopla} el aprendizaje temporal (MLP verde)
+		del aprendizaje espacial (auto-atención azul).
+		\item La máscara $M^{P}$ introduce conocimiento a priori de la topología vial,
+		lo que acelera la convergencia y mejora la interpretabilidad.
+		\item Los MLP son ligeros y comparten pesos entre nodos, reduciendo la
+		complejidad frente a arquitecturas basadas en LSTM o CNN.
+	\end{itemize}
+	
+\end{document}
