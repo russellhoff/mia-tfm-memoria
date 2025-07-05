@@ -49,7 +49,34 @@ La cobertura de los datos obtenidos se representa en la tabla \ref{tab:cobertura
 	\end{itemize}
 \end{table}
 
-El caso de uso actual trata de cubrir la provincia de Bizkaia, por lo que únicamente van a ser necesarias las fuentes de datos con identificadores sourceId 1, 2 y 5.
+El presente caso de uso se circunscribe a la provincia de Bizkaia, por lo que únicamente se emplean las fuentes de datos identificadas con los códigos sourceId 1, 2 y 5. La fuente proporcionada por la Dirección de Tráfico del Gobierno Vasco abarca principalmente la red viaria principal de la Comunidad Autónoma del País Vasco (CAPV), incluyendo carreteras de alta capacidad. Por su parte, la base de datos de la Diputación Foral de Bizkaia recoge aforos situados, en su mayoría, en carreteras secundarias y forales. Finalmente, la fuente de datos del Ayuntamiento de Bilbao representa el entorno urbano, al contar con sensores ubicados en intersecciones y vías principales de la ciudad.
+
+La Figura~\ref{fig:sourceid1_map} muestra la ubicación de los sensores de la fuente \texttt{source\_id = 1} (Gobierno Vasco). En muchos de estos puntos existen múltiples medidores, ya que se instala un sensor por carril en el mismo emplazamiento físico.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.85\textwidth]{includes/cap5/source_id_1_meters.png}
+	\caption{Ubicación de aforos de la fuente Gobierno Vasco (source\_id = 1)}
+	\label{fig:sourceid1_map}
+\end{figure}
+
+La Figura~\ref{fig:sourceid2_map} recoge la distribución de medidores correspondiente a la fuente \texttt{source\_id = 2} (Diputación Foral de Bizkaia). Esta fuente dispone de una extensa red de sensores desplegada a lo largo de la provincia, lo que proporciona una cobertura muy amplia y variada a nivel geográfico y funcional.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.85\textwidth]{includes/cap5/source_id_2_meters.png}
+	\caption{Ubicación de aforos de la fuente Diputación Foral de Bizkaia (source\_id = 2)}
+	\label{fig:sourceid2_map}
+\end{figure}
+
+Finalmente, la Figura~\ref{fig:sourceid5_map} representa los sensores aportados por el \texttt{source\_id = 5} (Ayuntamiento de Bilbao), con presencia en los principales ejes viarios de la ciudad. Se conoce que existen más medidores instalados, pero el consistorio no ha habilitado su acceso público o no los tiene en funcionamiento, por razones que se desconocen.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.85\textwidth]{includes/cap5/source_id_5_meters.png}
+	\caption{Ubicación de aforos de la fuente Ayuntamiento de Bilbao (source\_id = 5)}
+	\label{fig:sourceid5_map}
+\end{figure}
 
 Las incidencias se obtuvieron completamente para todos los sourceId.
 
@@ -62,7 +89,7 @@ En cuanto a la obtención de los datos meteorológicos, si bien es cierto que ex
 	\label{fig:euskalmet_api_error}
 \end{figure}
 
-Por ello, no se tenía la certeza de si se iban a obtener datos correctos, por lo que se pensó en maneras alternativas de obtener los propios datos. Así, en esa búsqueda de caminos se encontró, dentro del mismo portal de Open Data del Gobierno Vasco, las lecturas recogidas por las estaciones meteorológicas del año 2024 de forma bruta en formato XML, accesible a continuación \cite{xmlMeteo2024}. 
+Ante la incertidumbre sobre la calidad y disponibilidad de los datos inicialmente previstos, se exploraron alternativas para la obtención de información relevante. En este proceso, se identificó dentro del propio portal de Open Data del Gobierno Vasco un recurso adicional: las lecturas brutas recogidas por las estaciones meteorológicas correspondientes al año 2024, disponibles en formato XML y accesibles públicamente \cite{xmlMeteo2024}.
 
 \subsubsection*{Modelo de datos almacenado}
 
@@ -77,7 +104,7 @@ Una vez explicadas las fuentes de datos, se podría comenzar a explicar cómo se
 
 A continuación, se describen las entidades persistidas en base de datos, divididas por paquetes funcionales según su origen y propósito dentro del sistema: tráfico, meteorología y dataset resultante. Los datos de incidencias se incluyen dentro del paquete de tráfico, puesto que así viene encasillado en el API consultado. Cada clase representa un documento en la base de datos MongoDB, adaptado a una estructura flexible y orientada a documentos.
 
-\paragraph{Flow}
+\paragraph*{Flow}
 Representa una medición de flujo de tráfico captada por un aforador en una fecha y hora determinadas. Entre sus atributos destacan:
 \begin{itemize}
 	\item \texttt{id}: identificador único del registro.
@@ -89,7 +116,7 @@ Representa una medición de flujo de tráfico captada por un aforador en una fec
 	\item \texttt{lengthIntervals} y \texttt{speedIntervals}: listas de intervalos por longitudes y velocidades, útiles para análisis más detallados. No se usa en este caso de uso.
 \end{itemize}
 
-\paragraph{Meter}
+\paragraph*{Meter}
 Contiene la información estática de los aforadores:
 \begin{itemize}
 	\item \texttt{meterId}, \texttt{sourceId}: identificadores del aforador y de la fuente de datos.
@@ -97,7 +124,7 @@ Contiene la información estática de los aforadores:
 	\item \texttt{postalCode}, \texttt{provinceId}, \texttt{municipalityId}: metadatos administrativos.
 \end{itemize}
 
-\paragraph{Incidence}
+\paragraph*{Incidence}
 Recoge información sobre incidencias viales que pueden afectar al tráfico:
 \begin{itemize}
 	\item \texttt{incidenceId}, \texttt{sourceId}: identificadores del evento y de la fuente de datos.
@@ -108,11 +135,11 @@ Recoge información sobre incidencias viales que pueden afectar al tráfico:
 	\item \texttt{point}: ubicación geoespacial (tipo GeoJSON). Útil para realizar búsquedas por cercanía.
 \end{itemize}
 
-\paragraph{Source}
+\paragraph*{Source}
 Representa los orígenes oficiales de datos, como el Gobierno Vasco o ayuntamientos. Sus campos identifican la organización y su descripción.
 
 \vspace{1em}
-\paragraph{Reading}
+\paragraph*{Reading}
 Es la clase principal para representar una lectura meteorológica horaria del API. Sin embargo, no se ha usado esta entidad para construir el dataset.
 \begin{itemize}
 	\item \texttt{oid}: identificador de la lectura.
@@ -124,7 +151,7 @@ Es la clase principal para representar una lectura meteorológica horaria del AP
 	\item \texttt{slots}, \texttt{values}: forma en la que tiene el API de almacenar las mediciones. Cada elemento del slot se corresponde a un elemento de values, en la misma posición, indicando lo que se mide y su valor.
 \end{itemize}
 
-\paragraph{ReadingXml}
+\paragraph*{ReadingXml}
 Clase específica para lecturas meteorológicas históricas extraídas desde ficheros XML. A diferencia de \texttt{Reading}, puede contener estructuras agrupadas por múltiples sensores. Es la clase definitiva empleada para construir el dataset.
 \begin{itemize}
 	\item \texttt{id}: identificador de la lectura.
@@ -134,7 +161,7 @@ Clase específica para lecturas meteorológicas históricas extraídas desde fic
 	\item \texttt{valueBySensor}: forma en la que se almacenan las mediciones. El elemento clave identifica el tipo de medición y el valor indica el valor propio de la medición.
 \end{itemize}
 
-\paragraph{Station}
+\paragraph*{Station}
 Define las estaciones meteorológicas que proporcionan las lecturas:
 \begin{itemize}
 	\item \texttt{stationId}: identificador único de la estación de medición.
@@ -143,7 +170,7 @@ Define las estaciones meteorológicas que proporcionan las lecturas:
 	\item \texttt{sensors}: lista de sensores instalados.
 \end{itemize}
 
-\paragraph{StationSensor}
+\paragraph*{StationSensor}
 Define la configuración física de un sensor en una estación:
 \begin{itemize}
 	\item \texttt{sensorId}, \texttt{sensorKey}: clave de sensor y código técnico.
@@ -151,7 +178,7 @@ Define la configuración física de un sensor en una estación:
 \end{itemize}
 
 \vspace{1em}
-\paragraph{MobilitySnapshot}
+\paragraph*{MobilitySnapshot}
 Es la entidad clave que representa un punto de datos enriquecido para el modelo predictivo. Cada snapshot incluye:
 \begin{itemize}
 	\item \texttt{id}: identificador único del dato.

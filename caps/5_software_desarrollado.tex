@@ -14,44 +14,6 @@ El presente capítulo recoge el desarrollo experimental llevado a cabo para vali
 
 Para ello, se ha diseñado una estrategia de evaluación comparativa entre modelos, aplicándolos sobre tres fuentes de datos independientes que recogen información de tráfico rodado en la provincia de Bizkaia. Cada fuente representa una infraestructura y cobertura distintas, lo que permite evaluar el comportamiento de los modelos bajo distintos escenarios y estructuras de datos.
 
-\subsubsection*{Fuentes de datos}
-Las fuentes de datos empleadas se almacenan en la base de datos \texttt{mobility\_db} de MongoDB, en la colección \texttt{mobility\_snapshots}. Cada snapshot representa una observación de múltiples medidores de tráfico en una marca temporal concreta. Las fuentes son las siguientes:
-
-\begin{itemize}
-	\item \textbf{source\_id = 1}: Datos de la Dirección de Tráfico del Gobierno Vasco. Esta fuente ofrece una cobertura amplia a lo largo de la red viaria principal de la CAPV, incluyendo carreteras de alta capacidad.
-	\item \textbf{source\_id = 2}: Datos de la Diputación Foral de Bizkaia. Se trata de aforos situados principalmente en carreteras secundarias y forales.
-	\item \textbf{source\_id = 5}: Datos del Ayuntamiento de Bilbao. Esta fuente representa el entorno urbano por excelencia, con sensores instalados en intersecciones y calles principales de la ciudad.
-\end{itemize}
-
-La estructura de los datos ha sido estandarizada previamente a través de un pipeline de construcción de dataset explicado en capítulos anteriores. En todos los casos, los datos incluyen no solo los conteos de vehículos sino también información meteorológica, atributos temporales (hora, día de la semana, etc.), y metadatos geográficos y semánticos de los sensores.
-
-La Figura~\ref{fig:sourceid1_map} muestra la ubicación de los sensores de la fuente \texttt{source\_id = 1} (Gobierno Vasco). En muchos de estos puntos existen múltiples medidores, ya que se instala un sensor por carril en el mismo emplazamiento físico.
-
-\begin{figure}[H]
-	\centering
-	\includegraphics[width=0.85\textwidth]{includes/cap5/source_id_1_meters.png}
-	\caption{Ubicación de aforos de la fuente Gobierno Vasco (source\_id = 1)}
-	\label{fig:sourceid1_map}
-\end{figure}
-
-La Figura~\ref{fig:sourceid2_map} recoge la distribución de medidores correspondiente a la fuente \texttt{source\_id = 2} (Diputación Foral de Bizkaia). Esta fuente dispone de una extensa red de sensores desplegada a lo largo de la provincia, lo que proporciona una cobertura muy amplia y variada a nivel geográfico y funcional.
-
-\begin{figure}[H]
-	\centering
-	\includegraphics[width=0.85\textwidth]{includes/cap5/source_id_2_meters.png}
-	\caption{Ubicación de aforos de la fuente Diputación Foral de Bizkaia (source\_id = 2)}
-	\label{fig:sourceid2_map}
-\end{figure}
-
-Finalmente, la Figura~\ref{fig:sourceid5_map} representa los sensores aportados por el \texttt{source\_id = 5} (Ayuntamiento de Bilbao), con presencia en los principales ejes viarios de la ciudad. Se conoce que existen más medidores instalados, pero el consistorio no ha habilitado su acceso público o no los tiene en funcionamiento, por razones que se desconocen.
-
-\begin{figure}[H]
-	\centering
-	\includegraphics[width=0.85\textwidth]{includes/cap5/source_id_5_meters.png}
-	\caption{Ubicación de aforos de la fuente Ayuntamiento de Bilbao (source\_id = 5)}
-	\label{fig:sourceid5_map}
-\end{figure}
-
 \subsubsection*{Hipótesis y objetivos del experimento}
 
 El objetivo del experimento es doble:
@@ -106,14 +68,32 @@ Este apartado describe el conjunto de herramientas, tecnologías y decisiones qu
 
 La experimentación ha sido desarrollada en un proyecto Python estructurado bajo el paquete \texttt{trafficformer-bizkaia}, gestionado mediante el gestor de dependencias \texttt{uv}. Este gestor ha demostrado ser una alternativa eficiente y moderna a sistemas tradicionales como \texttt{pip} o \texttt{poetry}, permitiendo la instalación aislada de entornos y una resolución rápida de paquetes.
 
-El conjunto de dependencias se encuentra especificado en el fichero \texttt{pyproject.toml} de la Figura~\ref{fig:capt_pyproject}, y abarca bibliotecas clave para aprendizaje profundo (\texttt{torch}, \texttt{torchvision}), procesamiento de datos (\texttt{numpy}, \texttt{pandas}), manipulación geoespacial (\texttt{osmnx}, \texttt{pyrosm}) y conexión con bases de datos NoSQL (\texttt{pymongo}).
+El conjunto de dependencias empleadas en el desarrollo del proyecto se encuentra detallado en el archivo \texttt{pyproject.toml}. A continuación, se enumeran las principales librerías utilizadas, acompañadas de una breve descripción de su función dentro del flujo de trabajo:
 
-\begin{figure}[H]
-	\centering
-	\includegraphics[width=0.85\textwidth]{includes/cap5/captura_pyproject_toml.png}
-	\caption{Captura del fichero pyproject.toml}
-	\label{fig:capt_pyproject}
-\end{figure}
+\begin{itemize}
+	\item \textbf{numpy} y \textbf{pandas}: Bibliotecas fundamentales para la manipulación y análisis eficiente de datos numéricos y estructurados en Python. Permiten operaciones vectorizadas, gestión de grandes volúmenes de datos y transformaciones avanzadas, esenciales en el preprocesamiento y análisis exploratorio.
+	
+	\item \textbf{scikit-learn}: Conjunto de herramientas de aprendizaje automático clásico, utilizado para la normalización de datos, particionado de conjuntos y evaluación mediante métricas estándar, así como para el desarrollo y comparación de modelos base.
+	
+	\item \textbf{torch}, \textbf{torchvision} y \textbf{torchaudio}: Paquete principal de PyTorch, framework de referencia para el desarrollo y entrenamiento de modelos de deep learning. Permiten la implementación eficiente de arquitecturas neuronales avanzadas, como Transformers, así como la integración con módulos especializados para visión y audio.
+	
+	\item \textbf{wandb}: Plataforma para el seguimiento, registro y visualización de experimentos de aprendizaje automático, facilitando la comparación reproducible de resultados y el ajuste de hiperparámetros.
+	
+	\item \textbf{matplotlib} y \textbf{seaborn}: Herramientas de visualización de datos que permiten generar gráficos y representaciones visuales de resultados, métricas de entrenamiento y análisis exploratorio.
+	
+	\item \textbf{pymongo}: Cliente de Python para la base de datos MongoDB, utilizado para la gestión y consulta eficiente de grandes volúmenes de datos históricos de tráfico y meteorología.
+	
+	\item \textbf{geopy} y \textbf{folium}: Librerías para el procesamiento y visualización de datos geoespaciales. Permiten la geolocalización, el cálculo de distancias y la creación de mapas interactivos con información relevante sobre la red viaria.
+	
+	\item \textbf{onnx}, \textbf{onnxscript} y \textbf{onnxruntime}: Conjunto de herramientas para la exportación y ejecución de modelos en formato ONNX, facilitando la interoperabilidad y el despliegue de modelos en entornos heterogéneos o en producción.
+	
+	\item \textbf{osmnx}: Biblioteca para la descarga y análisis de datos de redes viarias desde OpenStreetMap, utilizada para la construcción de grafos topológicos que representan la infraestructura de carreteras de Bizkaia.
+	
+	\item \textbf{tabulate}: Herramienta auxiliar para la generación de tablas en formato texto, útil para la presentación estructurada de resultados y métricas.
+	
+	\item \textbf{python-dotenv}: Permite la gestión de variables de entorno y configuración sensible, facilitando la portabilidad y seguridad del entorno de experimentación.
+	
+\end{itemize}
 
 \subsubsection*{Monitorización y trazabilidad experimental con W\textsc{and}B}
 
@@ -164,7 +144,9 @@ Mediante una plantilla en \texttt{CloudFormation} (fichero \texttt{template.yaml
 
 Esta infraestructura fue diseñada como alternativa escalable, con posibilidad de ser reutilizada en el futuro para entrenamientos de mayor duración o mayor carga de memoria.
 
-\paragraph{Nota sobre seguridad:} toda la configuración se recupera desde un bucket S3 controlado mediante permisos específicos del rol IAM.
+\paragraph*{Nota sobre seguridad} 
+
+Toda la configuración se recupera desde un bucket S3 controlado mediante permisos específicos del rol IAM.
 
 Con el objetivo de facilitar futuras ejecuciones en la nube, se ha preparado una plantilla de infraestructura como código utilizando AWS CloudFormation. Esta plantilla automatiza el despliegue de una instancia con GPU, volumen persistente y conexión segura mediante VPN a la base de datos local. Aunque no ha sido necesario su uso durante el desarrollo del presente trabajo, se ha documentado como valor añadido y se incluye en el \hyperref[anexo:plantilla_aws]{Anexo~D}.
 
@@ -444,7 +426,7 @@ Esta flexibilidad, unida a su capacidad para integrar estructura espacial, convi
 \subsection{Diseño experimental y combinaciones}
 \label{sec:diseño_exp_combinaciones}
 
-Para evaluar de forma rigurosa el rendimiento de las distintas arquitecturas propuestas, se ha diseñado un conjunto exhaustivo de experimentos que cubre diversas combinaciones de modelos, hiperparámetros y fuentes de datos. El total de combinaciones generadas asciende a \textbf{120 experimentos}, cada uno de los cuales ha sido ejecutado de forma independiente y almacenado como notebook reproducible.
+Para evaluar de forma rigurosa el rendimiento de las distintas arquitecturas propuestas, se ha diseñado un conjunto exhaustivo de experimentos que cubre diversas combinaciones de modelos, hiperparámetros y fuentes de datos. En concreto, el total de combinaciones generadas asciende a \textbf{120 experimentos}, resultado de combinar las 3 fuentes de datos preparadas (Gobierno Vasco, Diputación Foral de Bizkaia y Ayuntamiento de Bilbao), 2 arquitecturas principales (MLP y Trafficformer), y 20 configuraciones distintas de hiperparámetros. Cada uno de estos experimentos ha sido ejecutado de forma independiente y almacenado como notebook reproducible.
 
 El diseño factorial considera dos modelos principales: \texttt{MLP} como base lineal y \texttt{Trafficformer} como modelo avanzado con atención espacial. A su vez, se han evaluado estas arquitecturas sobre tres conjuntos de datos procedentes de distintas fuentes institucionales, representadas por los identificadores \texttt{source\_id = 1, 2, 5}.
 
@@ -509,19 +491,19 @@ En el \hyperref[anexo:combinaciones_exp]{Anexo~F} se pueden consultar las difere
 
 El proceso de entrenamiento de los modelos se ha realizado bajo un entorno controlado y reproducible, siguiendo las mejores prácticas en experimentación con redes neuronales. Para ello, se han desarrollado cuadernos Jupyter donde se define de manera explícita cada paso del ciclo experimental: carga de datos, configuración del entorno, definición del modelo, entrenamiento, evaluación y registro de resultados.
 
-\paragraph{Configuración y reproducibilidad.}  
+\subsubsection*{Configuración y reproducibilidad}  
 El entorno de trabajo se inicializa con la carga de variables de entorno desde ficheros \texttt{.env}, estableciendo parámetros como la conexión a la base de datos MongoDB, claves de autenticación para \textit{Weights \& Biases} (Wandb), y valores por defecto de hiperparámetros como \texttt{batch size}, \texttt{learning rate}, \texttt{dropout} o \texttt{hidden dimensions}. Se fija una semilla aleatoria global para asegurar la reproducibilidad entre ejecuciones, controlando el estado de generación de números aleatorios tanto de \texttt{NumPy}, \texttt{Python} como de \texttt{PyTorch} (CPU y GPU).
 
-\paragraph{Carga del dataset y preparación.}  
+\subsubsection*{Carga del dataset y preparación}  
 Se emplea una clase personalizada \texttt{TrafficDataset}, diseñada para conectarse directamente a la base de datos y construir un conjunto de muestras a partir de una ventana temporal configurable (\texttt{SEQ\_LEN}). El conjunto de datos incluye tanto variables numéricas escaladas (\texttt{StandardScaler}), como categóricas codificadas (\texttt{OneHotEncoder}) y booleanas convertidas a \texttt{float} con valores binarios. Las variables faltantes se imputan de forma segura mediante media (\texttt{mean}) para variables continuas y con cero para booleanos. La división de datos se realiza de forma estratificada y reproducible en tres subconjuntos: entrenamiento (70\%), validación (20\%) y test (10\%).
 
-\paragraph{Máscara espacial y visualización.}  
+\subsubsection*{Máscara espacial y visualización}  
 Para los modelos tipo Transformer, se genera una máscara espacial binaria que codifica qué sensores de tráfico pueden atenderse entre sí, basada en criterios geográficos extraídos desde OpenStreetMap (vía GraphML). Esta máscara se emplea durante el mecanismo de atención multi-cabezal. Se valida la consistencia entre los sensores del dataset y la máscara, y se genera una visualización interactiva de la red de sensores y sus enlaces espaciales, posteriormente registrada como artefacto en Wandb.
 
-\paragraph{Inicialización del modelo y optimización.}  
+\subsubsection*{Inicialización del modelo y optimización}  
 El modelo se instancia según el tipo elegido (\texttt{TrafficMLPEnhanced} o \texttt{Trafficformer}), utilizando parámetros definidos al inicio del experimento. El criterio de pérdida utilizado es el error cuadrático medio (\texttt{MSELoss}), y el optimizador elegido es \texttt{AdamW}, con tasa de aprendizaje inicial y \texttt{weight decay} ajustables. El modelo y el criterio son registrados en Wandb, junto con los hiperparámetros y la configuración del experimento.
 
-\paragraph{Entrenamiento supervisado y \textit{early stopping}.}  
+\subsubsection*{Entrenamiento supervisado y \textit{early stopping}}  
 El bucle de entrenamiento se ejecuta durante un máximo de 100--120 épocas, con activación de un mecanismo de \textit{early stopping} basado en la pérdida de validación con una paciencia de 10 épocas. Por cada época, se computan las métricas \texttt{MSE}, \texttt{MAE}, \texttt{RMSE}, \texttt{MAPE} y \texttt{R\textsuperscript{2}} para los tres subconjuntos (train, val, test). Además, se monitoriza el uso de memoria RAM y GPU, el tiempo de inferencia por muestra y la duración total por época.
 
 En cada iteración se guardan:
@@ -532,8 +514,8 @@ En cada iteración se guardan:
 	\item El mejor modelo según pérdida de validación.
 \end{itemize}
 
-\paragraph{Evaluación y seguimiento.}  
-Al finalizar el entrenamiento, se guarda el modelo final, se registra el tiempo total del proceso y se finaliza la sesión de Wandb. Además, se generan gráficas para cada métrica de evaluación, comparando la evolución entre entrenamiento y validación. La mejor época (mínima pérdida de validación) se resalta en cada gráfica. Estas curvas permiten detectar patrones de sobreentrenamiento, estancamiento o mejoras progresivas en el aprendizaje.
+\subsubsection*{Evaluación y seguimiento}  
+Al finalizar el entrenamiento, se guarda el modelo final, se registra el tiempo total del proceso y se finaliza la sesión de WandB. Además, se generan gráficas para cada métrica de evaluación, comparando la evolución entre entrenamiento y validación. La mejor época se corresponde con la mínima pérdida de validación y se resalta en cada gráfica. Estas curvas permiten detectar patrones de sobreentrenamiento, estancamiento o mejoras progresivas en el aprendizaje.
 
 \begin{figure}[H]
 	\centering
@@ -542,5 +524,5 @@ Al finalizar el entrenamiento, se guarda el modelo final, se registra el tiempo 
 	\label{fig:loss_curve_example}
 \end{figure}
 
-\paragraph{Registro de resultados y comparación.}  
+\subsubsection{Registro de resultados y comparación}  
 Cada experimento queda documentado y reproducible mediante artefactos almacenados en el sistema de ficheros y sincronizados con la plataforma \textit{Weights \& Biases}. Esto incluye mapas de sensores, configuración exacta, métricas por época, curvas de entrenamiento y modelos entrenados. El historial completo permite comparar el rendimiento de diferentes combinaciones de hiperparámetros, tanto a nivel visual como mediante agregación tabular.
