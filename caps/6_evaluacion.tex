@@ -30,14 +30,14 @@ En la tabla~\ref{tab:mejores_modelos} se muestran los modelos seleccionados junt
 	\label{tab:mejores_modelos}
 	\begin{tabularx}{\textwidth}{c | c | c | c | c | c | c | c }
 		\toprule
-		\textbf{SID} & \textbf{M} & \textbf{EP} & \textbf{VTL} & \textbf{VTMAE} & \textbf{VTRMSE} & \textbf{VTMAPE} & \textbf{VTR2} \\
+		\textbf{SID} & \textbf{M} & \textbf{EP} & \textbf{TL} & \textbf{TMAE} & \textbf{TRMSE} & \textbf{TMAPE} & \textbf{TR2} \\
 		\midrule
-		1 & mlp           & 67 & 0.000 & 25.327/25.466 & 50.904/38.489 & 1.826/1.853 & 0.743/0.759 \\
-		1 & trafficformer & 30 & 0.143 & 19.300/19.125 & 44.298/30.784 & 1.718/1.745 & 0.797/0.822 \\
-		2 & mlp           & 30 & 0.000 & 30.967/31.017 & 38.144/38.177 & 1.75e14/1.82e14 & 0.868/0.866 \\
-		2 & trafficformer & 96 & 0.002 & 5.787/5.832 & 15.356/15.046 & 1.31e3/1.51e3 & 0.983/0.982 \\
-		5 & mlp           & 39 & 0.000 & 216.265/213.850 & 345.766/343.603 & 4.85e5/4.83e5 & 0.523/-1.797 \\
-		5 & trafficformer & 29 & 0.153 & 176.356/175.975 & 308.041/306.134 & 1.74e5/1.74e5 & 0.703/0.640 \\
+		1 & mlp           & 67 & 0.000 & 25.466 & 38.489   & 1.853   & 0.759 \\
+		1 & trafficformer & 30 & 0.143 & 19.125 & 30.784   & 1.745   & 0.822 \\
+		2 & mlp           & 30 & 0.000 & 31.017 & 38.177   & 1.82e14 & 0.866 \\
+		2 & trafficformer & 96 & 0.002 & 5.832  & 15.046   & 1.51e3  & 0.982 \\
+		5 & mlp           & 39 & 0.000 & 213.850 & 343.603 & 4.83e5  & -1.797 \\
+		5 & trafficformer & 29 & 0.153 & 175.975 & 306.134 & 1.74e5  & 0.640 \\
 		\bottomrule
 	\end{tabularx}
 	\vspace{0.5em}
@@ -47,11 +47,11 @@ En la tabla~\ref{tab:mejores_modelos} se muestran los modelos seleccionados junt
 	\textbf{SID}: sourceId. \\
 	\textbf{M}: Modelo. \\
 	\textbf{EP}: Epoch óptima. \\
-	\textbf{VTL}: Validation \& Test Loss. \\
-	\textbf{VTMAE}: Validation \& Test MAE. \\
-	\textbf{VTRMSE}: Validation \& Test RMSE. \\
-	\textbf{VTMAPE}: Validation \& Test MAPE. \\
-	\textbf{VTR2}: Validation \& Test $R^2$. \\
+	\textbf{TL}: Test Loss. \\
+	\textbf{TMAE}: Test MAE. \\
+	\textbf{TRMSE}: Test RMSE. \\
+	\textbf{TMAPE}: Test MAPE. \\
+	\textbf{TR2}: Test $R^2$. \\
 	Los valores muy grandes se muestran en notación científica (\texttt{a.eb} significa $a \times 10^{b}$). Decimales reducidos para mejorar la presentación.
 	\end{minipage}
 \end{table}
@@ -87,7 +87,7 @@ Cada figura agrupa, en formato compacto, las seis métricas principales para cad
 		\includegraphics[width=\linewidth]{includes/cap5/graphs/sid1_mlp_rmse.png}
 		\subcaption{RMSE}
 	\end{minipage}
-	\caption{Curvas de entrenamiento para el modelo \texttt{MLP} con sourceId 1.}
+	\caption{Curvas de entrenamiento para el modelo \texttt{MLP} con datos del Gobierno Vasco (sourceId 1).}
 	\label{fig:curvas_sid1_mlp}
 \end{figure}
 
@@ -116,7 +116,7 @@ Cada figura agrupa, en formato compacto, las seis métricas principales para cad
 		\includegraphics[width=\linewidth]{includes/cap5/graphs/sid1_trafficformer_rmse.png}
 		\subcaption{RMSE}
 	\end{minipage}
-	\caption{Curvas de entrenamiento para el modelo \texttt{Trafficformer} con sourceId 1.}
+	\caption{Curvas de entrenamiento para el modelo \texttt{Trafficformer} con datos del Gobierno Vasco (sourceId 1).}
 	\label{fig:curvas_sid1_trafficformer}
 \end{figure}
 
@@ -147,7 +147,7 @@ Cada figura agrupa, en formato compacto, las seis métricas principales para cad
 		\includegraphics[width=\linewidth]{includes/cap5/graphs/sid2_mlp_rmse.png}
 		\subcaption{RMSE}
 	\end{minipage}
-	\caption{Curvas de entrenamiento para el modelo \texttt{MLP} con sourceId 2.}
+	\caption{Curvas de entrenamiento para el modelo \texttt{MLP} con datos de la Diputación Foral de Bizkaia (sourceId 2).}
 	\label{fig:curvas_sid2_mlp}
 \end{figure}
 
@@ -176,7 +176,7 @@ Cada figura agrupa, en formato compacto, las seis métricas principales para cad
 		\includegraphics[width=\linewidth]{includes/cap5/graphs/sid2_trafficformer_rmse.png}
 		\subcaption{RMSE}
 	\end{minipage}
-	\caption{Curvas de entrenamiento para el modelo \texttt{Trafficformer} con sourceId 2.}
+	\caption{Curvas de entrenamiento para el modelo \texttt{Trafficformer} con datos de la Diputación Foral de Bizkaia (sourceId 2).}
 	\label{fig:curvas_sid2_trafficformer}
 \end{figure}
 
@@ -207,7 +207,7 @@ Cada figura agrupa, en formato compacto, las seis métricas principales para cad
 		\includegraphics[width=\linewidth]{includes/cap5/graphs/sid5_mlp_rmse.png}
 		\subcaption{RMSE}
 	\end{minipage}
-	\caption{Curvas de entrenamiento para el modelo \texttt{MLP} con sourceId 5.}
+	\caption{Curvas de entrenamiento para el modelo \texttt{MLP} con datos del Ayuntamiento de Bilbao (sourceId 5).}
 	\label{fig:curvas_sid5_mlp}
 \end{figure}
 
@@ -236,9 +236,15 @@ Cada figura agrupa, en formato compacto, las seis métricas principales para cad
 		\includegraphics[width=\linewidth]{includes/cap5/graphs/sid5_trafficformer_rmse.png}
 		\subcaption{RMSE}
 	\end{minipage}
-	\caption{Curvas de entrenamiento para el modelo \texttt{Trafficformer} con sourceId 5.}
+	\caption{Curvas de entrenamiento para el modelo \texttt{Trafficformer} con datos del Ayuntamiento de Bilbao (sourceId 5).}
 	\label{fig:curvas_sid5_trafficformer}
 \end{figure}
+
+Antes de analizar en profundidad los resultados, conviene contextualizar los experimentos realizados respecto al modelo original Trafficformer propuesto por \cite{trafficformer}. En dicho estudio, la evaluación se realizó sobre el \textit{Seattle Loop Detector Dataset}, un conjunto de datos altamente estructurado y representativo de una red viaria en anillo con características propias, tanto en topología como en calidad de señal.
+
+Por el contrario, en el presente trabajo se han utilizado datos abiertos de diferentes fuentes públicas, correspondientes a la provincia de Bizkaia y el entorno urbano de Bilbao, incluyendo sensores instalados en redes viarias de distinta naturaleza (autonómica, foral y municipal) y sometidos a procesos adicionales de integración, limpieza y preprocesamiento. Esta heterogeneidad y variabilidad inherente a los datos introduce desafíos adicionales en el modelado y la predicción.
+
+A pesar de estas diferencias, los resultados obtenidos son comparables en términos de magnitud y tendencia a los reportados por Chang et al., lo que evidencia la solidez y capacidad de generalización de la arquitectura Trafficformer, incluso en contextos con fuentes de datos abiertas, distribuidas y heterogéneas. Esta comparativa refuerza la validez de las conclusiones presentadas a continuación y pone en valor la adaptabilidad del modelo a diferentes escenarios reales de predicción de tráfico.
 
 Todas las curvas y métricas detalladas para los 120 experimentos están disponibles en la plataforma \textit{Weights \& Biases}.
 
@@ -257,62 +263,56 @@ Todas las curvas y métricas detalladas para los 120 experimentos están disponi
 
 En esta sección se realiza una evaluación crítica y comparativa de los resultados obtenidos por las dos arquitecturas propuestas (MLP y Trafficformer), para cada una de las tres fuentes de datos analizadas (sourceIds 1, 2 y 5). Se emplean las métricas reportadas en la tabla~\ref{tab:mejores_modelos}, junto con las gráficas de entrenamiento para cada modelo, para ofrecer un análisis detallado sobre la superioridad y limitaciones observadas.
 
-\subsubsection*{Comparativa en sourceId 1}
+\subsubsection*{Comparativa en datos del Gobierno Vasco (sourceId 1)}
 
-La comparativa entre modelos MLP (figura~\ref{fig:curvas_sid1_mlp}) y Trafficformer (figura~\ref{fig:curvas_sid1_trafficformer}) muestra claramente la ventaja del modelo Trafficformer. Esta arquitectura obtiene un valor significativamente menor en las métricas de pérdida (loss), MAE, RMSE y MAPE, así como un valor superior en $R^2$. En particular, Trafficformer logra reducir el MAE desde 25.466 hasta 19.125 y el RMSE desde 38.489 hasta 30.784, mostrando una mejor capacidad para capturar las complejidades espaciales y temporales de los datos de tráfico.
+El conjunto de datos del Gobierno Vasco incluye un total de 386 sensores (\textit{meters}), aunque estos se encuentran ubicados en unos pocos puntos estratégicos distribuidos linealmente a lo largo de vías principales, como se observa en la figura~\ref{fig:sensores_sid1}. Cada sensor representa un carril individual, lo que genera una alta densidad espacial en áreas críticas, pero una baja dispersión geográfica global. El dataset empleado para el entrenamiento tiene una dimensionalidad de entrada de 14,828 ventanas temporales, con una longitud de secuencia (\texttt{seq\_len}) de 8 (equivalente a ventanas de 4 horas). El conjunto de entrenamiento consta de 10,379 muestras, el de validación de 2,980 y el de test de 1,469. Esta configuración temporal amplia permite a los modelos captar patrones dinámicos prolongados, aspecto especialmente favorable para el mecanismo de atención espacial de Trafficformer.
 
-El análisis visual de las curvas de entrenamiento evidencia una convergencia más rápida y estable del modelo Trafficformer, alcanzando el punto óptimo en la época 30, notablemente antes que el modelo MLP (época 67). Este fenómeno puede atribuirse a su capacidad de atención espacial y aprendizaje secuencial, permitiendo explotar eficazmente las relaciones entre sensores cercanos.
+La comparativa entre modelos MLP (figura~\ref{fig:curvas_sid1_mlp}) y Trafficformer (figura~\ref{fig:curvas_sid1_trafficformer}) muestra claramente la superioridad de la arquitectura basada en Transformer. Trafficformer obtiene valores significativamente mejores en las métricas de pérdida (loss), MAE, RMSE y MAPE, así como un mayor coeficiente de determinación ($R^2$). En particular, Trafficformer reduce el MAE de 25.466 a 19.125 y el RMSE de 38.489 a 30.784, lo que refleja una mayor capacidad para capturar las complejidades espaciales y temporales de los datos de tráfico en este entorno.
+
+El análisis visual de las curvas de entrenamiento evidencia una convergencia más rápida y estable para Trafficformer, que alcanza su punto óptimo en la época 30, notablemente antes que el modelo MLP (época 67). Este comportamiento puede atribuirse a la capacidad de atención espacial y aprendizaje secuencial del modelo, que permite explotar eficazmente las relaciones entre sensores cercanos.
 
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=0.7\linewidth]{includes/cap5/source_id_1_meters_mask.png}
-	\caption{Distribución espacial de sensores para SourceId 1}
+	\caption{Distribución espacial de sensores para Gobierno Vasco (sourceId 1).}
 	\label{fig:sensores_sid1}
 \end{figure}
 
-La disposición de los sensores del SourceId 1, agrupados en puntos estratégicos específicos a lo largo de vías principales como se ve en la figura~\ref{fig:sensores_sid1}, permite al modelo Trafficformer aprovechar mejor las relaciones espaciales locales, favoreciendo su desempeño frente al modelo MLP.
+La disposición lineal y agrupada de los sensores en puntos estratégicos de la red viaria facilita que el modelo Trafficformer aproveche las relaciones espaciales locales, incrementando así su desempeño frente a modelos menos estructurados como el MLP.
 
-\subsubsection*{Comparativa en sourceId 2}
+\subsubsection*{Comparativa en datos Diputación Foral de Bizkaia (sourceId 2)}
 
-La superioridad del modelo Trafficformer respecto al modelo MLP se acentúa aún más en los datos del sourceId 2. Como se observa en las figuras~\ref{fig:curvas_sid2_mlp} y \ref{fig:curvas_sid2_trafficformer}, Trafficformer reduce considerablemente el MAE desde 31.017 hasta 5.832 y el RMSE desde 38.177 hasta 15.046. El $R^2$ mejora sustancialmente de 0.866 (MLP) hasta 0.982 (Trafficformer), indicando una capacidad notablemente superior para explicar la variabilidad en los datos.
+La fuente de datos de la Diputación Foral de Bizkaia presenta una distribución geográfica amplia y diversa, cubriendo exhaustivamente la red viaria de Bizkaia, como se observa en la figura~\ref{fig:sensores_sid2}. Inicialmente se consideraron 520 sensores, aunque tras el filtrado por ausencia de datos el número efectivo de sensores fue de 462. Esta elevada cantidad y dispersión espacial implica una alta complejidad en términos de relaciones y patrones de tráfico. El conjunto de entrenamiento está compuesto por 12,292 ventanas temporales, mientras que validación y test contienen 3,530 y 1,739 ventanas respectivamente. Para esta fuente se ha empleado una ventana temporal más reducida (\texttt{seq\_len} = 4, equivalentes a ventanas de 2 horas), adaptada a la mayor densidad y complejidad espacial de la red. La máscara espacial generada revela numerosas conexiones entre sensores distantes, lo que beneficia de manera significativa al modelo Trafficformer gracias a su capacidad de capturar relaciones espaciales complejas mediante atención multi-cabeza.
+
+La superioridad del modelo Trafficformer respecto al modelo MLP se acentúa aún más en los datos de la Diputación Foral de Bizkaia. Como se observa en las figuras~\ref{fig:curvas_sid2_mlp} y \ref{fig:curvas_sid2_trafficformer}, Trafficformer reduce considerablemente el MAE desde 31.017 hasta 5.832 y el RMSE desde 38.177 hasta 15.046. El $R^2$ mejora sustancialmente de 0.866 (MLP) a 0.982 (Trafficformer), lo que indica una capacidad notablemente superior para explicar la variabilidad en los datos.
 
 Las curvas de entrenamiento muestran una convergencia estable y continua del modelo Trafficformer hasta la época 96, reflejando una adecuada selección de hiperparámetros que permitió una optimización profunda. El modelo MLP, en cambio, converge rápidamente en la época 30, mostrando potencialmente limitaciones en su capacidad para aprovechar plenamente el volumen y complejidad de los datos disponibles.
 
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=0.7\linewidth]{includes/cap5/source_id_2_meters_mask.png}
-	\caption{Distribución espacial de sensores para SourceId 2}
+	\caption{Distribución espacial de sensores para Diputación Foral de Bizkaia (sourceId 2).}
 	\label{fig:sensores_sid2}
 \end{figure}
 
-La amplia distribución geográfica de los sensores para SourceId 2, como se aprecia en la figura~\ref{fig:sensores_sid2}, permite al modelo Trafficformer capturar relaciones espaciales complejas, aspecto que el modelo MLP no puede explotar debido a su limitada capacidad para modelar dependencias espaciales.
+La amplia y densa distribución geográfica de los sensores para la Diputación Foral de Bizkaia, como se aprecia en la figura~\ref{fig:sensores_sid2}, permite al modelo Trafficformer capturar relaciones espaciales complejas, aspecto que el modelo MLP no puede explotar debido a su limitada capacidad para modelar dependencias espaciales.
 
-\subsubsection*{Comparativa en sourceId 5}
+\subsubsection*{Comparativa en datos Ayuntamiento de Bilbao (sourceId 5)}
 
-Para la fuente sourceId 5, el modelo Trafficformer sigue mostrando una clara ventaja frente al modelo MLP. Según las figuras~\ref{fig:curvas_sid5_mlp} y \ref{fig:curvas_sid5_trafficformer}, se observa una mejora en todas las métricas principales. El MAE disminuye desde 213.850 hasta 175.975, y el RMSE desde 343.603 hasta 306.134. El valor $R^2$ presenta una mejora significativa, desde un negativo e inadecuado -1.797 hasta un aceptable 0.640 para Trafficformer.
+El tercer conjunto de datos se caracteriza por una cobertura urbana densa, centrada en la ciudad de Bilbao, como se aprecia en la figura~\ref{fig:sensores_sid5}. Aunque inicialmente se disponía de 92 sensores, el filtrado por calidad y disponibilidad redujo el número efectivo a 70. Esta elevada concentración espacial en un entorno urbano genera relaciones altamente correlacionadas y complejas entre sensores, lo que presenta retos específicos para los modelos de predicción de tráfico. El dataset consta de 17,330 ventanas temporales, de las cuales 12,131 se utilizaron para entrenamiento, 3,483 para validación y 1,716 para test. Al igual que en el caso anterior, se utilizó una ventana temporal de 2 horas (\texttt{seq\_len} = 4), permitiendo al modelo captar de manera eficiente las dinámicas urbanas rápidas propias de la ciudad.
 
-Las curvas de entrenamiento revelan que Trafficformer converge rápidamente (época 29), mostrando que el mecanismo de atención espacial resulta particularmente efectivo en escenarios urbanos densos como el representado en esta fuente de datos.
+Para la fuente sourceId 5, el modelo Trafficformer sigue mostrando una clara ventaja frente al modelo MLP. Según las figuras~\ref{fig:curvas_sid5_mlp} y \ref{fig:curvas_sid5_trafficformer}, se observa una mejora sustancial en todas las métricas principales. El MAE disminuye de 213.850 a 175.975, y el RMSE de 343.603 a 306.134. El coeficiente de determinación $R^2$ experimenta una mejora especialmente relevante, pasando de un valor negativo e inadecuado de -1.797 (MLP) a un aceptable 0.640 (Trafficformer), lo que indica una mayor capacidad para explicar la variabilidad del tráfico urbano.
+
+Las curvas de entrenamiento muestran que Trafficformer converge rápidamente (época 29), evidenciando que su mecanismo de atención espacial resulta especialmente efectivo en escenarios urbanos densos, donde la interacción entre sensores cercanos es particularmente compleja.
 
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=0.7\linewidth]{includes/cap5/source_id_5_meters_mask.png}
-	\caption{Distribución espacial de sensores para SourceId 5}
+	\caption{Distribución espacial de sensores para Ayuntamiento de Bilbao (sourceId 5).}
 	\label{fig:sensores_sid5}
 \end{figure}
 
-La concentración urbana y la alta densidad espacial del SourceId 5, apreciable en la figura~\ref{fig:sensores_sid5}, generan complejas interacciones entre sensores cercanos. Esta configuración beneficia notablemente al modelo Trafficformer frente al MLP, que carece de mecanismos específicos para gestionar esta complejidad espacial.
-
-\subsubsection*{Análisis comparativo de fuentes de datos}
-
-Las características particulares de cada fuente de datos han ejercido una influencia importante en el desempeño de los modelos.
-
-\paragraph{SourceId 1} Este conjunto posee un total de 386 sensores (meters), aunque estos se encuentran ubicados en unos pocos puntos estratégicos distribuidos linealmente a lo largo de vías principales, como se observa en la figura \ref{fig:sensores_sid1}. Dado que cada sensor representa un carril individual, existe una alta densidad espacial localizada en ciertas áreas críticas, pero una baja distribución geográfica. El dataset utilizado para el entrenamiento tiene una dimensionalidad de entrada de 14,828 ventanas temporales, con una longitud de secuencia (\texttt{seq\_len}) de 8 (ventanas de 4 horas). El tamaño del conjunto de entrenamiento es de 10,379, validación 2,980, y test 1,469. Esta configuración temporal amplia permite al modelo captar patrones dinámicos extendidos en el tiempo, siendo favorable para el mecanismo de atención espacial del modelo Trafficformer.
-
-\paragraph{SourceId 2} La fuente de datos 2 presenta una distribución geográfica amplia y diversa, cubriendo exhaustivamente la red viaria de Bizkaia (figura \ref{fig:sensores_sid2}). Inicialmente se consideraron 520 sensores, aunque tras el filtrado por ausencia de datos, el número efectivo de sensores fue de 462. Esto implica una alta complejidad en términos de relaciones espaciales y diversidad de patrones de tráfico. El conjunto de entrenamiento está compuesto por 12,292 ventanas temporales, mientras que validación y test contienen 3,530 y 1,739 ventanas respectivamente. Para esta fuente se ha empleado una ventana temporal más reducida (\texttt{seq\_len} = 4, equivalentes a ventanas de 2 horas), debido a la mayor densidad y complejidad espacial. La máscara espacial generada revela numerosas conexiones entre sensores distantes, lo que beneficia significativamente al modelo Trafficformer gracias a su capacidad de capturar relaciones espaciales complejas mediante atención multi-cabezal.
-
-\paragraph{SourceId 5} El tercer conjunto se caracteriza por una cobertura urbana densa, centrado en la ciudad de Bilbao (figura \ref{fig:sensores_sid5}). Aunque inicialmente existían 92 sensores, el filtrado redujo el número a 70. La distribución espacial en un entorno urbano tan concentrado genera relaciones espaciales complejas y altamente correlacionadas. El dataset dispone de 17,330 ventanas temporales, dividido en entrenamiento (12,131 ventanas), validación (3,483 ventanas) y test (1,716 ventanas). También se empleó una ventana de 2 horas (\texttt{seq\_len} = 4), facilitando al modelo capturar dinámicas urbanas rápidas. La máscara espacial evidencia la compleja red de interacciones espaciales entre sensores urbanos cercanos, circunstancia que nuevamente favorece al modelo Trafficformer debido a su capacidad innata para modelar dependencias espaciales y temporales simultáneamente.
-
-Este análisis de fuentes de datos subraya la importancia del diseño experimental y la selección de ventanas temporales adecuadas a las particularidades de cada conjunto, reflejándose directamente en el rendimiento relativo de los modelos evaluados.
+La configuración urbana y la alta densidad espacial de los sensores del Ayuntamiento de Bilbao, como se observa en la figura~\ref{fig:sensores_sid5}, genera una compleja red de interacciones espaciales que favorece notablemente al modelo Trafficformer frente al MLP, que carece de mecanismos específicos para gestionar esta complejidad. Este análisis subraya la importancia de adaptar el diseño experimental y la selección de ventanas temporales a las particularidades de cada conjunto de datos, ya que estas decisiones se reflejan directamente en el rendimiento relativo de los modelos evaluados.
 
 \subsubsection*{Síntesis y reflexión general}
 
@@ -329,39 +329,15 @@ Además del análisis comparativo entre las arquitecturas y fuentes de datos rea
 
 A continuación, se presentan las conclusiones más relevantes derivadas del análisis avanzado realizado para cada una de las fuentes de datos (\texttt{sourceId}). El detalle completo de las gráficas mencionadas está disponible en el \hyperref[anexo:analisis_avanzado]{Anexo~H}.
 
-\paragraph{SourceId 1}
+\subsubsection*{Gobierno Vasco (SourceId 1)}
 El análisis avanzado sobre la fuente de datos 1 muestra una adecuada capacidad predictiva global del modelo Trafficformer. El gráfico de dispersión (scatter plot) revela una fuerte correlación entre los valores predichos y los reales, con la mayoría de puntos cercanos a la diagonal. Sin embargo, el histograma de errores refleja la presencia de errores significativos en ciertas predicciones puntuales, lo que sugiere áreas específicas donde el modelo podría mejorar. El mapa de errores confirma visualmente que la mayoría de errores altos se concentran en puntos geográficos específicos (probablemente zonas críticas de tráfico o intersecciones complejas), lo que podría ser causado por factores no capturados completamente por el modelo.
 
-\paragraph{SourceId 2}
+\subsubsection*{Diputación Foral de Bizkaia (SourceId 2)}
 En el caso del sourceId 2, se observa un excelente rendimiento del modelo Trafficformer, especialmente notable en el gráfico de dispersión y el histograma de errores, que muestran una alta concentración alrededor del valor real y errores generalmente bajos. Sin embargo, la distribución espacial del error representada en el mapa destaca algunas ubicaciones específicas con errores ligeramente mayores, posiblemente relacionadas con zonas periféricas o sensores más aislados, donde la densidad de datos disponibles para el entrenamiento fue inferior. Las series temporales para los mejores y peores sensores confirman que los mayores errores ocurren en contextos específicos, probablemente vinculados a eventos atípicos o patrones de tráfico inusuales.
 
-\paragraph{SourceId 5}
+\subsubsection*{Ayuntamiento de Bilbao (SourceId 5)}
 Finalmente, la fuente de datos 5, que cubre una zona urbana densa (Bilbao), presenta una complejidad intrínseca mayor. Esto se evidencia en el gráfico de dispersión, donde se observa una mayor dispersión de los puntos respecto a la diagonal ideal, indicando predicciones menos precisas para determinados sensores urbanos. El histograma del error muestra una distribución más amplia, sugiriendo heterogeneidad en la capacidad predictiva del modelo según zonas específicas. La distribución espacial de los errores confirma que áreas urbanas densamente pobladas y congestionadas muestran consistentemente errores más elevados, un aspecto esperado dada la complejidad del tráfico urbano.
 
 Este análisis avanzado permite concluir que, aunque el modelo Trafficformer muestra en general buenos resultados en todas las fuentes de datos, existe un margen significativo de mejora en escenarios específicos y complejos, tales como intersecciones críticas y áreas urbanas densas. Además, pone de manifiesto la importancia del análisis visual detallado para identificar oportunidades específicas de optimización en futuras iteraciones del modelo.
 
 Las gráficas completas utilizadas para este análisis avanzado se encuentran detalladamente en el \hyperref[anexo:analisis_avanzado]{Anexo~H}.
-
-
-\subsection{Limitaciones y validez de los experimentos}
-\label{sec:limitaciones_validez}
-
-\begin{comment}
-	- Discusión sobre limitaciones técnicas, posibles sesgos, restricciones de hardware, tamaño de muestra, etc.
-\end{comment}
-
-Aunque los resultados obtenidos a lo largo de este trabajo demuestran una alta eficacia en la predicción del tráfico mediante las arquitecturas propuestas, es fundamental reconocer ciertas limitaciones inherentes a la investigación realizada, que deben considerarse al interpretar los resultados obtenidos y planificar futuras líneas de trabajo.
-
-En primer lugar, existe una \textbf{limitación asociada al tamaño y representatividad de las muestras}. Aunque se han empleado datasets significativos con numerosos sensores distribuidos espacialmente, ciertas fuentes de datos (como el caso del \texttt{sourceId 1}) presentan una distribución espacial concentrada en pocos puntos estratégicos. Esto podría implicar una representación parcial del comportamiento general del tráfico en áreas menos monitorizadas o rutas secundarias.
-
-En segundo lugar, los experimentos se han visto afectados por ciertas \textbf{restricciones técnicas y de hardware}. La necesidad de entrenar múltiples modelos complejos como Trafficformer, con elevados requerimientos computacionales, ha limitado la exploración exhaustiva del espacio de hiperparámetros, especialmente en lo relativo al número de capas, cabezas de atención o tamaño de embedding. Esta limitación técnica puede haber impedido obtener resultados aún más óptimos.
-
-Otra limitación importante reside en la \textbf{posible presencia de sesgos en los datos originales}. Los datasets provienen de fuentes públicas (Gobierno Vasco, Diputación Foral de Bizkaia y Ayuntamiento de Bilbao), por lo que es posible que contengan sesgos derivados de errores instrumentales, pérdida de datos en algunos sensores o inconsistencias temporales en la recopilación de información. Estos sesgos pueden afectar la precisión y generalización de los modelos desarrollados.
-
-Adicionalmente, el uso exclusivo de \textbf{variables numéricas y categóricas predefinidas} limita la capacidad del modelo para captar factores externos relevantes, como eventos específicos no registrados, cambios estacionales detallados o efectos socioeconómicos más amplios, que podrían mejorar la precisión y robustez del modelo.
-
-Por último, la \textbf{validez externa y generalización} de los resultados está condicionada al contexto específico de la provincia de Bizkaia. Aunque la metodología aplicada es escalable y transferible a otros contextos urbanos, es necesario realizar experimentos adicionales para confirmar que los modelos desarrollados mantienen su rendimiento en otras regiones con diferentes características geográficas, culturales y económicas.
-
-Estas limitaciones deben ser tomadas como puntos de partida para futuras investigaciones, enfocadas hacia la mejora de los modelos y la inclusión de nuevas fuentes de datos y técnicas que puedan aumentar la robustez y generalización del sistema propuesto.
-
-

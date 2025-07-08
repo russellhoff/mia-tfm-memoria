@@ -7,21 +7,64 @@
 % 	como se describe en la Sección~\nameref{sec:dataset_arquitectura})
 %
 
-Este capítulo sintetiza los hallazgos principales derivados del desarrollo y evaluación de los modelos propuestos en este trabajo fin de máster. Se presentan primero las conclusiones fundamentales del estudio, seguidas por recomendaciones y propuestas específicas para futuras investigaciones.
+Este capítulo recopila y sintetiza los hallazgos más relevantes derivados del desarrollo y evaluación de los modelos propuestos en este trabajo fin de máster. A lo largo de las siguientes secciones se presentan, en primer lugar, las conclusiones generales del estudio, haciendo especial hincapié en el grado de consecución de los objetivos y la validación de la hipótesis planteada. Posteriormente, se resumen los aprendizajes principales extraídos en cada uno de los contextos evaluados, se abordan de forma crítica las limitaciones y consideraciones de validez de los experimentos realizados, y se proponen líneas de trabajo futuro. El capítulo concluye con una reflexión sobre la aportación realizada y el potencial impacto del sistema desarrollado en el ámbito de la predicción del tráfico.
 
-\subsection{Conclusiones}
+\subsection{Síntesis global y verificación de la hipótesis}
+\label{sec:sintesis_verif}
 
-El desarrollo de este trabajo ha permitido abordar con éxito el objetivo principal planteado inicialmente: diseñar, implementar y evaluar modelos de predicción del tráfico vehicular mediante técnicas avanzadas de aprendizaje profundo, destacando especialmente la arquitectura \texttt{Trafficformer} basada en Transformers con atención espacial.
+El objetivo principal de este trabajo fue diseñar, implementar y evaluar modelos avanzados de predicción del tráfico vehicular, centrándose en el desarrollo y validación de una arquitectura basada en Transformers adaptada a la complejidad de los datos reales de movilidad. La hipótesis de partida planteaba que, mediante el uso de mecanismos de atención espacial y temporal, sería posible superar la precisión y capacidad de generalización de modelos clásicos como las redes neuronales multi-capa (\texttt{MLP}), especialmente en entornos con alta densidad de sensores y complejidad topológica.
 
-La comparación entre \texttt{MLP} y \texttt{Trafficformer} ha demostrado la clara superioridad del segundo en los tres contextos evaluados (sourceIds 1, 2 y 5). Trafficformer logró resultados significativamente mejores en métricas clave como MAE, RMSE y $R^2$, validando así su capacidad para explotar eficazmente dependencias espaciales y temporales, especialmente en escenarios complejos con alta densidad y distribución espacial.
+Los resultados obtenidos a lo largo del estudio han permitido confirmar dicha hipótesis. El modelo \texttt{Trafficformer} ha demostrado de forma consistente un mejor desempeño en comparación con la arquitectura MLP en los tres contextos evaluados (Gobierno Vasco, Diputación Foral de Bizkaia y Ayuntamiento de Bilbao), logrando mejoras significativas en métricas clave como MAE, MSE, RMSE y $R^2$. Estas mejoras se han observado tanto en escenarios de tráfico lineal y disperso como en entornos urbanos densos, evidenciando la capacidad del modelo para capturar patrones espaciotemporales complejos y adaptarse a distintos tipos de redes viarias.
 
-La metodología de experimentación exhaustiva permitió identificar combinaciones óptimas de hiperparámetros (tamaño de ventana temporal, número de cabezas de atención, tamaño de embedding, entre otros), destacando la importancia crítica del ajuste adecuado de estos parámetros para obtener un rendimiento óptimo del modelo.
+En cuanto al cumplimiento de los objetivos planteados, se han alcanzado tanto el objetivo general como los objetivos específicos definidos al inicio del trabajo:
+\begin{itemize}
+	\item \textbf{Diseñar e implementar un pipeline completo de tratamiento, modelado y evaluación de datos de tráfico}, que ha permitido gestionar eficientemente múltiples fuentes de datos y preparar los conjuntos de entrenamiento necesarios para la experimentación.
+	\item \textbf{Desarrollar e integrar modelos basados en arquitecturas profundas avanzadas}, en particular el modelo Trafficformer, adaptando y optimizando sus hiperparámetros para distintos escenarios y tipos de datos.
+	\item \textbf{Comparar de manera sistemática el rendimiento de distintas arquitecturas}, utilizando métricas rigurosas y plataformas de experimentación reproducible, como Weights \& Biases.
+	\item \textbf{Analizar la capacidad de generalización y robustez de los modelos propuestos} en contextos reales de la provincia de Bizkaia, destacando la adaptabilidad del sistema a diferentes configuraciones y tipos de red viaria.
+\end{itemize}
 
-Asimismo, la utilización de la plataforma \textit{Weights \& Biases} ha resultado fundamental para asegurar la reproducibilidad, transparencia y análisis riguroso de los experimentos, proporcionando un seguimiento detallado y sistemático del proceso de entrenamiento y evaluación.
+En definitiva, la investigación realizada ha permitido validar la hipótesis inicial y alcanzar los objetivos propuestos, contribuyendo al avance en el campo de la predicción de tráfico mediante el uso de arquitecturas Transformer adaptadas a escenarios reales y heterogéneos.
 
-No obstante, el trabajo ha revelado diversas limitaciones, principalmente relacionadas con la representatividad espacial de las fuentes de datos, restricciones técnicas de hardware, posibles sesgos en los datos y limitaciones en la generalización externa. Estas limitaciones representan oportunidades claras para futuros desarrollos y mejoras.
+\subsection{Conclusiones principales por fuente de datos}
+\label{sec:concl_fue_dat}
+
+El análisis comparativo entre las distintas fuentes de datos ha permitido identificar patrones diferenciales en el rendimiento de los modelos evaluados, así como aspectos clave vinculados a la naturaleza y topología de cada conjunto.
+
+\subsubsection*{Gobierno Vasco (sourceId 1)}  
+En este entorno, caracterizado por una concentración de sensores en puntos estratégicos de vías principales, el modelo Trafficformer logró una mejora clara respecto al MLP, reduciendo el MAE de 25.466 a 19.125 y el RMSE de 38.489 a 30.784. El coeficiente de determinación $R^2$ mejoró sustancialmente, mostrando la capacidad del modelo Transformer para capturar dependencias espaciales locales incluso en redes con dispersión limitada. El patrón de convergencia rápida y estable refuerza la idoneidad de la arquitectura propuesta para este tipo de datos.
+
+\subsubsection*{Diputación Foral de Bizkaia (sourceId 2)}  
+La amplia y compleja distribución geográfica de los sensores en la red viaria foral puso a prueba la capacidad de generalización espacial de los modelos. Trafficformer destacó especialmente, con una reducción del MAE desde 31.017 a 5.832 y del RMSE de 38.177 a 15.046, así como una mejora de $R^2$ desde 0.866 a 0.982. Estas métricas evidencian la robustez del modelo en escenarios con gran diversidad espacial y patrones de tráfico heterogéneos.
+
+\subsubsection*{Ayuntamiento de Bilbao (sourceId 5)}  
+En el entorno urbano denso de Bilbao, donde la correlación espacial entre sensores es máxima, Trafficformer volvió a superar al MLP, disminuyendo el MAE de 213.850 a 175.975 y el RMSE de 343.603 a 306.134. El avance más significativo se observa en el $R^2$, que pasó de un valor negativo con MLP (-1.797) a un valor positivo y aceptable con Trafficformer (0.640). Estos resultados subrayan la eficacia del mecanismo de atención espacial en contextos urbanos complejos, donde la interacción entre sensores es altamente dinámica.
+
+En síntesis, el modelo Trafficformer ha mostrado una capacidad superior para adaptarse a diferentes configuraciones espaciales y temporales, confirmando su versatilidad y rendimiento en contextos de tráfico real diversos.
+
+\subsection{Limitaciones y validez de los experimentos}
+\label{sec:limitaciones_validez}
+
+\begin{comment}
+	- Discusión sobre limitaciones técnicas, posibles sesgos, restricciones de hardware, tamaño de muestra, etc.
+\end{comment}
+
+Aunque los resultados obtenidos a lo largo de este trabajo demuestran una alta eficacia en la predicción del tráfico mediante las arquitecturas propuestas, es fundamental reconocer ciertas limitaciones inherentes a la investigación realizada, que deben considerarse al interpretar los resultados obtenidos y planificar futuras líneas de trabajo.
+
+En primer lugar, existe una \textbf{limitación asociada al tamaño y representatividad de las muestras}. Aunque se han empleado datasets significativos con numerosos sensores distribuidos espacialmente, ciertas fuentes de datos (como el caso del Gobiero Vasco) presentan una distribución espacial concentrada en pocos puntos estratégicos. Esto podría implicar una representación parcial del comportamiento general del tráfico en áreas menos monitorizadas o rutas secundarias.
+
+En segundo lugar, los experimentos se han visto afectados por ciertas \textbf{restricciones técnicas y de hardware}. La necesidad de entrenar múltiples modelos complejos como Trafficformer, con elevados requerimientos computacionales, ha limitado la exploración exhaustiva del espacio de hiperparámetros, especialmente en lo relativo al número de capas, cabezas de atención o tamaño de embedding. Esta limitación técnica puede haber impedido obtener resultados aún más óptimos.
+
+Otra limitación importante reside en la \textbf{posible presencia de sesgos en los datos originales}. Los datasets provienen de fuentes públicas (Gobierno Vasco con sourceId 1, Diputación Foral de Bizkaia con sourceId 2 y Ayuntamiento de Bilbao con sourceId 5), por lo que es posible que contengan sesgos derivados de errores instrumentales, pérdida de datos en algunos sensores o inconsistencias temporales en la recopilación de información. Estos sesgos pueden afectar la precisión y generalización de los modelos desarrollados.
+
+Adicionalmente, el uso exclusivo de \textbf{variables numéricas y categóricas predefinidas} limita la capacidad del modelo para captar factores externos relevantes, como eventos específicos no registrados, cambios estacionales detallados o efectos socioeconómicos más amplios, que podrían mejorar la precisión y robustez del modelo.
+
+Por último, la \textbf{validez externa y generalización} de los resultados está condicionada al contexto específico de la provincia de Bizkaia. Aunque la metodología aplicada es escalable y transferible a otros contextos urbanos, es necesario realizar experimentos adicionales para confirmar que los modelos desarrollados mantienen su rendimiento en otras regiones con diferentes características geográficas, culturales y económicas.
+
+Estas limitaciones deben ser tomadas como puntos de partida para futuras investigaciones, enfocadas hacia la mejora de los modelos y la inclusión de nuevas fuentes de datos y técnicas que puedan aumentar la robustez y generalización del sistema propuesto.
 
 \subsection{Trabajo Futuro}
+\label{sec:trabajo_futuro}
 
 De cara a futuras investigaciones, se identifican diversas líneas de trabajo que permitirían mejorar aún más los resultados obtenidos:
 
@@ -35,6 +78,14 @@ De cara a futuras investigaciones, se identifican diversas líneas de trabajo qu
 	\item \textbf{Integración de otros modelos avanzados}: Explorar modelos complementarios como Graph Neural Networks (GNNs) o modelos híbridos que podrían aprovechar aún más las estructuras espaciales complejas presentes en los datos de tráfico.
 \end{itemize}
 
-En conclusión, este TFM establece una sólida base metodológica y técnica para futuros trabajos en predicción de tráfico, y destaca la capacidad de los modelos basados en Transformers, particularmente Trafficformer, para abordar eficazmente desafíos de alta complejidad espacial y temporal.
+\subsection{Cierre y aportación al campo}
+\label{sec:cierre_aport}
+
+En conclusión, este trabajo ha establecido una base sólida para la aplicación de modelos avanzados de aprendizaje profundo, específicamente arquitecturas basadas en Transformers, en el ámbito de la predicción del tráfico vehicular. La investigación desarrollada no solo ha permitido validar la eficacia del modelo Trafficformer en escenarios urbanos y viarios reales, sino que también ha evidenciado la importancia de adaptar y optimizar estos enfoques a las particularidades de cada contexto y fuente de datos.
+
+La principal aportación de este trabajo reside en haber demostrado que los mecanismos de atención espaciotemporal implementados en Trafficformer permiten superar las limitaciones de modelos tradicionales, logrando una mayor capacidad predictiva y una mejor adaptación a entornos complejos y dinámicos. Además, el desarrollo de un pipeline reproducible y escalable, junto con el uso de plataformas modernas de experimentación, contribuye a mejorar la transparencia y la replicabilidad en futuras investigaciones.
+
+Se espera que las conclusiones extraídas y las líneas de trabajo propuestas sirvan de referencia para la comunidad investigadora y para profesionales del sector de la movilidad, facilitando el despliegue de sistemas inteligentes de predicción de tráfico en contextos urbanos y metropolitanos cada vez más exigentes. En definitiva, este trabajo refuerza el papel de las arquitecturas Transformer como herramientas clave para abordar los desafíos emergentes en el ámbito de la gestión y planificación inteligente de la movilidad.
+
 
 
