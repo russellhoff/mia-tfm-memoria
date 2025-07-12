@@ -88,7 +88,7 @@ Para aportar una visión rigurosa y formal del modelo propuesto, a continuación
 
 \subsubsection*{Componentes principales}
 
-\paragraph{1. Traffic Input.}  
+\paragraph*{1. Traffic Input.}  
 El punto de partida del modelo es una matriz histórica de aforos:
 
 \[
@@ -105,7 +105,7 @@ M^{P}\in\mathbb{R}^{I\times I}.
 
 Se trata de una matriz binaria que determina qué pares de nodos pueden influirse mutuamente, filtrando las interacciones irrelevantes (por ejemplo, nodos distantes o no conectados directamente en la red viaria).
 
-\paragraph{2. Temporal Feature Extractor}  
+\paragraph*{2. Temporal Feature Extractor}  
 
 Cada columna de $S_t^{I}$, correspondiente a la serie temporal de un nodo, se procesa mediante un \emph{Multi-Layer Perceptron} (MLP) compartido. El resultado es una matriz de embeddings temporales por nodo:
 
@@ -113,7 +113,7 @@ Cada columna de $S_t^{I}$, correspondiente a la serie temporal de un nodo, se pr
 S_t^{C1}\in\mathbb{R}^{I\times d_t}.
 \]
 
-\paragraph{3. Traffic Node Feature Interaction}  
+\paragraph*{3. Traffic Node Feature Interaction}  
 
 Las representaciones temporales se combinan a través de un mecanismo de \emph{Multi-head Self-Attention}, donde la máscara $M^{P}$ restringe la atención a los nodos vialmente conectados. La estructura sigue el esquema Transformer estándar: atención $\rightarrow$ \textsc{Add \& Norm} $\rightarrow$ Feed-Forward $\rightarrow$ \textsc{Add \& Norm}. El resultado es un embedding espaciotemporal enriquecido:
 
@@ -121,7 +121,7 @@ Las representaciones temporales se combinan a través de un mecanismo de \emph{M
 Z_t\in\mathbb{R}^{I\times d_s}.
 \]
 
-\paragraph{4. Traffic Capacity Forecasting}  
+\paragraph*{4. Traffic Capacity Forecasting}  
 
 Finalmente, un segundo MLP por nodo transforma $Z_t$ en las predicciones para los siguientes $H$ pasos temporales:
 
