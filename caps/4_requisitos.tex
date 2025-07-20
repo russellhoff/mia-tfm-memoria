@@ -26,7 +26,7 @@ La cobertura de los datos obtenidos se representa en la tabla \ref{tab:cobertura
 	\centering
 	\caption{Cobertura de datos por fuente y tipo.}
 	\label{tab:cobertura_datos_opendata}
-	\renewcommand{\arraystretch}{1.2}
+	\begin{comment}\renewcommand{\arraystretch}{1.2}\end{comment}
 	\begin{tabularx}{\textwidth}{cXccc}
 		\toprule
 		\textbf{SourceId} & \textbf{Organización} & \textbf{Meters} & \textbf{Flows} & \textbf{Incidences} \\
@@ -40,14 +40,13 @@ La cobertura de los datos obtenidos se representa en la tabla \ref{tab:cobertura
 		7 & Ayuntamiento de Donostia-San Sebastián & \textcolor{mygreen}{\faCheck} & \textcolor{myred}{\faTimes} & \textcolor{mygreen}{\faCheck} \\
 		\bottomrule
 	\end{tabularx}
-	
-	\vspace{0.5em}
-	\begin{itemize}
-		\item \textcolor{mygreen}{\faCheck} Datos existentes y descargados correctamente.
-		\item \textcolor{myred}{\faTimes} No existen datos para ese \texttt{sourceId} en OpenData.
-		\item \textcolor{gray}{\faHandPaper} Datos obtenidos de forma externa e introducidos manualmente mediante programación.
-	\end{itemize}
 \end{table}
+
+\begin{itemize}
+	\item \textcolor{mygreen}{\faCheck} Datos existentes y descargados correctamente.
+	\item \textcolor{myred}{\faTimes} No existen datos para ese \texttt{sourceId} en OpenData.
+	\item \textcolor{gray}{\faHandPaper} Datos obtenidos de forma externa e introducidos manualmente mediante programación.
+\end{itemize}
 
 El presente caso de uso se circunscribe a la provincia de Bizkaia, por lo que únicamente se emplean las fuentes de datos identificadas con los códigos sourceId 1, 2 y 5. La fuente proporcionada por la Dirección de Tráfico del Gobierno Vasco abarca principalmente la red viaria principal de la Comunidad Autónoma del País Vasco (CAPV), incluyendo carreteras de alta capacidad. Por su parte, la base de datos de la Diputación Foral de Bizkaia recoge aforos situados, en su mayoría, en carreteras secundarias y forales. Finalmente, la fuente de datos del Ayuntamiento de Bilbao representa el entorno urbano, al contar con sensores ubicados en intersecciones y vías principales de la ciudad.
 
@@ -55,7 +54,7 @@ La Figura~\ref{fig:sourceid1_map} muestra la ubicación de los sensores de la fu
 
 \begin{figure}[H]
 	\centering
-	\includegraphics[width=0.85\textwidth]{includes/cap5/source_id_1_meters.png}
+	\includegraphics[width=0.65\textwidth]{includes/cap5/source_id_1_meters.png}
 	\caption{Ubicación de aforos de la fuente Gobierno Vasco (source\_id = 1)}
 	\label{fig:sourceid1_map}
 \end{figure}
@@ -194,17 +193,7 @@ Esta clase es el resultado final del proceso de integración de datos y constitu
 
 \subsection{Recolección, arquitectura y patrones de diseño empleados}
 
-El software encargado de la recolección de datos se ha desarrollado en \textbf{Kotlin con Spring Boot}, aplicando principios de arquitectura hexagonal y múltiples patrones de diseño para garantizar su mantenibilidad y robustez. Entre los patrones de diseño empleados destacan:
-
-\begin{itemize}
-	\item \textbf{Builder}: utilizado en la generación del dataset a través de la clase \texttt{MobilitySnapshotBuilder}.
-	\item \textbf{Repository}: todas las operaciones de acceso a datos (\texttt{FlowRepository}, \texttt{MeterRepository}, etc.) se abstraen en repositorios desacoplados.
-	\item \textbf{Service Layer}: la lógica de negocio reside en servicios como \texttt{FlowService}, \texttt{MeterService}, \texttt{IncidenceService}.
-	\item \textbf{DTO (Data Transfer Object)}: se emplean DTOs para el intercambio de datos entre capas, evitando el acoplamiento con los modelos de persistencia.
-	\item \textbf{Helper/Utility Classes}: utilidades para parseo, validación y transformación de datos (por ejemplo, para el tratamiento de ficheros XML meteorológicos).
-	\item \textbf{Facade}: fachadas que agrupan operaciones complejas en interfaces sencillas, facilitando la integración con servicios externos.
-	\item \textbf{Factory} y \textbf{Singleton}: empleados para instanciar objetos según el origen de datos y para servicios centrales, respectivamente.
-\end{itemize}
+El software encargado de la recolección de datos se ha desarrollado en \textbf{Kotlin con Spring Boot}, aplicando principios de arquitectura hexagonal y múltiples patrones de diseño para garantizar su mantenibilidad y robustez. Entre los patrones de diseño empleados destacan: \gls{design_pattern:builder}, \gls{design_pattern:repository}, \gls{design_pattern:servicelayer}, \gls{design_pattern:dto}, \gls{design_pattern:helper_utility}, \gls{design_pattern:facade} y \gls{design_pattern:factory_singleton}.
 
 El sistema de integración y procesamiento de datos ha sido desarrollado en Kotlin, un lenguaje moderno que combina características orientadas a objetos y funcionales. La clase \texttt{MobilitySnapshotGeneratorService}, pieza central del sistema, hace uso de varias construcciones idiomáticas que representan buenas prácticas del lenguaje y potencian la expresividad, la seguridad y la eficiencia en tiempo de desarrollo.
 
@@ -277,6 +266,7 @@ A partir del análisis exploratorio de las incidencias disponibles en la base de
 
 \begin{table}[H]
 	\centering
+	\small
 	\caption{Frecuencia de incidencias por tipo original}
 	\label{tab:incidencias_frecuencia}
 	\begin{tabularx}{\textwidth}{rX}
@@ -310,9 +300,10 @@ El resultado es una agrupación validada que se resume en la tabla \ref{tab:agru
 
 \begin{table}[H]
 	\centering
+	\small
 	\caption{Agrupación final de incidencias para el modelo predictivo}
 	\label{tab:agrupacion_incidencias}
-	\renewcommand{\arraystretch}{1.3}
+	\begin{comment}\renewcommand{\arraystretch}{1.3}\end{comment}
 	\begin{tabularx}{\textwidth}{lXrX}
 		\toprule
 		\textbf{Categoría general} & \textbf{Tipos incluidos} & \textbf{Total casos} & \textbf{Variable sugerida} \\
@@ -323,7 +314,7 @@ El resultado es una agrupación validada que se resume en la tabla \ref{tab:agru
 		\texttt{ACCIDENT}   & Accidente                                                    & \textbf{3.155}  & \texttt{hasAccident} \\
 		\texttt{OTHER}      & Otras incidencias, OTRO                                      & \textbf{2.170}  & \texttt{hasOtherIncident} \\
 		\texttt{EVENT}      & EVEN                                                         & \textbf{78}     & \texttt{hasEvent} \\
-		\texttt{CONGESTION} & Retención                                                    & \textbf{3}      & \texttt{hasCongestion (opcional)} \\
+		\texttt{CONGESTION} & Retención                                                    & \textbf{3}      & \texttt{hasCongestion} \\
 		\bottomrule
 	\end{tabularx}
 \end{table}
@@ -357,9 +348,10 @@ Las variables seleccionadas, junto con su justificación práctica, se muestran 
 
 \begin{table}[H]
 	\centering
+	\small
 	\caption{Selección de sensores meteorológicos y su relevancia para la predicción de tráfico}
 	\label{tab:seleccion_meteo}
-	\renewcommand{\arraystretch}{1.3}
+	\begin{comment}\renewcommand{\arraystretch}{1.3}\end{comment}
 	\begin{tabularx}{\textwidth}{l l X}
 		\toprule
 		\textbf{Categoría} & \textbf{SensorKey base} & \textbf{Justificación} \\
@@ -374,7 +366,6 @@ Las variables seleccionadas, junto con su justificación práctica, se muestran 
 	\end{tabularx}
 \end{table}
 
-\vspace{1em}
 Para cada una de estas categorías, se escoge \textbf{el sensor más representativo o más cercano al suelo} disponible en cada estación. Este criterio asegura la mayor homogeneidad entre estaciones y la mayor cercanía posible a las condiciones experimentadas en carretera.
 
 Finalmente, estas variables se integran dentro de cada observación del dataset final mediante su asociación espacio-temporal al flujo de tráfico correspondiente, quedando reflejadas como campos meteorológicos en la clase \texttt{MobilitySnapshot}:
@@ -396,8 +387,8 @@ La entidad central para la construcción del dataset es la clase \texttt{Mobilit
 
 \begin{itemize}
 	\item \textbf{Flujos de tráfico (\texttt{Flow})}: variables como \texttt{meterId}, \texttt{dateTime}, \texttt{totalVehicles}, y metadatos geográficos.
-	\item \textbf{Meteorología}: valores de los sensores seleccionados asociados espacial y temporalmente al flujo.
-	\item \textbf{Incidencias}: información de incidencias activas cercanas en tiempo y espacio, codificadas según la tipología definida.
+	\item \textbf{Meteorología (\texttt{Reading})}: valores de los sensores seleccionados asociados espacial y temporalmente al flujo.
+	\item \textbf{Incidencias (\texttt{Incidence})}: información de incidencias activas cercanas en tiempo y espacio, codificadas según la tipología definida.
 \end{itemize}
 
 El proceso de generación de las observaciones enriquecidas se implementa en el servicio \texttt{MobilitySnapshotGeneratorService}, dentro del método \texttt{generateSnapshots()}. Este método ejecuta de forma secuencial la construcción de objetos \texttt{MobilitySnapshot}, cada uno de los cuales encapsula una observación consolidada de movilidad para un instante y punto geográfico concretos. La lógica está diseñada para ser robusta y escalable, gestionando datos de múltiples fuentes (flujos, meteorología e incidencias) mediante el uso de procesamiento por intervalos y agrupación por sensor.
@@ -446,19 +437,12 @@ El algoritmo se describe de la siguiente forma.
 \vspace{1em}
 \noindent \textbf{Ejemplo práctico:}
 \begin{lstlisting}[language=Kotlin, caption={Ejemplo de uso con intervalos de 30 minutos}]
-	generateIntervals(
-	start = 2024-01-01T00:00,
-	end = 2024-01-01T01:00,
-	step = Duration.ofMinutes(30)
-	)
+	generateIntervals(start = 2024-01-01T00:00, end = 2024-01-01T01:00, step = Duration.ofMinutes(30))
 \end{lstlisting}
 
 \noindent El resultado de este ejemplo sería:
 \begin{verbatim}
-	[
-	(2024-01-01T00:00, 2024-01-01T00:30),
-	(2024-01-01T00:30, 2024-01-01T01:00)
-	]
+	[ (2024-01-01T00:00, 2024-01-01T00:30), (2024-01-01T00:30, 2024-01-01T01:00) ]
 \end{verbatim}
 
 Este mecanismo permite particionar grandes volúmenes de datos históricos en unidades manejables, facilitando la agregación de información por tramos y reduciendo la carga computacional de los algoritmos de predicción.
@@ -489,9 +473,10 @@ Una decisión fundamental en la construcción del dataset es la selección del i
 
 \begin{table}[H]
 	\centering
+	\small
 	\caption{Comparativa entre intervalos temporales posibles para el resampling}
 	\label{tab:resample_comparison}
-	\renewcommand{\arraystretch}{1.4}
+	\begin{comment}\renewcommand{\arraystretch}{1.4}\end{comment}
 	\begin{tabularx}{\textwidth}{lXXX}
 		\toprule
 		\textbf{Criterio} & \textbf{15 minutos} & \textbf{30 minutos} & \textbf{1 hora} \\

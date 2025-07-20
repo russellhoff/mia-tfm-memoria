@@ -113,3 +113,32 @@
 	description={Open Neural Network Exchange. Formato abierto y estandarizado para representar modelos de aprendizaje automático, diseñado para facilitar la interoperabilidad entre diferentes frameworks de deep learning como PyTorch, TensorFlow, Keras o Scikit-learn}
 }
 
+
+\newglossaryentry{design_pattern:builder}{
+	name=Builder,
+	description={Separa la construcción de un objeto complejo de su representación, permitiendo que el mismo proceso de construcción pueda crear diferentes representaciones. Utilizado en la generación del dataset a través de la clase \texttt{MobilitySnapshotBuilder}}
+}
+\newglossaryentry{design_pattern:repository}{
+	name=Repository,
+	description={Media entre el dominio y las capas de mapeo de datos, proporcionando una interfaz similar a una colección para acceder a los objetos del dominio. Todas las operaciones de acceso a datos (\texttt{FlowRepository}, \texttt{MeterRepository}, etc.) se abstraen en repositorios desacoplados}
+}
+\newglossaryentry{design_pattern:servicelayer}{
+	name=Service Layer,
+	description={Define los límites de una aplicación y las operaciones disponibles, coordinando la respuesta de la aplicación en cada operación. La lógica de negocio reside en servicios como \texttt{FlowService}, \texttt{MeterService}, \texttt{IncidenceService}}
+}
+\newglossaryentry{design_pattern:dto}{
+	name=Data Transfer Object,
+	description={Es un objeto que transporta datos entre procesos, generalmente para reducir el número de llamadas a métodos remotos. Se emplean DTOs para el intercambio de datos entre capas, evitando el acoplamiento con los modelos de persistencia.}
+}
+\newglossaryentry{design_pattern:helper_utility}{
+	name=Helper/Utility,
+	description={Helper: Proporciona funcionalidad reutilizable y de bajo nivel a otras clases, a menudo a través de métodos estáticos, para evitar la duplicación de código. Utility: Es una clase que agrupa métodos estáticos con funcionalidades comunes y reutilizables que no dependen del estado de ningún objeto. Utilidades para parseo, validación y transformación de datos (por ejemplo, para el tratamiento de ficheros XML meteorológicos)}
+}
+\newglossaryentry{design_pattern:facade}{
+	name=Facade,
+	description={Ofrece una interfaz unificada y simplificada a un conjunto de interfaces en un subsistema más complejo, facilitando su uso. Fachadas que agrupan operaciones complejas en interfaces sencillas, facilitando la integración con servicios externos.}
+}
+\newglossaryentry{design_pattern:factory_singleton}{
+	name=Factory/Singleton,
+	description={Factory: Se encarga de crear objetos sin especificar la clase exacta del objeto que se creará, delegando esta lógica a una subclase. Garantiza que una clase tenga una única instancia y proporciona un punto de acceso global a ella. Empleados para instanciar objetos según el origen de datos y para servicios centrales, respectivamente.}
+}

@@ -9,7 +9,7 @@
 
 Este capítulo recopila y sintetiza los hallazgos más relevantes derivados del desarrollo y evaluación de los modelos propuestos en este trabajo fin de máster. A lo largo de las siguientes secciones se presentan, en primer lugar, las conclusiones generales del estudio, haciendo especial hincapié en el grado de consecución de los objetivos y la validación de la hipótesis planteada. Posteriormente, se resumen los aprendizajes principales extraídos en cada uno de los contextos evaluados, se abordan de forma crítica las limitaciones y consideraciones de validez de los experimentos realizados, y se proponen líneas de trabajo futuro. El capítulo concluye con una reflexión sobre la aportación realizada y el potencial impacto del sistema desarrollado en el ámbito de la predicción del tráfico.
 
-\subsection{Síntesis global y verificación de la hipótesis}
+\subsection{Síntesis global, verificación de la hipótesis y aportación al campo}
 \label{sec:sintesis_verif}
 
 El objetivo principal de este trabajo fue diseñar, implementar y evaluar modelos avanzados de predicción del tráfico vehicular, centrándose en el desarrollo y validación de una arquitectura basada en Transformers adaptada a la complejidad de los datos reales de movilidad. La hipótesis de partida planteaba que, mediante el uso de mecanismos de atención espacial y temporal, sería posible superar la precisión y capacidad de generalización de modelos clásicos como las redes neuronales multi-capa (\texttt{MLP}), especialmente en entornos con alta densidad de sensores y complejidad topológica.
@@ -24,7 +24,11 @@ En cuanto al cumplimiento de los objetivos planteados, se han alcanzado tanto el
 	\item \textbf{Analizar la capacidad de generalización y robustez de los modelos propuestos} en contextos reales de la provincia de Bizkaia, destacando la adaptabilidad del sistema a diferentes configuraciones y tipos de red viaria.
 \end{itemize}
 
-En definitiva, la investigación realizada ha permitido validar la hipótesis inicial y alcanzar los objetivos propuestos, contribuyendo al avance en el campo de la predicción de tráfico mediante el uso de arquitecturas Transformer adaptadas a escenarios reales y heterogéneos.
+Más allá de la validación experimental, este trabajo establece una base sólida para la aplicación de modelos avanzados de aprendizaje profundo —y en particular de arquitecturas basadas en Transformers— en el ámbito de la predicción del tráfico vehicular en entornos reales y heterogéneos. La principal aportación reside en haber demostrado que los mecanismos de atención espaciotemporal implementados en Trafficformer permiten superar las limitaciones de modelos tradicionales, logrando una mayor capacidad predictiva y una mejor adaptación a escenarios complejos y dinámicos.
+
+Adicionalmente, el desarrollo de un pipeline reproducible y escalable, junto con el uso de plataformas modernas de experimentación, contribuye a mejorar la transparencia y la replicabilidad en futuras investigaciones. Se espera que las conclusiones extraídas y las líneas de trabajo propuestas sirvan de referencia para la comunidad investigadora y para profesionales del sector de la movilidad, facilitando el despliegue de sistemas inteligentes de predicción de tráfico en contextos urbanos y metropolitanos cada vez más exigentes.
+
+En definitiva, este trabajo refuerza el papel de las arquitecturas Transformer como herramientas clave para abordar los desafíos emergentes en la gestión y planificación inteligente de la movilidad.
 
 \subsection{Conclusiones principales por fuente de datos}
 \label{sec:concl_fue_dat}
@@ -77,15 +81,6 @@ De cara a futuras investigaciones, se identifican diversas líneas de trabajo qu
 	\item \textbf{Interpretabilidad y explicabilidad}: Implementar técnicas adicionales que aumenten la interpretabilidad de los modelos desarrollados, facilitando la comprensión y justificación de las decisiones tomadas por el sistema.
 	\item \textbf{Integración de otros modelos avanzados}: Explorar modelos complementarios como Graph Neural Networks (GNNs) o modelos híbridos que podrían aprovechar aún más las estructuras espaciales complejas presentes en los datos de tráfico.
 \end{itemize}
-
-\subsection{Cierre y aportación al campo}
-\label{sec:cierre_aport}
-
-En conclusión, este trabajo ha establecido una base sólida para la aplicación de modelos avanzados de aprendizaje profundo, específicamente arquitecturas basadas en Transformers, en el ámbito de la predicción del tráfico vehicular. La investigación desarrollada no solo ha permitido validar la eficacia del modelo Trafficformer en escenarios urbanos y viarios reales, sino que también ha evidenciado la importancia de adaptar y optimizar estos enfoques a las particularidades de cada contexto y fuente de datos.
-
-La principal aportación de este trabajo reside en haber demostrado que los mecanismos de atención espaciotemporal implementados en Trafficformer permiten superar las limitaciones de modelos tradicionales, logrando una mayor capacidad predictiva y una mejor adaptación a entornos complejos y dinámicos. Además, el desarrollo de un pipeline reproducible y escalable, junto con el uso de plataformas modernas de experimentación, contribuye a mejorar la transparencia y la replicabilidad en futuras investigaciones.
-
-Se espera que las conclusiones extraídas y las líneas de trabajo propuestas sirvan de referencia para la comunidad investigadora y para profesionales del sector de la movilidad, facilitando el despliegue de sistemas inteligentes de predicción de tráfico en contextos urbanos y metropolitanos cada vez más exigentes. En definitiva, este trabajo refuerza el papel de las arquitecturas Transformer como herramientas clave para abordar los desafíos emergentes en el ámbito de la gestión y planificación inteligente de la movilidad.
 
 
 

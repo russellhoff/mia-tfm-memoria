@@ -14,7 +14,7 @@ El presente capítulo recoge el desarrollo experimental llevado a cabo para vali
 
 Para ello, se ha diseñado una estrategia de evaluación comparativa entre modelos, aplicándolos sobre tres fuentes de datos independientes que recogen información de tráfico rodado en la provincia de Bizkaia. Cada fuente representa una infraestructura y cobertura distintas, lo que permite evaluar el comportamiento de los modelos bajo distintos escenarios y estructuras de datos.
 
-\subsubsection*{Hipótesis y objetivos del experimento}
+\subsubsection*{Propósito e hipótesis del experimento}
 
 El objetivo del experimento es doble:
 
@@ -23,7 +23,7 @@ El objetivo del experimento es doble:
 	\item \textbf{Analizar el impacto del diseño de arquitectura y la configuración de parámetros} sobre el rendimiento predictivo en escenarios heterogéneos, valorando especialmente la aportación del mecanismo de atención espacial.
 \end{enumerate}
 
-La hipótesis de partida es que el modelo \textit{Trafficformer}, al integrar mecanismos de atención multi-cabeza junto con máscaras espaciales basadas en OpenStreetMap, será capaz de capturar relaciones espaciales y temporales complejas entre sensores de tráfico, lo que se traducirá en mejores métricas de error respecto al MLP.
+La hipótesis de partida es que el modelo \textit{Trafficformer}, al integrar mecanismos de atención multi-cabeza junto con máscaras espaciales basadas en OpenStreetMap, será capaz de capturar relaciones espaciales y temporales complejas entre sensores de tráfico, lo que se traducirá en mejores métricas de error respecto a una MLP.
 
 Antes de abordar las particularidades técnicas de cada arquitectura en apartados posteriores, en la Tabla~\ref{tab:mlp_vs_trafficformer} se presenta una comparación conceptual entre los dos modelos evaluados: un perceptrón multicapa clásico (MLP) y el modelo propuesto basado en atención (Trafficformer).
 
@@ -107,14 +107,7 @@ La herramienta \texttt{Weights \& Biases (wandb)} ha sido empleada como sistema 
 	\item Exportar fácilmente los pesos y configuraciones más prometedoras.
 \end{itemize}
 
-Esta herramienta ha resultado esencial para asegurar la reproducibilidad de los experimentos y la trazabilidad científica, especialmente dado el elevado número de combinaciones exploradas (120 experimentos). En la Figura~\ref{fig:capt_wandb} se puede visualizar cuál es el aspecto visual de Wandb.
-
-\begin{figure}[H]
-	\centering
-	\includegraphics[width=0.85\textwidth]{includes/cap5/captura_wandb.png}
-	\caption{Captura de Wandb}
-	\label{fig:capt_wandb}
-\end{figure}
+Esta herramienta ha resultado esencial para asegurar la reproducibilidad de los experimentos y la trazabilidad científica, especialmente dado el elevado número de combinaciones exploradas (120 experimentos).
 
 \subsubsection*{Exportación de modelos con ONNX}
 
@@ -246,19 +239,41 @@ Esta diferenciación permite compartir código, reutilizando funciones comunes d
 
 \subsubsection*{Construcción del grafo de sensores}
 
-En el caso del modelo Trafficformer, se genera un grafo representando la red viaria de sensores. Cada nodo representa un \texttt{meter}, y las aristas se definen en función de su proximidad física o conectividad vial. Este grafo es generado desde el módulo \texttt{sensor\_network\_map.py}, utilizando distancias geográficas, heurísticas de agrupación y datos abiertos de OpenStreetMap.
+En el caso del modelo \textit{Trafficformer}, se genera un grafo que representa la red viaria de sensores. Cada nodo corresponde a un \texttt{meter}, mientras que las aristas se definen en función de su proximidad física o conectividad vial. Para su construcción, se parte de las posiciones geográficas de los sensores, agrupándolos mediante heurísticas espaciales y considerando su distribución sobre el territorio. Esta lógica se implementa en el módulo \texttt{sensor\_network\_map.py}, apoyándose en información abierta de OpenStreetMap y cálculos de distancia geodésica.
 
-A partir del grafo se puede derivar la matriz de adyacencia que servirá como base para aplicar enmascaramientos espaciales.
+A modo ilustrativo, en las Figuras~\ref{fig:sensores_sid1}, \ref{fig:sensores_sid2} y \ref{fig:sensores_sid5} se muestran las distribuciones espaciales de sensores para las distintas entidades proveedoras de datos: Gobierno Vasco (sourceId 1), Diputación Foral de Bizkaia (sourceId 2) y Ayuntamiento de Bilbao (sourceId 5), respectivamente. Estos gráficos permiten apreciar la heterogeneidad geográfica en la cobertura sensorial y su concentración en zonas urbanas o periurbanas.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.5\linewidth]{includes/cap5/source_id_1_meters_mask.png}
+	\caption{Distribución espacial de sensores para Gobierno Vasco (sourceId 1).}
+	\label{fig:sensores_sid1}
+\end{figure}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.7\linewidth]{includes/cap5/source_id_2_meters_mask.png}
+	\caption{Distribución espacial de sensores para Diputación Foral de Bizkaia (sourceId 2).}
+	\label{fig:sensores_sid2}
+\end{figure}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.7\linewidth]{includes/cap5/source_id_5_meters_mask.png}
+	\caption{Distribución espacial de sensores para Ayuntamiento de Bilbao (sourceId 5).}
+	\label{fig:sensores_sid5}
+\end{figure}
+
+A partir del grafo de sensores se puede derivar la matriz de adyacencia, que resulta clave para la aplicación de técnicas de enmascaramiento espacial y la explotación de correlaciones topológicas en los modelos de predicción.
 
 \subsubsection*{Máscaras espaciales (solo para Trafficformer)}
 
 Las máscaras espaciales permiten restringir el campo de atención del modelo, indicando qué sensores deben influenciarse entre sí durante el proceso de autoatención.
 
-Se ha diseñado una arquitectura extensible de generación de máscaras, implementada en el paquete \texttt{mask}, con tres estrategias principales:
+Se ha diseñado una arquitectura extensible de generación de máscaras, implementada en el paquete \texttt{mask}, con dos estrategias principales:
 
 \begin{itemize}
 	\item \texttt{BinarySpatialMaskStrategy}: enmascaramiento binario según distancia máxima.
-	\item \texttt{ContinuousSpatialMaskStrategy}: atenúa la atención según distancia continua.
 	\item \texttt{OSMPathSpatialMaskStrategy}: estrategia principal utilizada, basada en conectividad vial real extraída de OpenStreetMap.
 \end{itemize}
 
@@ -294,7 +309,8 @@ Cada entrada al modelo consiste en un vector plano que concatena todas las varia
 
 El objetivo de este modelo es servir de referencia base o \textit{baseline}, tanto en términos de complejidad como de rendimiento, permitiendo comparar sus resultados con arquitecturas más sofisticadas.
 
-En la Figura~\ref{fig:mlp_enhanced_vertical} se presenta un esquema lógico de su flujo de capas.
+En la Figura~\ref{fig:mlp_enhanced_vertical} 
+ de capas.
 
 \begin{figure}[H]
 	\centering
@@ -449,31 +465,19 @@ Cada modelo ha sido entrenado utilizando un conjunto diverso de combinaciones de
 		5 & Trafficformer & 4, 8 & 1e-3 / 5e-4 & 32 / 64  & 120 / patience=10 & 4 / 8  & 64 / 128 & 4/256 y 6/512 \\
 		\bottomrule
 	\end{tabularx}
-	\vspace{0.5em}
-	\begin{minipage}{0.98\textwidth}
-	\footnotesize
-	\textbf{Leyenda de columnas:} 
-	\textbf{SID}: sourceId. \\
-	\textbf{M}: Modelo. \\
-	\textbf{SL}: Secuencia temporal (\texttt{seq\_len}). \\
-	\textbf{LR}: Learning Rate. \\
-	\textbf{BS}: Tamaño de batch. \\
-	\textbf{E/ES}: Épocas / \textit{Early Stopping} (p: patience). \\
-	\textbf{NH}: Número de cabezas de atención (\texttt{num\_heads}). \\
-	\textbf{ED}: Dimensión de embedding (\texttt{embedding\_dim}). \\
-	\textbf{NL/FF}: Número de capas encoder / dimensión del feedforward (\texttt{num\_layers / ff\_hidden\_dim}).
-	\end{minipage}
 \end{table}
 
 A continuación, se detallan las combinaciones de hiperparámetros evaluadas en el conjunto de experimentos realizados. Cada uno de estos parámetros ha sido cuidadosamente seleccionado en base a recomendaciones de la literatura científica y su aplicabilidad práctica en modelos de predicción multivariada de series temporales, como se describe seguidamente:
 
 \begin{itemize}
-	\item \textbf{SEQ\_LEN}: Los valores 4 y 8 permiten comparar el efecto de ventanas más cortas vs. más largas sobre la precisión y la capacidad de capturar patrones temporales. Es una práctica habitual en \textit{forecasting} experimentar con varias ventanas para encontrar el equilibrio entre capacidad de predicción y sobreajuste.
-	\item \textbf{Learning Rate}: 1e-3 es un valor estándar en \textit{deep learning} y recomendado en el propio artículo de Trafficformer~\cite{trafficformer}, pero se elige 5e-4 para realizar el experimento. En el articulo también se cita el empleo de la estrategia ReduceLROnPlateau \cite{ruder2017overviewgradientdescentoptimization}, estrategia que permite reducir el learning rate hasta un umbral en función de la selección de una métrica. Pese a que dicha estrategia está disponible en Pytorch \cite{pytorchReduceLrOnPLateau} se decidió no emplearla por reducir la complejidad del experimento.
-	\item \textbf{Batch Size}: Se experimenta con 64 y 128 para MLP, y con 32 y 64 para Trafficformer. Un \textit{batch size} menor en Trafficformer permite reducir el uso de memoria y mejora la generalización en modelos más profundos.
-	\item \textbf{Epochs / Early Stopping}: Se ha limitado el entrenamiento a 100--120 épocas, con un mecanismo de \textit{early stopping} con paciencia de 10 épocas. Esta configuración evita el sobreentrenamiento sin necesidad de vigilancia manual.
-	\item \textbf{NUM\_HEADS y EMBEDDING\_DIM}: Las combinaciones evaluadas (4/64 y 8/128) reflejan el equilibrio entre capacidad representacional y coste computacional. Un mayor número de cabezas puede capturar relaciones más complejas entre sensores.
-	\item \textbf{NUM\_LAYERS / FF\_HIDDEN\_DIM}: Se han probado configuraciones de 4 capas con 256 dimensiones ocultas y 6 capas con 512. Estos valores están alineados con los recomendados en el artículo original y en benchmarks del estado del arte.
+	\item \textbf{SourceId} (SID): La fuente de datos.
+	\item \textbf{Modelo} (M): El modelo.
+	\item \textbf{SEQ\_LEN} (SL): Los valores 4 y 8 permiten comparar el efecto de ventanas más cortas vs. más largas sobre la precisión y la capacidad de capturar patrones temporales. Es una práctica habitual en \textit{forecasting} experimentar con varias ventanas para encontrar el equilibrio entre capacidad de predicción y sobreajuste.
+	\item \textbf{Learning Rate} (LR): 1e-3 es un valor estándar en \textit{deep learning} y recomendado en el propio artículo de Trafficformer~\cite{trafficformer}, pero se elige 5e-4 para realizar el experimento. En el articulo también se cita el empleo de la estrategia ReduceLROnPlateau \cite{ruder2017overviewgradientdescentoptimization}, estrategia que permite reducir el learning rate hasta un umbral en función de la selección de una métrica. Pese a que dicha estrategia está disponible en Pytorch \cite{pytorchReduceLrOnPLateau} se decidió no emplearla por reducir la complejidad del experimento.
+	\item \textbf{Batch Size} (BS): Se experimenta con 64 y 128 para MLP, y con 32 y 64 para Trafficformer. Un \textit{batch size} menor en Trafficformer permite reducir el uso de memoria y mejora la generalización en modelos más profundos.
+	\item \textbf{Epochs / Early Stopping} (E/ES): Se ha limitado el entrenamiento a 100--120 épocas, con un mecanismo de \textit{early stopping} con paciencia de 10 épocas. Esta configuración evita el sobreentrenamiento sin necesidad de vigilancia manual.
+	\item \textbf{NUM\_HEADS} (NH) y \textbf{EMBEDDING\_DIM} (ED): Las combinaciones evaluadas (4/64 y 8/128) reflejan el equilibrio entre capacidad representacional y coste computacional. Un mayor número de cabezas puede capturar relaciones más complejas entre sensores.
+	\item \textbf{NUM\_LAYERS} (NL) y \textbf{FF\_HIDDEN\_DIM} (FF): Se han probado configuraciones de 4 capas con 256 dimensiones ocultas y 6 capas con 512. Estos valores están alineados con los recomendados en el artículo original y en benchmarks del estado del arte.
 \end{itemize}
 
 Cada experimento fue registrado y monitorizado utilizando la plataforma \texttt{Weights \& Biases}, lo que permitió realizar un análisis sistemático posterior y facilitar la selección de los mejores modelos por fuente de datos y arquitectura. Para facilitar la reproducibilidad y la trazabilidad de los resultados, todos los notebooks están numerados de forma consistente e incluyen visualizaciones, métricas y configuración exacta de entrenamiento.
@@ -482,12 +486,6 @@ En el \hyperref[anexo:combinaciones_exp]{Anexo~F} se pueden consultar las difere
 
 \subsection{Proceso de entrenamiento y selección de mejores modelos}
 \label{sec:entrenamiento_mej_modelos}
-
-\begin{comment}
-	- Explicación de cómo se lleva a cabo el entrenamiento de MLP y Trafficformer (diferencias, particularidades, callbacks, etc.).
-	- Integración con Wandb: registro, seguimiento, selección y exportación de los mejores modelos.
-	- Presentación del proceso de extracción del mejor modelo para cada pareja source/modelo (resumido, referenciando tu notebook y código).
-\end{comment}
 
 El proceso de entrenamiento de los modelos se ha realizado bajo un entorno controlado y reproducible, siguiendo las mejores prácticas en experimentación con redes neuronales. Para ello, se han desarrollado cuadernos Jupyter donde se define de manera explícita cada paso del ciclo experimental: carga de datos, configuración del entorno, definición del modelo, entrenamiento, evaluación y registro de resultados.
 
@@ -519,7 +517,7 @@ Al finalizar el entrenamiento, se guarda el modelo final, se registra el tiempo 
 
 \begin{figure}[H]
 	\centering
-	\includegraphics[width=0.95\textwidth]{includes/cap5/loss_curve_example.png}
+	\includegraphics[width=0.5\textwidth]{includes/cap5/loss_curve_example.png}
 	\caption{Curvas de evolución de pérdida para entrenamiento y validación, con indicación de la mejor época.}
 	\label{fig:loss_curve_example}
 \end{figure}
