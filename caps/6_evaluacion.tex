@@ -1,21 +1,8 @@
 \section{Evaluación, comparación de modelos y resultados}
 \label{sec:evaluacion}
 
-%
-% Para citar: 
-% 	(ver Sección~\ref{sec:dataset_arquitectura})
-% 	como se describe en la Sección~\nameref{sec:dataset_arquitectura})
-%
-
 \subsection{Resultados experimentales}
 \label{sec:resultados_exp}
-
-\begin{comment}
-	- Presentación de los resultados finales:
-	- Tablas y/o gráficos para las métricas más relevantes (MAE, RMSE, R2, MAPE...) para cada experimento y cada mejor modelo.
-	- Comparativa directa entre MLP y Trafficformer para cada source.
-	- Visualizaciones clave (si tienes heatmaps, gráficas de error, etc.).
-\end{comment}
 
 Para cada una de las tres fuentes de datos disponibles (\texttt{sourceId} = 1, 2 y 5), se ha seleccionado el mejor modelo entrenado para cada una de las dos arquitecturas evaluadas: \texttt{MLP} y \texttt{Trafficformer}. La selección se ha realizado tomando como criterio el valor mínimo de la métrica de pérdida sobre el conjunto de validación (\texttt{val\_loss}) entre todas las combinaciones de hiperparámetros evaluadas durante el proceso experimental.
 
@@ -320,7 +307,7 @@ Con el objetivo de contextualizar los resultados obtenidos en este trabajo, se p
 	\small
 	\caption{Comparativa de resultados de Trafficformer respecto al estado del arte.}
 	\label{tab:comparativa_trafficformer}
-	\begin{tabular}{lcccccc}
+	\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}X c c c c c c}
 		\toprule
 		& \textbf{Dataset} & \textbf{Variable Predicha} & \textbf{MAE} & \textbf{MAPE (\%)} & \textbf{RMSE} & \textbf{$R^2$} \\
 		\midrule
@@ -329,7 +316,7 @@ Con el objetivo de contextualizar los resultados obtenidos en este trabajo, se p
 		\textbf{Trafficformer (TFM, SourceId 2)} & DFB & Capacidad (veh/h) & 5.832 & 1.51e3 & 15.046 & 0.982 \\
 		\textbf{Trafficformer (TFM, SourceId 5)} & Ayto. Bilbao & Capacidad (veh/h) & 175.975 & 1.74e5 & 306.134 & 0.640 \\
 		\bottomrule
-	\end{tabular}
+	\end{tabularx}
 \end{table}
 
 Tal y como se recoge en la Tabla~\ref{tab:comparativa_trafficformer}, se aprecia una consistencia en la tendencia favorable del modelo Trafficformer frente a arquitecturas más simples como MLP, en línea con lo observado en la literatura reciente.

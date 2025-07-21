@@ -2,23 +2,32 @@
 \label{anexo:sensores}
 \addcontentsline{toc}{section}{Anexo B – Descripción de sensores meteorológicos}
 
-En este anexo se presenta un listado exhaustivo de los sensores meteorológicos utilizados en la construcción del dataset. Cada sensor cuenta con un identificador único, una abreviatura técnica y una descripción textual de la variable que mide. Estos sensores provienen de estaciones automáticas distribuidas en la CAPV, y sus mediciones son fundamentales para enriquecer los \texttt{MobilitySnapshot} con información climática contextual.
+En este anexo se presenta un listado exhaustivo de los sensores meteorológicos empleados en la construcción del dataset, el cual se detalla en la Tabla~\ref{tab:sensores_euskalmet}. Cada sensor dispone de un identificador único, una abreviatura técnica y una descripción textual de la variable que mide. Todos ellos proceden de estaciones automáticas distribuidas por la CAPV, cuyas mediciones resultan fundamentales para enriquecer los registros \texttt{MobilitySnapshot} con información climática contextual.
 
 La codificación y nomenclatura de los sensores meteorológicos responde al estándar empleado por Euskalmet, el cual está documentado en su catálogo de abreviaturas técnicas de tipo de sensor~\cite{sensorTypeAbbrv}.
 
 \vspace{1em}
 
 \begin{longtable}{|c|l|p{8.5cm}|}
-	\hline
+	\caption{Sensores Euskalmet empleados en la construcción del dataset.}
+	\label{tab:sensores_euskalmet} \\
+	\toprule
 	\textbf{ID} & \textbf{Nombre} & \textbf{Descripción} \\
-	\hline
+	\midrule
 	\endfirsthead
-	\hline
+	
+	\toprule
 	\textbf{ID} & \textbf{Nombre} & \textbf{Descripción} \\
-	\hline
+	\midrule
 	\endhead
-	\hline
+	
+	\midrule
+	\multicolumn{3}{r}{\textit{Continúa en la siguiente página}} \\
+	\midrule
 	\endfoot
+	
+	\bottomrule
+	\endlastfoot
 	
 	12 & Dir.Med & Dirección media del viento en grados (º) \\
 	14 & Vel.Max & Racha máxima del viento horizontal en km/h \\
@@ -58,5 +67,5 @@ La codificación y nomenclatura de los sensores meteorológicos responde al est�
 	BD & Ola Sig2 & Altura significante de ola (variante) en metros \\
 	72 & Rad.Refl & Radiación solar reflejada en w/m² \\
 	73 & Rad.UV & Radiación UV en J/m² h \\
-	\hline
+	
 \end{longtable}

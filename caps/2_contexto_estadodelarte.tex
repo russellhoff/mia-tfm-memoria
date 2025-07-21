@@ -130,36 +130,50 @@ Los Transformers, y en particular la arquitectura Trafficformer, superan estas l
 	\item \textbf{Permitir entrenamiento completamente paralelo}: Gracias al mecanismo de atención, el modelo puede ser entrenado de manera más rápida que una \acrshort{rnn} convencional.
 \end{itemize}
 
-Los resultados experimentales de \cite{trafficformer} muestran que Trafficformer supera consistentemente a las otras propuestas mencionadas anteriormente en múltiples métricas de evaluación como \acrshort{mae}, \acrshort{rmse} y \acrshort{mape}. Por ejemplo, en el dataset del \textit{Seattle Loop Detector}, se observó una mejora de hasta el 18\% en error medio absoluto frente a los mejores modelos recurrentes. Además, la arquitectura Transformer mostró una mayor capacidad de generalización frente a cambios dinámicos del tráfico. En la tabla \ref{tab:comparativa_modelos} se puede ver a modo resumido todo lo dicho anteriormente.
+Los resultados experimentales de \cite{trafficformer} muestran que Trafficformer supera consistentemente a las otras propuestas mencionadas anteriormente en múltiples métricas de evaluación como \acrshort{mae}, \acrshort{rmse} y \acrshort{mape}. Por ejemplo, en el dataset del \textit{Seattle Loop Detector}, se observó una mejora de hasta el 18\% en error medio absoluto frente a los mejores modelos recurrentes. Además, la arquitectura Transformer mostró una mayor capacidad de generalización frente a cambios dinámicos del tráfico. En la tabla \ref{tab:comparativa-modelos} se puede ver a modo resumido todo lo dicho anteriormente.
 
-\begin{table}[H]
-	\centering
-	\small
-	\caption{Comparativa entre arquitecturas en tareas de predicción del tráfico}
-	\label{tab:comparativa_modelos}
-	\begin{comment}\renewcommand{\arraystretch}{1.4}\end{comment}
-	\begin{tabularx}{\textwidth}{lXXX}
-		\toprule
-		\textbf{Aspecto} & \textbf{RNNs (LSTM, GRU)} & \textbf{GNNs} & \textbf{Transformers} \\
-		\midrule
-		Procesamiento secuencial vs. paralelo &
-		Procesamiento secuencial con paralelización limitada &
-		No aplicable (estructura estática) &
-		Paralelización total mediante mecanismo de atención \\
-		
-		\midrule
-		Modelado espacial y temporal &
-		Modelado temporal fuerte, pero poco eficiente para relaciones espaciales &
-		Excelente modelado espacial, dificultad para integrar dinámica temporal &
-		Modelado explícito y desacoplado de componentes espaciales y temporales \\
-		
-		\midrule
-		Rendimiento empírico &
-		Rendimiento limitado en benchmarks de tráfico &
-		Rendimiento moderado en tareas espaciales, sensible a ruido temporal &
-		Mejores resultados en métricas MAE, RMSE y MAPE, mayor capacidad de generalización \\
-		\bottomrule
-	\end{tabularx}
-\end{table}
+\begin{longtable}{>{\raggedright\arraybackslash}p{3cm} >{\raggedright\arraybackslash}p{3.5cm} >{\raggedright\arraybackslash}p{3.5cm} >{\raggedright\arraybackslash}p{4cm}}
+	\caption{Comparativa entre arquitecturas en tareas de predicción del tráfico.} \label{tab:comparativa-modelos} \\
+	\toprule
+	\textbf{Aspecto} &
+	\textbf{RNNs (LSTM, GRU)} &
+	\textbf{GNNs} &
+	\textbf{Transformers} \\
+	\midrule
+	\endfirsthead
+	
+	\toprule
+	\textbf{Aspecto} &
+	\textbf{RNNs (LSTM, GRU)} &
+	\textbf{GNNs} &
+	\textbf{Transformers} \\
+	\midrule
+	\endhead
+	
+	\midrule
+	\multicolumn{4}{r}{\textit{Continúa en la siguiente página}} \\
+	\midrule
+	\endfoot
+	
+	\bottomrule
+	\endlastfoot
+	
+	Procesamiento secuencial vs. paralelo &
+	Procesamiento secuencial con paralelización limitada &
+	No aplicable (estructura estática) &
+	Paralelización total mediante mecanismo de atención \\
+	
+	Modelado espacial y temporal &
+	Modelado temporal fuerte, pero poco eficiente para relaciones espaciales &
+	Excelente modelado espacial, dificultad para integrar dinámica temporal &
+	Modelado explícito y desacoplado de componentes espaciales y temporales \\
+	
+	Rendimiento empírico &
+	Rendimiento limitado en benchmarks de tráfico &
+	Rendimiento moderado en tareas espaciales, sensible a ruido temporal &
+	Mejores resultados en métricas MAE, RMSE y MAPE, mayor capacidad de generalización \\
+	
+\end{longtable}
 
 En resumen, los modelos Transformer no solo ofrecen ventajas computacionales, sino que proporcionan una representación más rica y eficiente de las correlaciones espacio-temporales que caracterizan al problema de la predicción del tráfico urbano. 
+

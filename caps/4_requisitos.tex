@@ -1,12 +1,6 @@
 \section{Construcción del dataset y arquitectura del sistema}
 \label{sec:dataset_arquitectura}
 
-%
-% Para citar: 
-% 	(ver Sección~\ref{sec:dataset_arquitectura})
-% 	como se describe en la Sección~\nameref{sec:dataset_arquitectura})
-%
-
 En este capítulo se describe el diseño, desarrollo e implementación del sistema responsable de generar el dataset empleado en el modelo de predicción de tráfico. Se parte de la identificación y análisis de las fuentes de datos disponibles, que incluyen mediciones de flujo vehicular, condiciones meteorológicas e incidencias viales. A continuación, se detallan las decisiones técnicas adoptadas en la arquitectura del sistema de integración, los patrones de diseño utilizados y el procedimiento empleado para consolidar todas las observaciones en una única estructura homogénea: la clase \texttt{MobilitySnapshot}. Finalmente, se justifican aspectos clave como la granularidad temporal del dataset, los criterios de selección de variables y las estrategias de persistencia.
 
 
@@ -24,9 +18,9 @@ La cobertura de los datos obtenidos se representa en la tabla \ref{tab:cobertura
 
 \begin{table}[H]
 	\centering
+	\small
 	\caption{Cobertura de datos por fuente y tipo.}
 	\label{tab:cobertura_datos_opendata}
-	\begin{comment}\renewcommand{\arraystretch}{1.2}\end{comment}
 	\begin{tabularx}{\textwidth}{cXccc}
 		\toprule
 		\textbf{SourceId} & \textbf{Organización} & \textbf{Meters} & \textbf{Flows} & \textbf{Incidences} \\
@@ -303,7 +297,6 @@ El resultado es una agrupación validada que se resume en la tabla \ref{tab:agru
 	\small
 	\caption{Agrupación final de incidencias para el modelo predictivo}
 	\label{tab:agrupacion_incidencias}
-	\begin{comment}\renewcommand{\arraystretch}{1.3}\end{comment}
 	\begin{tabularx}{\textwidth}{lXrX}
 		\toprule
 		\textbf{Categoría general} & \textbf{Tipos incluidos} & \textbf{Total casos} & \textbf{Variable sugerida} \\
@@ -351,7 +344,6 @@ Las variables seleccionadas, junto con su justificación práctica, se muestran 
 	\small
 	\caption{Selección de sensores meteorológicos y su relevancia para la predicción de tráfico}
 	\label{tab:seleccion_meteo}
-	\begin{comment}\renewcommand{\arraystretch}{1.3}\end{comment}
 	\begin{tabularx}{\textwidth}{l l X}
 		\toprule
 		\textbf{Categoría} & \textbf{SensorKey base} & \textbf{Justificación} \\
@@ -476,7 +468,6 @@ Una decisión fundamental en la construcción del dataset es la selección del i
 	\small
 	\caption{Comparativa entre intervalos temporales posibles para el resampling}
 	\label{tab:resample_comparison}
-	\begin{comment}\renewcommand{\arraystretch}{1.4}\end{comment}
 	\begin{tabularx}{\textwidth}{lXXX}
 		\toprule
 		\textbf{Criterio} & \textbf{15 minutos} & \textbf{30 minutos} & \textbf{1 hora} \\

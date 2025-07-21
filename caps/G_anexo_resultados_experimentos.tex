@@ -5,12 +5,14 @@
 
 Este anexo recoge el resultado completo de los 120 experimentos de entrenamiento realizados, abarcando diferentes modelos, fuentes de datos y combinaciones de hiperparámetros. Se incluyen, para cada experimento, los valores principales de las métricas obtenidas en validación y test: \texttt{loss}, \texttt{mae}, \texttt{rmse}, \texttt{mape} y \texttt{r2}, además de la epoch de mejor resultado. 
 
-La tabla siguiente muestra la información relevante de cada experimento, agrupando por fuente de datos (\texttt{sourceId}) y modelo (\texttt{model}).
+La Tabla~\ref{tab:metricas_120_experimentos} muestra la información relevante de cada experimento, agrupando por fuente de datos (\texttt{sourceId}) y modelo (\texttt{model}).
 
 \scriptsize
 \setlength{\extrarowheight}{0.5pt}
+
 \begin{longtable}{c | c | c | c | c | c | c | c | c | c | c | c | c | c}
-	\caption{Métricas principales de los 120 experimentos realizados (validación y test).} \\
+	\caption{Métricas principales de los 120 experimentos realizados (validación y test).}
+	\label{tab:metricas_120_experimentos} \\
 	\toprule
 	\textbf{ID} & \textbf{SID} & \textbf{M} & \textbf{EP} & \textbf{VL} & \textbf{VMAE} & \textbf{VRMSE} & \textbf{VMAPE} & \textbf{VR2} & \textbf{TL} & \textbf{TMAE} & \textbf{TRMSE} & \textbf{TMAPE} & \textbf{TR2} \\
 	\midrule
@@ -149,7 +151,7 @@ La tabla siguiente muestra la información relevante de cada experimento, agrupa
 	119 & 5 & trafficformer & 32 & 0.1587 & 179.3557 & 310.5347 & 1.423e5 & 0.6935 & 0.1588 & 179.7756 & 317.2663 & 1.360e5 & 0.6270 \\
 	120 & 5 & trafficformer & 30 & 0.1590 & 180.8759 & 313.7183 & 1.663e5 & 0.6896 & 0.1605 & 181.9994 & 321.2527 & 1.554e5 & 0.5859 \\
 \end{longtable}
-
+	
 \vspace{0.5em}
 \begin{minipage}{0.99\textwidth}
 \footnotesize
@@ -169,5 +171,6 @@ La tabla siguiente muestra la información relevante de cada experimento, agrupa
 \textbf{TMAPE}: Test MAPE. \\
 \textbf{TR2}: Test $R^2$.\\
 \end{minipage}
+
 \end{landscape}
 
