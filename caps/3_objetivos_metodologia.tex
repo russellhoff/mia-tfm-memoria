@@ -146,24 +146,23 @@ Z_t\;
 \]
 
 Para mayor claridad, en la Tabla~\ref{tab:simbolos_trafficformer} se resume la notación empleada en esta sección.
+
 \begin{table}[H]
 	\centering
 	\small
 	\caption{Notación de los principales símbolos utilizados en la formulación de Trafficformer.}
 	\label{tab:simbolos_trafficformer}
-	\begin{tabularx}{\textwidth}{@{}>{$}c<{$}X@{}}
+	\begin{tabularx}{0.75\textwidth}{@{}>{$}c<{$}X@{}}
 		\toprule
-		\textbf{Símbolo} & \textbf{Descripción} \\ 
-		
+		\textbf{Símbolo} & \textbf{Descripción} \\
 		\midrule
-		N & Longitud de la ventana histórica (nº de pasos de tiempo) \\[2pt]
-		I & Número total de nodos/sensores en la red \\[2pt]
-		S_t^{I} & Matriz de características históricas de tamaño $N\times I$ \\[2pt]
-		M^{P} & Máscara espacial ($I\times I$) que pondera la atención entre nodos \\[2pt]
-		S_t^{C1} & Embedding temporal por nodo ($I\times d_t$) \\[2pt]
-		Z_t & Embedding espaciotemporal final ($I\times d_s$) \\[2pt]
-		\hat{V}_{t+1:t+H} & Aforos predichos para los próximos $H$ pasos \\ 
-		
+		N                     & Longitud de la ventana histórica (nº de pasos de tiempo) \\[2pt]
+		I                     & Número total de nodos/sensores en la red \\[2pt]
+		S_t^{I}               & Matriz de características históricas de tamaño $N\times I$ \\[2pt]
+		M^{P}                 & Máscara espacial ($I\times I$) que pondera la atención entre nodos \\[2pt]
+		S_t^{C1}              & Embedding temporal por nodo ($I\times d_t$) \\[2pt]
+		Z_t                   & Embedding espaciotemporal final ($I\times d_s$) \\[2pt]
+		\hat{V}_{t+1:t+H}     & Aforos predichos para los próximos $H$ pasos \\
 		\bottomrule
 	\end{tabularx}
 \end{table}

@@ -253,8 +253,6 @@ La decisión de utilizar una base de datos \textbf{NoSQL, MongoDB}, responde a l
 Tras la integración de las fuentes de datos de tráfico, meteorología e incidencias, se llevó a cabo un proceso de análisis y consolidación de información para la construcción del dataset final utilizado por el modelo de predicción. Este dataset, modelado a través de la clase \texttt{MobilitySnapshot}, resume en cada observación todos los factores que pueden influir en la intensidad del tráfico en un instante y ubicación concretos. En los siguientes apartados se detallan las decisiones tomadas en relación con cada fuente de información, comenzando por la tipificación de incidencias viales.
 
 \subsubsection*{Obtención y estructuración de incidencias}
-% Si ponemos así no se imprime en el indice
-%\subsubsection*{Obtención y estructuración de incidencias}
 
 A partir del análisis exploratorio de las incidencias disponibles en la base de datos, se identificaron distintos tipos reportados a lo largo del tiempo por las diferentes entidades públicas. La tabla \ref{tab:incidencias_frecuencia} resume las categorías encontradas, junto con su frecuencia absoluta. Es importante tener en cuenta que estos datos corresponden a toda la \acrshort{capv}, no solo a Bizkaia.
 
@@ -263,7 +261,7 @@ A partir del análisis exploratorio de las incidencias disponibles en la base de
 	\small
 	\caption{Frecuencia de incidencias por tipo original}
 	\label{tab:incidencias_frecuencia}
-	\begin{tabularx}{\textwidth}{rX}
+	\begin{tabularx}{0.4\textwidth}{rX}
 		\toprule
 		\textbf{Frecuencia} & \textbf{Tipo de incidencia} \\
 		\midrule
@@ -301,7 +299,7 @@ El resultado es una agrupación validada que se resume en la tabla \ref{tab:agru
 		\toprule
 		\textbf{Categoría general} & \textbf{Tipos incluidos} & \textbf{Total casos} & \textbf{Variable sugerida} \\
 		\midrule
-		\texttt{WEATHER}    & Puertos de montaña, Vialidad invernal tramos, Meteorológica & \textbf{50.386} & \texttt{hasWeatherImpact} \\
+		\texttt{WEATHER}    & Puertos de montaña, Vialidad invernal tramos, Meteorológica  & \textbf{50.386} & \texttt{hasWeatherImpact} \\
 		\texttt{ROADWORK}   & Obras, OBRA                                                  & \textbf{8.679}  & \texttt{hasRoadwork} \\
 		\texttt{SAFETY}     & Seguridad vial                                               & \textbf{7.594}  & \texttt{hasSafetyIssue} \\
 		\texttt{ACCIDENT}   & Accidente                                                    & \textbf{3.155}  & \texttt{hasAccident} \\

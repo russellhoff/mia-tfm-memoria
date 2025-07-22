@@ -15,22 +15,32 @@ En la tabla~\ref{tab:mejores_modelos} se muestran los modelos seleccionados junt
 	\small
 	\caption{Resultados de los mejores modelos por combinación \texttt{sourceId}--arquitectura}
 	\label{tab:mejores_modelos}
-	\begin{tabularx}{\textwidth}{c | c | c | c | c | c | c | c }
+	\begin{tabularx}{0.85\textwidth}{
+			>{\centering\arraybackslash}p{0.7cm}  % SID
+			>{\centering\arraybackslash}p{1.8cm}  % Modelo
+			>{\centering\arraybackslash}p{0.7cm}  % EP
+			>{\centering\arraybackslash}p{0.9cm}  % TL
+			>{\centering\arraybackslash}p{1.2cm}  % TMAE
+			>{\centering\arraybackslash}p{1.4cm}  % TRMSE
+			>{\centering\arraybackslash}p{1.5cm}  % TMAPE
+			>{\centering\arraybackslash}p{1.1cm}  % TR2
+		}
 		\toprule
 		\textbf{SID} & \textbf{M} & \textbf{EP} & \textbf{TL} & \textbf{TMAE} & \textbf{TRMSE} & \textbf{TMAPE} & \textbf{TR2} \\
 		\midrule
-		1 & mlp           & 67 & 0.000 & 25.466 & 38.489   & 1.853   & 0.759 \\
-		1 & trafficformer & 30 & 0.143 & 19.125 & 30.784   & 1.745   & 0.822 \\
-		2 & mlp           & 30 & 0.000 & 31.017 & 38.177   & 1.82e14 & 0.866 \\
-		2 & trafficformer & 96 & 0.002 & 5.832  & 15.046   & 1.51e3  & 0.982 \\
-		5 & mlp           & 39 & 0.000 & 213.850 & 343.603 & 4.83e5  & -1.797 \\
-		5 & trafficformer & 29 & 0.153 & 175.975 & 306.134 & 1.74e5  & 0.640 \\
+		1 & mlp           & 67 & 0.000 & 25.466  & 38.489  & 1.853e0  & 0.759 \\
+		1 & trafficformer & 30 & 0.143 & 19.125  & 30.784  & 1.745e0  & 0.822 \\
+		2 & mlp           & 30 & 0.000 & 31.017  & 38.177  & 1.82e14  & 0.866 \\
+		2 & trafficformer & 96 & 0.002 & 5.832   & 15.046  & 1.51e3   & 0.982 \\
+		5 & mlp           & 39 & 0.000 & 213.850 & 343.603 & 4.83e5   & -1.797 \\
+		5 & trafficformer & 29 & 0.153 & 175.975 & 306.134 & 1.74e5   & 0.640 \\
 		\bottomrule
 	\end{tabularx}
-	\vspace{0.5em}
+	
+	\vspace{2em}
+	
 	\begin{minipage}{0.98\textwidth}
 	\footnotesize
-	\textbf{Leyenda de columnas:} \\
 	\textbf{SID}: sourceId. \\
 	\textbf{M}: Modelo. \\
 	\textbf{EP}: Epoch óptima. \\

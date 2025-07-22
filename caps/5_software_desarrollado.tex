@@ -447,16 +447,26 @@ Cada modelo ha sido entrenado utilizando un conjunto diverso de combinaciones de
 	\small
 	\caption{Configuraciones experimentales evaluadas}
 	\label{tab:experimentos_resumen}
-	\begin{tabularx}{\textwidth}{c | c | c | c | c | c | c | c | c}
+	\begin{tabularx}{\textwidth}{
+			>{\centering\arraybackslash}c
+			>{\centering\arraybackslash}c
+			>{\centering\arraybackslash}c
+			>{\centering\arraybackslash}c
+			>{\centering\arraybackslash}c
+			>{\centering\arraybackslash}c
+			>{\centering\arraybackslash}c
+			>{\centering\arraybackslash}c
+			>{\centering\arraybackslash}X
+	}
 		\toprule
-		\textbf{SID} & \textbf{M} & \textbf{SL} & \textbf{LR} & \textbf{BS} & \textbf{E/ES} & \textbf{NH} & \textbf{ED} & \textbf{NL/FF} \\
+		\textbf{SID} & \textbf{M} & \textbf{SL} & \textbf{LR} & \textbf{BS} & \textbf{E/ESP} & \textbf{NH} & \textbf{ED} & \textbf{NL/FF} \\
 		\midrule
-		1 & MLP           & 4, 8 & 1e-3 / 5e-4 & 64 / 128 & 100 / patience=10 & -      & -       & - \\
-		1 & Trafficformer & 4, 8 & 1e-3 / 5e-4 & 32 / 64  & 120 / patience=10 & 4 / 8  & 64 / 128 & 4/256 y 6/512 \\
-		2 & MLP           & 4, 8 & 1e-3 / 1e-4 & 64 / 128 & 100 / patience=10 & -      & -       & - \\
-		2 & Trafficformer & 4, 8 & 1e-3 / 1e-4 & 32 / 64  & 120 / patience=10 & 4 / 8  & 64 / 128 & 4/256 y 6/512 \\
-		5 & MLP           & 4, 8 & 1e-3 / 5e-4 & 64 / 128 & 100 / patience=10 & -      & -       & - \\
-		5 & Trafficformer & 4, 8 & 1e-3 / 5e-4 & 32 / 64  & 120 / patience=10 & 4 / 8  & 64 / 128 & 4/256 y 6/512 \\
+		1 & MLP           & 4, 8 & 1e-3 / 5e-4 & 64 / 128 & 100 / 10  & -      & -        & - \\
+		1 & Trafficformer & 4, 8 & 1e-3 / 5e-4 & 32 / 64  & 120 / 10  & 4 / 8  & 64 / 128 & 4/256 y 6/512 \\
+		2 & MLP           & 4, 8 & 1e-3 / 1e-4 & 64 / 128 & 100 / 10  & -      & -        & - \\
+		2 & Trafficformer & 4, 8 & 1e-3 / 1e-4 & 32 / 64  & 120 / 10  & 4 / 8  & 64 / 128 & 4/256 y 6/512 \\
+		5 & MLP           & 4, 8 & 1e-3 / 5e-4 & 64 / 128 & 100 / 10  & -      & -        & - \\
+		5 & Trafficformer & 4, 8 & 1e-3 / 5e-4 & 32 / 64  & 120 / =10 & 4 / 8  & 64 / 128 & 4/256 y 6/512 \\
 		\bottomrule
 	\end{tabularx}
 \end{table}
@@ -469,7 +479,7 @@ A continuación, se detallan las combinaciones de hiperparámetros evaluadas en 
 	\item \textbf{SEQ\_LEN} (SL): Los valores 4 y 8 permiten comparar el efecto de ventanas más cortas vs. más largas sobre la precisión y la capacidad de capturar patrones temporales. Es una práctica habitual en \textit{forecasting} experimentar con varias ventanas para encontrar el equilibrio entre capacidad de predicción y sobreajuste.
 	\item \textbf{Learning Rate} (LR): 1e-3 es un valor estándar en \textit{deep learning} y recomendado en el propio artículo de Trafficformer~\cite{trafficformer}, pero se elige 5e-4 para realizar el experimento. En el articulo también se cita el empleo de la estrategia ReduceLROnPlateau \cite{ruder2017overviewgradientdescentoptimization}, estrategia que permite reducir el learning rate hasta un umbral en función de la selección de una métrica. Pese a que dicha estrategia está disponible en Pytorch \cite{pytorchReduceLrOnPLateau} se decidió no emplearla por reducir la complejidad del experimento.
 	\item \textbf{Batch Size} (BS): Se experimenta con 64 y 128 para MLP, y con 32 y 64 para Trafficformer. Un \textit{batch size} menor en Trafficformer permite reducir el uso de memoria y mejora la generalización en modelos más profundos.
-	\item \textbf{Epochs / Early Stopping} (E/ES): Se ha limitado el entrenamiento a 100--120 épocas, con un mecanismo de \textit{early stopping} con paciencia de 10 épocas. Esta configuración evita el sobreentrenamiento sin necesidad de vigilancia manual.
+	\item \textbf{Epochs / Early Stopping, Patience} (E/ESP): Se ha limitado el entrenamiento a 100--120 épocas, con un mecanismo de \textit{early stopping} con paciencia de 10 épocas. Esta configuración evita el sobreentrenamiento sin necesidad de vigilancia manual.
 	\item \textbf{NUM\_HEADS} (NH) y \textbf{EMBEDDING\_DIM} (ED): Las combinaciones evaluadas (4/64 y 8/128) reflejan el equilibrio entre capacidad representacional y coste computacional. Un mayor número de cabezas puede capturar relaciones más complejas entre sensores.
 	\item \textbf{NUM\_LAYERS} (NL) y \textbf{FF\_HIDDEN\_DIM} (FF): Se han probado configuraciones de 4 capas con 256 dimensiones ocultas y 6 capas con 512. Estos valores están alineados con los recomendados en el artículo original y en benchmarks del estado del arte.
 \end{itemize}
