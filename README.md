@@ -1,4 +1,4 @@
-# TFM – Predicción del Tráfico con Redes Neuronales y Transformers
+# TFM – Predicción de tráfico mediante aprendizaje profundo y Transformers
 
 **Autor:** Jon Inazio  
 
