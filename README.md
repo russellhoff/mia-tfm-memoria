@@ -1,8 +1,13 @@
 # TFM – Predicción del Tráfico con Redes Neuronales y Transformers
 
 **Autor:** Jon Inazio  
+
 **Director:** Omar Velázquez López
-**Máster Universitario en Inteligencia Artificial – UNIR**  
+
+**Titulación:** Máster Universitario en Inteligencia Artificial
+
+**Universidad:** Universidad Internacional de la Rioja - UNIR 
+
 **Curso:** 2024-2025
 
 ---
