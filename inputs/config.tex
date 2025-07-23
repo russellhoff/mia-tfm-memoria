@@ -207,6 +207,18 @@
 	%\renewcommand{\bibname}{Referencia bibliográfica}
 }
 
+\captionsetup[figure]{labelfont=bf, textfont=it, font=normalsize}
+\captionsetup[table]{labelfont=bf, textfont=it, font=normalsize}
+
+% Comando para fuente bajo figura/tabla
+\newcommand{\fuente}[1]{%
+	\vspace{-1.2em}% Ajusta aquí la cantidad de espacio negativo (prueba entre -0.5em y -1.2em)
+	\begin{center}
+		\fontsize{9.5pt}{11pt}\selectfont
+		Fuente: #1
+	\end{center}
+}
+
 \titlespacing*{\paragraph}{0pt}{9pt}{0.5ex}
 \titleformat{\paragraph}[block]{\normalsize}{\theparagraph}{.5em}{\mdseries}
 \titlespacing*{\subparagraph}{0pt}{9pt}{0.5ex}

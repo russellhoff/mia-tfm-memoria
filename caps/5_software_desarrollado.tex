@@ -239,22 +239,22 @@ A modo ilustrativo, en las Figuras~\ref{fig:sensores_sid1}, \ref{fig:sensores_si
 
 \begin{figure}[H]
 	\centering
-	\includegraphics[width=0.5\linewidth]{includes/cap5/source_id_1_meters_mask.png}
 	\caption{Distribución espacial de sensores para Gobierno Vasco (sourceId 1).}
+	\includegraphics[width=0.5\linewidth]{includes/cap5/source_id_1_meters_mask.png}
 	\label{fig:sensores_sid1}
 \end{figure}
 
 \begin{figure}[H]
 	\centering
-	\includegraphics[width=0.7\linewidth]{includes/cap5/source_id_2_meters_mask.png}
 	\caption{Distribución espacial de sensores para Diputación Foral de Bizkaia (sourceId 2).}
+	\includegraphics[width=0.7\linewidth]{includes/cap5/source_id_2_meters_mask.png}
 	\label{fig:sensores_sid2}
 \end{figure}
 
 \begin{figure}[H]
 	\centering
-	\includegraphics[width=0.7\linewidth]{includes/cap5/source_id_5_meters_mask.png}
 	\caption{Distribución espacial de sensores para Ayuntamiento de Bilbao (sourceId 5).}
+	\includegraphics[width=0.7\linewidth]{includes/cap5/source_id_5_meters_mask.png}
 	\label{fig:sensores_sid5}
 \end{figure}
 
@@ -303,11 +303,11 @@ Cada entrada al modelo consiste en un vector plano que concatena todas las varia
 
 El objetivo de este modelo es servir de referencia base o \textit{baseline}, tanto en términos de complejidad como de rendimiento, permitiendo comparar sus resultados con arquitecturas más sofisticadas.
 
-En la Figura~\ref{fig:mlp_enhanced_vertical} 
- de capas.
+En la Figura~\ref{fig:mlp_enhanced_vertical} se presenta un esquema lógico de su flujo de capas.
 
 \begin{figure}[H]
 	\centering
+	\caption{Esquema lógico del flujo de capas en el modelo \texttt{MLP}.}
 	\begin{tikzpicture}[
 		node distance=1.5cm,
 		every node/.style={font=\small, align=center},
@@ -331,9 +331,9 @@ En la Figura~\ref{fig:mlp_enhanced_vertical}
 		\draw[arrow] (linear3) -- (reshape);
 		\draw[arrow] (reshape) -- (output);
 	\end{tikzpicture}
-	\caption{Esquema lógico del flujo de capas en el modelo \texttt{MLP}.}
 	\label{fig:mlp_enhanced_vertical}
 \end{figure}
+\fuente{Elaboración propia.}
 
 El comportamiento del modelo está condicionado por varios parámetros configurables en su constructor:
 
@@ -361,6 +361,7 @@ Esta operación se ilustra esquemáticamente en la Figura~\ref{fig:attention_mas
 
 \begin{figure}[H]
 	\centering
+	\caption{Aplicación de la máscara espacial en el mecanismo de atención de \texttt{Trafficformer}.}
 	\begin{tikzpicture}[
 		node distance=1.8cm,
 		every node/.style={font=\small, align=center},
@@ -384,9 +385,9 @@ Esta operación se ilustra esquemáticamente en la Figura~\ref{fig:attention_mas
 		\draw[arrow] (mask) -- (rest);
 		\draw[arrow] (rest) -- (embed);
 	\end{tikzpicture}
-	\caption{Aplicación de la máscara espacial en el mecanismo de atención de \texttt{Trafficformer}.}
 	\label{fig:attention_masking}
 \end{figure}
+\fuente{Elaboración propia.}
 
 Tras el bloque de atención se encuentra una red \texttt{FeedForward} con normalización y conexiones residuales, que complementa la capacidad de aprendizaje no lineal de la arquitectura. Finalmente, se aplica un bloque predictor por nodo, implementado como un MLP con estructura \texttt{Linear → LayerNorm → ReLU → Linear}, que emite la predicción del volumen de tráfico esperado en el próximo instante temporal.
 
@@ -394,6 +395,7 @@ El flujo completo de capas puede representarse de forma esquemática como sigue:
 
 \begin{figure}[H]
 	\centering
+	\caption{Esquema lógico del flujo de capas del modelo \texttt{Trafficformer}.}
 	\begin{tikzpicture}[
 		node distance=1.8cm,
 		every node/.style={font=\small, align=center},
@@ -415,9 +417,9 @@ El flujo completo de capas puede representarse de forma esquemática como sigue:
 		\draw[arrow] (encoder) -- (pred);
 		\draw[arrow] (pred) -- (output);
 	\end{tikzpicture}
-	\caption{Esquema lógico del flujo de capas del modelo \texttt{Trafficformer}.}
 	\label{fig:trafficformer_vertical}
 \end{figure}
+\fuente{Elaboración propia.}
 
 Cabe destacar que el modelo ha sido diseñado para ser altamente configurable, permitiendo ajustar su capacidad expresiva a distintos conjuntos de datos y requisitos computacionales. Entre los principales hiperparámetros se encuentran:
 
@@ -521,8 +523,8 @@ Al finalizar el entrenamiento, se guarda el modelo final, se registra el tiempo 
 
 \begin{figure}[H]
 	\centering
-	\includegraphics[width=0.5\textwidth]{includes/cap5/loss_curve_example.png}
 	\caption{Curvas de evolución de pérdida para entrenamiento y validación, con indicación de la mejor época.}
+	\includegraphics[width=0.5\textwidth]{includes/cap5/loss_curve_example.png}
 	\label{fig:loss_curve_example}
 \end{figure}
 
